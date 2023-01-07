@@ -1,5 +1,6 @@
-# Bootstrapping a Nomad environment
-- [Description](index.md)
+[Introduction](index.md)
+
+# Prepare environment
 - [Preparation](preparation.md)
 - [Basic setup](basic-setup.md)
 
@@ -13,8 +14,8 @@
 # Service jobs
 - [Mutagen](service/sync.md)
 
-# Tools and scripts
-## Tools
- - [Damon](tools/damon.md)
-## Scripts
-- [Quick enter containers](scripts/quick-enter.md)
+# Tools
+- [Damon](tools/damon.md)
+
+# Scripts
+- [Quick-enter containers](scripts/quick-enter.md)
