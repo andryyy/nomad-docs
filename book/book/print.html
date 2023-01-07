@@ -1333,6 +1333,10 @@ EOH
 }
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="damon"><a class="header" href="#damon">Damon</a></h1>
+<p>There currently isn't an official release nor a pre-built binary to download, so I compiled it myself:</p>
+<ul>
+<li>linux/amd64, <a href="tools/damon-v0.1.0-dev">damon-v0.1.0-dev</a></li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="quick-enter-containers"><a class="header" href="#quick-enter-containers">Quick enter containers</a></h1>
 <p>This script refers to <code>nomad-env.json</code>.</p>
 <pre><code class="language-bash">for nomad in $(jq -r keys[] ~/nomad-env.json); do
