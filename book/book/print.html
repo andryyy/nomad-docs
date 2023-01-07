@@ -1,0 +1,1368 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Nomad</title>
+        <meta name="robots" content="noindex" />
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="index.html"><strong aria-hidden="true">1.</strong> Description</a></li><li class="chapter-item expanded "><a href="preparation.html"><strong aria-hidden="true">2.</strong> Preparation</a></li><li class="chapter-item expanded "><a href="basic-setup.html"><strong aria-hidden="true">3.</strong> Basic setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Nomad cluster</li><li class="chapter-item expanded "><a href="nomad/encryption.html"><strong aria-hidden="true">4.</strong> Encryption</a></li><li class="chapter-item expanded affix "><li class="part-title">System Jobs</li><li class="chapter-item expanded "><a href="system/nginx.html"><strong aria-hidden="true">5.</strong> Nginx</a></li><li class="chapter-item expanded "><a href="system/sshd.html"><strong aria-hidden="true">6.</strong> SSHd</a></li><li class="chapter-item expanded affix "><li class="part-title">Service jobs</li><li class="chapter-item expanded "><a href="service/sync.html"><strong aria-hidden="true">7.</strong> Mutagen</a></li><li class="chapter-item expanded affix "><li class="part-title">Helper scripts</li><li class="chapter-item expanded "><a href="scripts/quick-enter.html"><strong aria-hidden="true">8.</strong> Quick enter containers</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Nomad</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="description"><a class="header" href="#description">Description</a></h1>
+<p>For our Nomad cluster to function properly, we will create three machines, where each machine is installed two agents on: a server and a client.</p>
+<p>This is not what either Hashicorp or me recommend for production setups, but read on:</p>
+<p>The nomad binary is able to be run as server and client agent started only once. For the sake of a proper configuration we will not stick to a single-configuration setup but create two systemd units representing a client and a server instance. We can bind each service to different internal networks and setup client and server TLS for each of them. The later seems to be more problematic when a single configuration is used as the &quot;tls&quot; stanza does not differentiate between client and server. We are also able to run the server agent with lower privileges and define different service specs.</p>
+<p>This is something in between a &quot;dev&quot; and &quot;prod&quot; setup and should be fine for most workloads as long as the machines are being monitored.</p>
+<p>But what is a server agent and what is a client agent? &quot;I came here for Kubernetes being too complicated, now look at this&quot; you may wonder.</p>
+<p>The concept is actually pretty easy. Server nodes are more or less the brain of the cluster making decisions for clever deployments and orchestration in general.</p>
+<p>A client agent is more stupid in this regard and does what it is told by a server agent. A client agent fingerprints the machine it is installed on, monitors resources, spawns containers, virtual machines or protected environments. This is why it requires higher privileges with capabilites like CAP_SYS_ADMIN and CAP_NET_ADMIN. A process running with CAP_SYS_ADMIN capabilites is almost always able to escalate to root, so Nomad client agents use root privileges to begin with.</p>
+<p>A Nomad server agent could be placed on a smaller virtual machine while the client must be installed on a machine where workload is deployed. It is best for a client agent to not share/battle resources with other processes that it is not aware of. In theory a broken Nomad server agent could balloon up and kill the client if not configured properly.</p>
+<p>Nomad client <strong>and</strong> server agents will join a <strong>server</strong> group.</p>
+<p><strong>Networking</strong> between Nomad server agents differs slightly from client agent network requirements: A Nomad server cluster should be able to exchange information with less than 10 ms delay. Client agents do not take part in a quorum and work fine with 100 ms latency and higher.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="preparation"><a class="header" href="#preparation">Preparation</a></h1>
+<p>For my setup I spawned three CX11 machines on Hetzer Cloud named nomad-1, nomad-2 and nomad-3.</p>
+<p>Each node has a public facing IPv4 and IPv6 address as well as two internal networks for client and server traffic:</p>
+<ul>
+<li><code>10.100.100.0/24</code> is the network used for Nomad server agents</li>
+<li><code>10.200.200.0/24</code> is the network used for Nomad client agents</li>
+</ul>
+<p>Both networks are <strong>not</strong> isolated from eachother. Our client agents need to talk to our server agents using RPC via <code>4647/tcp</code>.</p>
+<p>IPs assigned in these networks must be static.</p>
+<p>Nomad server agents mostly use gossip on <code>4648/tcp+udp</code> within their own class for consensus decision-making and other communication.</p>
+<p>The network used for Nomad server agent gossip <strong>could be</strong> isolated from the other networks and abstracted as cross-regional network over VPN. Gossip traffic will be encrypted in our setup, a network for this kind of traffic should not add extra latency by using an overly complex encryption.</p>
+<p>Besides the machine hostname I will assign two more names to each host:</p>
+<pre><code class="language-yaml">Machine hostname nomad-1:
+  DNS:
+    - Server name in cluster: server-1.nomad.cluster
+    - Client name in cluster: client-1.nomad.cluster
+
+Machine hostname nomad-2:
+  DNS:
+    - Server name in cluster: server-2.nomad.cluster
+    - Client name in cluster: client-2.nomad.cluster
+
+Machine hostname nomad-3:
+  DNS:
+    - Server name in cluster: server-3.nomad.cluster
+    - Client name in cluster: client-3.nomad.cluster
+</code></pre>
+<p>A simple for-loop will setup hostnames and modify the hosts file accordingly in the next steps.</p>
+<p>This is my temporary ssh config file. I write &quot;temporary&quot; as I do not prefer to use root as default user for anything, but it will help a lot to create, append, or copy configurations between nodes while setting up the cluster:</p>
+<pre><code class="language-yaml">Host nomad-1
+  User root
+  Hostname 5.75.230.14
+  Port 22
+  LocalForward 127.0.0.1:4646 10.100.100.2:4646
+  ForwardAgent yes
+
+Host nomad-2
+  User root
+  Hostname 5.75.230.15
+  LocalForward 127.0.0.1:4647 10.100.100.3:4646
+  Port 22
+  ForwardAgent yes
+
+Host nomad-3
+  User root
+  Hostname 5.75.230.16
+  LocalForward 127.0.0.1:4648 10.100.100.4:4646
+  Port 22
+  ForwardAgent yes
+</code></pre>
+<p>As you see I will use agent forwarding. I will be able to jump from/to each worker using my forwarded agent, that is as long as I carry the SSH agent of course. You can do as you like.</p>
+<p>To access the web UI I added a port forwarding to expose the server agents HTTP listener to my local machine. We will also encrypt HTTP traffic and require to authenticate using a client certificate.</p>
+<hr />
+<p>To make life easier I will use JSON in combination with &quot;jq&quot; to pre-seed a set of variables to use in different occasions. I will write this data to <code>~/nomad-env.json</code>:</p>
+<pre><code class="language-json">{
+  &quot;nomad-1&quot;: {
+    &quot;server_name&quot;: &quot;server-1.nomad.cluster&quot;,
+    &quot;client_name&quot;: &quot;client-1.nomad.cluster&quot;,
+    &quot;server&quot;: &quot;10.100.100.2&quot;,
+    &quot;client&quot;: &quot;10.200.200.2&quot;,
+    &quot;server_interface&quot;: &quot;ens10&quot;,
+    &quot;client_interface&quot;: &quot;ens11&quot;
+  },
+  &quot;nomad-2&quot;: {
+    &quot;server_name&quot;: &quot;server-2.nomad.cluster&quot;,
+    &quot;client_name&quot;: &quot;client-2.nomad.cluster&quot;,
+    &quot;server&quot;: &quot;10.100.100.3&quot;,
+    &quot;client&quot;: &quot;10.200.200.3&quot;,
+    &quot;server_interface&quot;: &quot;ens10&quot;,
+    &quot;client_interface&quot;: &quot;ens11&quot;
+  },
+  &quot;nomad-3&quot;: {
+    &quot;server_name&quot;: &quot;server-3.nomad.cluster&quot;,
+    &quot;client_name&quot;: &quot;client-3.nomad.cluster&quot;,
+    &quot;server&quot;: &quot;10.100.100.4&quot;,
+    &quot;client&quot;: &quot;10.200.200.4&quot;,
+    &quot;server_interface&quot;: &quot;ens10&quot;,
+    &quot;client_interface&quot;: &quot;ens11&quot;
+  }
+}
+</code></pre>
+<p>Now <strong>validate</strong> the correct evaluation using &quot;jq&quot;:</p>
+<pre><code class="language-bash">for nomad in $(jq -r keys[] ~/nomad-env.json); do
+  cat &lt;&lt; TEST
+
+Hostname ${nomad}:
+  - Server name in cluster: $(jq -r &quot;.\&quot;$nomad\&quot;.server_name&quot; ~/nomad-env.json)
+  - Client name in cluster: $(jq -r &quot;.\&quot;$nomad\&quot;.client_name&quot; ~/nomad-env.json)
+  - Client address $(jq -r &quot;.\&quot;$nomad\&quot;.client&quot; ~/nomad-env.json) on interface $(jq -r &quot;.\&quot;$nomad\&quot;.client_interface&quot; ~/nomad-env.json)
+  - Server address $(jq -r &quot;.\&quot;$nomad\&quot;.server&quot; ~/nomad-env.json) on interface $(jq -r &quot;.\&quot;$nomad\&quot;.server_interface&quot; ~/nomad-env.json)
+
+TEST
+done
+</code></pre>
+<p>This is a great opportunity to get an overview of the setup:</p>
+<pre><code>Hostname nomad-1:
+  - Server name in cluster: server-1.nomad.cluster
+  - Client name in cluster: client-1.nomad.cluster
+  - Client address 10.200.200.2 on interface ens11
+  - Server address 10.100.100.2 on interface ens10
+
+
+Hostname nomad-2:
+  - Server name in cluster: server-2.nomad.cluster
+  - Client name in cluster: client-2.nomad.cluster
+  - Client address 10.200.200.3 on interface ens11
+  - Server address 10.100.100.3 on interface ens10
+
+
+Hostname nomad-3:
+  - Server name in cluster: server-3.nomad.cluster
+  - Client name in cluster: client-3.nomad.cluster
+  - Client address 10.200.200.4 on interface ens11
+  - Server address 10.100.100.4 on interface ens10
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="basic-setup"><a class="header" href="#basic-setup">Basic setup</a></h1>
+<p>I will start by setting the hostname, timezone, and populating the node hostnames (manually). My scripts will be run using a bash shell.</p>
+<pre><code class="language-bash">for nomad in $(jq -r keys[] ~/nomad-env.json); do
+  ssh $nomad bash &lt;&lt;EOF
+    hostnamectl set-hostname $nomad;
+    timedatectl set-timezone Europe/Berlin;
+    cat &lt;&lt; HOSTS &gt;&gt; /etc/hosts
+# Nomad server agents
+10.100.100.2 server-1.nomad.cluster
+10.100.100.3 server-2.nomad.cluster
+10.100.100.4 server-3.nomad.cluster
+# Nomad client agents
+10.200.200.2 client-1.nomad.cluster
+10.200.200.3 client-2.nomad.cluster
+10.200.200.4 client-3.nomad.cluster
+HOSTS
+    apt install jq -y
+EOF
+done
+</code></pre>
+<p>Some basic aliases; you may skip this part.</p>
+<pre><code class="language-bash">for nomad in $(jq -r keys[] ~/nomad-env.json); do
+  ssh $nomad bash &lt;&lt;'EOF'
+cat &lt;&lt;'ALIASES'&gt; ~/.bashrc
+export LS_OPTIONS='--color=auto'
+eval &quot;$(dircolors)&quot;
+alias ls='ls $LS_OPTIONS'
+alias ll='ls $LS_OPTIONS -la'
+alias l='ls $LS_OPTIONS -lA'
+ALIASES
+EOF
+done
+</code></pre>
+<p>The Docker driver will be used, so Docker needs to be installed on each Nomad client. Nomad will automatically detect the driver.</p>
+<p>This is a lazy approach to install Docker. Piping shell scripts from the internet is never a good idea, keep that in mind.</p>
+<pre><code class="language-bash">for nomad in $(jq -r keys[] ~/nomad-env.json); do
+  ssh $nomad bash &lt;&lt;'EOF'
+  curl -fsSL https://get.docker.com | sh
+EOF
+done
+</code></pre>
+<p>Let's add the Hashicorp repository and install Nomad. The default service will be stopped (if running) and disabled, autocomplete for Nomad is installed:</p>
+<pre><code class="language-bash">for nomad in $(jq -r keys[] ~/nomad-env.json); do
+  ssh $nomad bash &lt;&lt;'EOF'
+    wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor &gt; /usr/share/keyrings/hashicorp-archive-keyring.gpg
+    echo &quot;deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main&quot; &gt; /etc/apt/sources.list.d/hashicorp.list
+    apt update
+    apt install nomad -y
+    systemctl stop nomad.service
+    systemctl disable nomad.service
+    systemctl mask nomad.service
+    nomad -autocomplete-install
+EOF
+done
+</code></pre>
+<p>Now for the last requirement I will download and extract the CNI plugins to <code>/opt/cni/bin</code> where they will be picked up by Nomad automatically.</p>
+<p>The CNI plugins are necessary for the &quot;nomad&quot; bridge to be created.</p>
+<p>The &quot;port bindings&quot; created in a bridged network mode are solely DNAT'ed to their dynamic destination, this is a concept I was not aware of when starting with Nomad.</p>
+<p>We will not see a listener on that port using <code>ss</code> or <code>netstat</code>, instead we can call <code>iptables -L CNI-HOSTPORT-DNAT -t nat -n</code> to check for their existence. Running the command <em>now</em> will result in either an error or an empty return as there is no chain available by that name.</p>
+<p>Version 1.1.1 may be deprecated by the time of reading:</p>
+<pre><code class="language-bash">for nomad in $(jq -r keys[] ~/nomad-env.json); do
+  ssh $nomad bash &lt;&lt;'EOF'
+    mkdir -p /opt/cni/bin
+    curl -L -o cni-plugins.tgz https://github.com/containernetworking/plugins/releases/download/v1.1.1/cni-plugins-linux-amd64-v1.1.1.tgz
+    tar -C /opt/cni/bin -xzf cni-plugins.tgz
+EOF
+done
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="encryption"><a class="header" href="#encryption">Encryption</a></h1>
+<h2 id="gossip-server-nodes"><a class="header" href="#gossip-server-nodes">Gossip (server nodes)</a></h2>
+<p>Gossip is traffic between server nodes on port 4648/tcp/udp. Gossip traffic is not read by a Nomad client. Gossip is encrypted by using symmetric encryption, so all server nodes will share the same secret given as base64 formatted string. The maximum length is 32 bytes.</p>
+<p>I will generate random bytes for gossip encryption between Nomad servers when populating the server configuration file.</p>
+<h2 id="mtls-encryption-for-http-and-rpc-traffic"><a class="header" href="#mtls-encryption-for-http-and-rpc-traffic">mTLS encryption for HTTP and RPC traffic</a></h2>
+<p>All nodes, no matter their role, talk RPC (4647/tcp) and HTTP (4646/tcp) traffic.</p>
+<p>HTTP is obviously used for the web UI but also necessary for running nomad commands via terminal as Nomad is fully API-driven - as most (all?) Hashicorp products are.</p>
+<p>RPC is used for communication between clients and servers.</p>
+<h3 id="preface-how-does-tls-in-nomad-work"><a class="header" href="#preface-how-does-tls-in-nomad-work">Preface: How does TLS in Nomad work?</a></h3>
+<p>It is helpful to understand the basics of what Nomad actually verifies using which name using which protocol.</p>
+<h4 id="rpc"><a class="header" href="#rpc">RPC</a></h4>
+<p>For <strong>RPC communication</strong> Nomad agents will use a pseudo name not resolved in DNS depending on the agent role:</p>
+<ul>
+<li><code>client.$region.nomad</code></li>
+<li><code>server.$region.nomad</code></li>
+</ul>
+<p><strong>Quick note</strong>: The default value for &quot;region&quot; is &quot;global&quot;, I will get back to this later. <code>$region</code> is merely a placeholder here.</p>
+<p>There are two modes for verification where &quot;verify_server_hostname&quot; can be either &quot;true&quot; or &quot;false&quot;.</p>
+<p>&quot;verify_server_hostname&quot; set to <strong>false</strong> will only require the cluster to use certificates signed by the same CA.</p>
+<p>&quot;verify_server_hostname&quot; set to <strong>true</strong> requires not only the CA but also the region to match. A Nomad agent using <code>server.us-west.nomad</code> would not be able to join a cluster in the region <code>eu-west</code> for example.</p>
+<p>In theory a single certificate containing both client and server pseudo names would be sufficient for Nomad no matter the agent role. You don't <strong>have to</strong> add more names for a functional setup, but read on...</p>
+<hr />
+<h4 id="http"><a class="header" href="#http">HTTP</a></h4>
+<p>HTTP as the second component covered by mTLS will use the <strong>same certificate as RPC</strong>.</p>
+<p>TLS can be enabled independently for RPC and HTTP, but only one shared certificate can be defined for both services.</p>
+<p><strong>Valid certificates for the HTTP endpoints should be preferred.</strong>
+The certificates will include the server as well as client agents name as populated in DNS, i.e. &quot;client-1.nomad.cluster&quot; and  &quot;server-1.nomad.cluster&quot;.</p>
+<p>Breaking the certificates down to only include the pseudo name (i.e. &quot;client.global.nomad&quot;) and the specific name of the agent (i.e. &quot;client-1.nomad.cluster&quot;) does not offer higher security compared to a combined certificate. As of writing this documentation Nomad is not able to read a CRL to invalidate certificates automatically, but in an existing PR (4901) the developers discussed the implementation of such a mechanism.</p>
+<p>One combined certificate for all client agents and one for all server agents is fine.</p>
+<p>A powerful access control for the HTTP endpoint is setting <code>verify_https_client</code> to <strong>true</strong> and enforce a policy to require a valid client certificate signed by the same CA. All requests to the HTTP endpoint including the API are covered. When set to <strong>false</strong>, the channel is encrypted but there is no mechanism to restrict.</p>
+<p><strong>Note</strong>: Creating and importing a client certificate as &quot;.p12&quot; file into the browser is explained in the course of this document.</p>
+<p>As long as CRLs are not supported, short-lived client certificates might be something to look into.</p>
+<p>A better and more granular method to restrict access in general is using Nomads ACL system, which can be quite complex.</p>
+<h4 id="our-setup"><a class="header" href="#our-setup">Our setup</a></h4>
+<p>This documentation will follow an easy to reproduce scheme:</p>
+<ul>
+<li>
+<p><strong>One</strong> certificate for all Nomad client agents:</p>
+<ul>
+<li>Hostnames in certificate: <code>client.global.nomad</code>, <code>*.nomad.cluster</code></li>
+</ul>
+</li>
+<li>
+<p><strong>One</strong> certificate for all Nomad server agents:</p>
+<ul>
+<li>Hostnames in certificate: <code>server.global.nomad</code>, <code>*.nomad.cluster</code></li>
+</ul>
+</li>
+<li>
+<p>A client certificate to authenticate against Nomads HTTP endpoint</p>
+</li>
+</ul>
+<p>As wildcard certificates are supported by Nomad, we will make use of that.</p>
+<p><strong>Important</strong>: &quot;server.global.nomad&quot; is used to address any server agent in the region &quot;global&quot;. This is the default region in Nomad we will adopt to. Changing the region to something like <code>eu-west</code> would require to append <code>server.eu-west.nomad</code> as hostname. This setup will validate the region.</p>
+<h3 id="bootstrap-a-minimal-ca"><a class="header" href="#bootstrap-a-minimal-ca">Bootstrap a minimal CA</a></h3>
+<p>I will use nomad-1 to bootstrap a minimal CA using &quot;cfssl&quot; as described in the Nomad documentation:</p>
+<pre><code class="language-bash">root@nomad-1:~ # apt install golang-cfssl
+root@nomad-1:~ # mkdir /etc/nomad.d/pki ; cd /etc/nomad.d/pki
+root@nomad-1:/etc/nomad.d/pki #
+</code></pre>
+<p>Create the CA with default values:</p>
+<pre><code class="language-bash">root@nomad-1:/etc/nomad.d/pki # cfssl print-defaults csr | cfssl gencert -initca - | cfssljson -bare nomad-ca
+</code></pre>
+<p>At this point the CA is alive.</p>
+<p>A certificate template is created, the fields should be pretty self-explanatory:</p>
+<pre><code class="language-bash">root@nomad-1:/etc/nomad.d/pki # cat &lt;&lt;EOF&gt; /etc/nomad.d/pki/cfssl.json
+{
+  &quot;signing&quot;: {
+    &quot;default&quot;: {
+      &quot;expiry&quot;: &quot;87600h&quot;,
+      &quot;usages&quot;: [&quot;signing&quot;, &quot;key encipherment&quot;, &quot;server auth&quot;, &quot;client auth&quot;]
+    }
+  }
+}
+EOF
+</code></pre>
+<h3 id="server-agent-certificate"><a class="header" href="#server-agent-certificate">Server agent certificate</a></h3>
+<pre><code class="language-bash">root@nomad-1:/etc/nomad.d/pki # echo '{}' | cfssl gencert \
+  -ca=/etc/nomad.d/pki/nomad-ca.pem \
+  -ca-key=/etc/nomad.d/pki/nomad-ca-key.pem \
+  -config=/etc/nomad.d/pki/cfssl.json \
+  -hostname=&quot;server.global.nomad,*.nomad.cluster&quot; - | cfssljson -bare server
+</code></pre>
+<h3 id="client-agent-certificate"><a class="header" href="#client-agent-certificate">Client agent certificate</a></h3>
+<pre><code class="language-bash">root@nomad-1:/etc/nomad.d/pki # echo '{}' | cfssl gencert \
+  -ca=/etc/nomad.d/pki/nomad-ca.pem \
+  -ca-key=/etc/nomad.d/pki/nomad-ca-key.pem \
+  -config=/etc/nomad.d/pki/cfssl.json \
+  -hostname=&quot;client.global.nomad,*.nomad.cluster&quot; - | cfssljson -bare client
+</code></pre>
+<h3 id="client-authentication-certificate"><a class="header" href="#client-authentication-certificate">Client authentication certificate</a></h3>
+<p>This certificate does not contain hostnames and is solely used to authenticate to the HTTP endpoint:</p>
+<pre><code class="language-bash">root@nomad-1:/etc/nomad.d/pki # echo '{}' | cfssl gencert -ca=nomad-ca.pem -ca-key=nomad-ca-key.pem -profile=client \
+  - | cfssljson -bare cli
+</code></pre>
+<h3 id="seeding-certificates-cleanup-and-details"><a class="header" href="#seeding-certificates-cleanup-and-details">Seeding certificates, cleanup, and details</a></h3>
+<p>Change the owner to nomad and its default group:</p>
+<pre><code class="language-bash">root@nomad-1:/etc/nomad.d/pki # chown -R nomad: /etc/nomad.d/pki
+</code></pre>
+<p>Now let's copy the pki data to all nodes. <strong>You should move the CA key to a host outside the Nomad cluster.</strong></p>
+<pre><code class="language-bash">root@nomad-1:/etc/nomad.d/pki # scp -r /etc/nomad.d/pki server-2.nomad.cluster:/etc/nomad.d/ ; ssh server-2.nomad.cluster chown -R nomad: /etc/nomad.d/pki
+root@nomad-1:/etc/nomad.d/pki # scp -r /etc/nomad.d/pki server-3.nomad.cluster:/etc/nomad.d/ ; ssh server-3.nomad.cluster chown -R nomad: /etc/nomad.d/pki
+</code></pre>
+<p>Before populating the server and client configuration files, we will export some variables to communicate with the corresponding HTTP server of the local Nomad server agent.</p>
+<p>It does not matter wether or not Nomad is running at this point.</p>
+<p>We are using the server agents DNS name as NOMAD_ADDR. These names are part of the created server certificate.</p>
+<pre><code class="language-bash">for nomad in $(jq -r keys[] ~/nomad-env.json); do
+  ssh $nomad bash &lt;&lt;EOF
+cat &lt;&lt;PROFILE&gt;&gt; ~/.profile
+export NOMAD_ADDR=https://$(jq -r &quot;.\&quot;$nomad\&quot;.server_name&quot; ~/nomad-env.json):4646
+export NOMAD_CACERT=/etc/nomad.d/pki/nomad-ca.pem
+export NOMAD_CLIENT_CERT=/etc/nomad.d/pki/cli.pem
+export NOMAD_CLIENT_KEY=/etc/nomad.d/pki/cli-key.pem
+PROFILE
+EOF
+done
+</code></pre>
+<h3 id="creating-a-p12-file"><a class="header" href="#creating-a-p12-file">Creating a .p12 file</a></h3>
+<p>I do want to access the Nomad web UI with my browser, so the CLI certificate must be imported into my local Firefox.</p>
+<p>A proper &quot;.p12&quot; file should be password protected. Some browsers or operation systems will refuse to import a &quot;.p12&quot; file without a password set (see iOS).</p>
+<pre><code class="language-bash">root@nomad-1:/etc/nomad.d/pki # openssl pkcs12 -export \
+  -in cli.pem \
+  -inkey cli-key.pem \
+  -out nomad-cli.p12 \
+  -name &quot;Nomad CLI&quot;
+</code></pre>
+<p><strong>Important</strong>: You may find yourself not being able to import the client certificate in iOS when using OpenSSL &gt;= v3.
+To be able to create an importable file, you need to append the <code>-legacy</code> flag to the command above.</p>
+<p>Scrolling back to the top you may remember the port forwarding added to my <code>.ssh/config</code> file. That's how I will be able to access the UI whenever I need to.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="nginx-job-file"><a class="header" href="#nginx-job-file">Nginx job file</a></h1>
+<p>The Nginx job file will run as system type and spawn a worker on all Nomad hosts in the defined datacenter.</p>
+<p>The provided template will create a Nginx upstream and location block for each Nomad service with the following tags:</p>
+<ul>
+<li>&quot;public-html&quot;</li>
+<li>A key/value map converted to JSON containing &quot;path&quot; for the location block</li>
+</ul>
+<p>In example:</p>
+<pre><code>tags = [&quot;public-http&quot;, jsonencode({
+  path = &quot;/mutagen/status.json&quot;
+})]
+</code></pre>
+<p>Each machine with a healthy service instance will be added as upstream.</p>
+<hr />
+<p>This job file must be passed a &quot;server_name&quot; variable value:</p>
+<pre><code class="language-bash">nomad run -var server_name=nomad.debinux.de nginx.nomad
+</code></pre>
+<p>Alternatively a default value can be assigned on top of the job file.</p>
+<pre><code class="language-bash">variable &quot;server_name&quot; {
+  type = string
+  #default = &quot;nomad.debinux.de&quot;
+}
+
+job &quot;lb&quot; {
+
+  datacenters = [&quot;falkenstein&quot;]
+  type = &quot;system&quot;
+
+  group &quot;web&quot; {
+
+    network {
+      port &quot;http&quot; {
+        to = 8080
+        static = 80
+      }
+      port &quot;https&quot; {
+        to = 8443
+        static = 443
+      }
+    }
+
+    service {
+      name     = &quot;lb-http&quot;
+      port     = &quot;http&quot;
+      provider = &quot;nomad&quot;
+    }
+
+    service {
+      name     = &quot;lb-https&quot;
+      port     = &quot;https&quot;
+      provider = &quot;nomad&quot;
+    }
+
+    restart {
+      attempts = 2
+      interval = &quot;30m&quot;
+      delay = &quot;15s&quot;
+      mode = &quot;fail&quot;
+    }
+
+    task &quot;nginx&quot; {
+
+      driver = &quot;docker&quot;
+
+      config {
+        image = &quot;nginx&quot;
+        ports = [&quot;http&quot;, &quot;https&quot;]
+        auth_soft_fail = true
+        volumes = [
+          &quot;local:/etc/nginx/conf.d&quot;,
+          &quot;www:/var/www&quot;,
+          &quot;tls:/etc/nginx/tls.d&quot;,
+        ]
+      }
+
+      logs {
+        max_files     = 10
+        max_file_size = 15
+      }
+
+      template {
+        data = &lt;&lt;EOH
+{{ with nomadVar &quot;nomad/jobs/system/web/nginx&quot; }}{{ .fullchain_pem }}{{ end }}
+EOH
+        destination = &quot;tls/fullchain.pem&quot;
+        change_mode   = &quot;signal&quot;
+        change_signal = &quot;SIGHUP&quot;
+      }
+
+      template {
+        data = &lt;&lt;EOH
+{{ with nomadVar &quot;nomad/jobs/system/web/nginx&quot; }}{{ .privkey_pem }}{{ end }}
+EOH
+        destination = &quot;tls/privkey.pem&quot;
+        perms = &quot;600&quot;
+        change_mode   = &quot;signal&quot;
+        change_signal = &quot;SIGHUP&quot;
+      }
+
+      template {
+        data = &lt;&lt;EOF
+{{ range nomadServices }}
+  {{ if contains &quot;public-http&quot; .Tags }}
+upstream {{ .Name }} {
+    {{ range nomadService .Name }}
+  server {{ .Address }}:{{ .Port }};
+    {{ else }}
+  server 127.0.0.1:65535;
+    {{ end }}
+}
+  {{ end }}
+{{ end }}
+
+server {
+   listen 8080;
+   server_name ${var.server_name};
+   return 301 https://${var.server_name}$request_uri;
+}
+server {
+  listen 8443;
+  ssl on;
+  ssl_certificate /etc/nginx/tls.d/fullchain.pem;
+  ssl_certificate_key /etc/nginx/tls.d/privkey.pem;
+  root /var/www;
+  server_name ${var.server_name};
+
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
+
+{{ range nomadServices }}
+  {{ if contains &quot;public-http&quot; .Tags }}
+    {{ $service := .Name }}
+    {{ range .Tags }}
+      {{ if . | regexMatch &quot;^{.+}$&quot; }}
+        {{ with $d := . | parseJSON }}
+          {{ if $d.path }}
+  location {{ $d.path }} {
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host ${var.server_name};
+    proxy_pass http://{{ $service }};
+  }
+          {{ end }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+}
+EOF
+        destination   = &quot;local/balancer.conf&quot;
+        change_mode   = &quot;signal&quot;
+        change_signal = &quot;SIGHUP&quot;
+      }
+
+      template {
+        data = &lt;&lt;EOF
+&lt;!DOCTYPE HTML&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;utf-8&quot; /&gt;
+  &lt;title&gt;LB&lt;/title&gt;
+  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot; /&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;container&quot;&gt;
+&lt;pre&gt;
+{{ range nomadServices }}
+  Name: {{ .Name }}
+  {{ range nomadService .Name }}
+    Address: {{ .Address }}
+    AllocID: {{ .AllocID }}
+    Datacenter: {{ .Datacenter }}
+    ID: {{ .ID }}
+    JobID: {{ .JobID }}
+    Port: {{ .Port }}
+    Tags: {{ .Tags }}
+  {{ end }}
+{{ end }}
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+EOF
+        destination   = &quot;www/index.html&quot;
+        change_mode   = &quot;signal&quot;
+        change_signal = &quot;SIGHUP&quot;
+      }
+    }
+  }
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="sshd-job-file"><a class="header" href="#sshd-job-file">SSHd job file</a></h1>
+<pre><code class="language-bash">job &quot;sshd&quot; {
+
+  datacenters = [&quot;falkenstein&quot;]
+  type = &quot;system&quot;
+
+  group &quot;sync&quot; {
+
+    volume &quot;shared-data&quot; {
+      type            = &quot;host&quot;
+      source          = &quot;shared-data&quot;
+      read_only       = false
+    }
+
+    network {
+      mode = &quot;bridge&quot;
+      port &quot;ssh&quot; {
+        host_network = &quot;nomad-clients&quot;
+        to = 2222
+      }
+    }
+
+    service {
+      name     = &quot;sshd&quot;
+      port     = &quot;ssh&quot;
+      provider = &quot;nomad&quot;
+    }
+
+    task &quot;sshd&quot; {
+
+      driver = &quot;docker&quot;
+
+      env {
+        PUID = &quot;1000&quot;
+        PGID = &quot;1000&quot;
+        UMASK = &quot;0077&quot;
+        # Overwritten in prepare script
+        SUDO_ACCESS = &quot;false&quot;
+        TZ = &quot;Europe/Berlin&quot;
+        USER_NAME = &quot;user&quot;
+        PUBLIC_KEY_FILE = &quot;/secrets/authorized_keys&quot;
+      }
+
+      config {
+        image = &quot;linuxserver/openssh-server&quot;
+        ports = [&quot;ssh&quot;]
+        volumes = [
+          &quot;ssh:/config/.ssh&quot;,
+          &quot;custom-init-d:/custom-cont-init.d&quot;,
+          &quot;usr-local-sbin:/usr/local/sbin&quot;,
+        ]
+      }
+
+      logs {
+        max_files     = 10
+        max_file_size = 15
+      }
+
+      template {
+        data = &lt;&lt;EOH
+#~ Install additinal packages
+
+apk add acl findutils
+
+#~ Create ACL file
+
+cat &lt;&lt;EOF&gt; /shared_data_acl
+# file: /shared-data
+# owner: user
+# group: users
+user::rwx
+group::---
+other::---
+default:user::rwx
+default:group::---
+default:other::---
+EOF
+
+#~ Apply ACL
+cd /
+setfacl --restore=/shared_data_acl
+
+#~ Allow user to run sudo cmd
+
+echo 'user ALL=(ALL) NOPASSWD: /usr/local/sbin/permfix *' &gt;&gt; /etc/sudoers.d/user
+EOH
+        destination = &quot;custom-init-d/prepare&quot;
+        perms = &quot;755&quot;
+      }
+
+      template {
+        data = &lt;&lt;EOH
+#!/bin/bash
+
+if [ $# -ne 1 ]; then
+  exit 1
+fi
+
+if [[ ! -z &quot;$1&quot; ]]; then
+  if ! echo &quot;$1&quot; | base64 -d &gt; /dev/null; then
+    exit 1
+  fi
+  OBJ=&quot;$(echo &quot;$1&quot; | base64 -d)&quot;
+  if [[ $(readlink  -f &quot;$OBJ&quot;) =~ ^/shared-data/ ]]; then
+    if [ -x &quot;$OBJ&quot; ]; then
+      /bin/chmod 700 &quot;$OBJ&quot;
+    else
+      /bin/chmod 600 &quot;$OBJ&quot;
+    fi
+    /bin/chown -R {{ env &quot;PUID&quot; }}:{{ env &quot;PGID&quot; }} &quot;$OBJ&quot;
+  fi
+fi
+EOH
+        destination = &quot;usr-local-sbin/permfix&quot;
+        perms = &quot;755&quot;
+      }
+
+      template {
+        data = &lt;&lt;EOH
+{{ with nomadVar &quot;nomad/jobs/system/sync/sshd&quot; }}{{ .id_ed25519_pub }}{{ end }}
+EOH
+        destination = &quot;secrets/authorized_keys&quot;
+        change_mode   = &quot;restart&quot;
+      }
+
+      volume_mount {
+        volume      = &quot;shared-data&quot;
+        destination = &quot;/shared-data&quot;
+      }
+    }
+  }
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="mutagen-job-file"><a class="header" href="#mutagen-job-file">Mutagen job file</a></h1>
+<p>This job file must be passed &quot;telegram_bot_token&quot; and &quot;telegram_chat_id&quot; variables <strong>if Telegram notifications should be enabled</strong>:</p>
+<pre><code class="language-bash">nomad run -var telegram_bot_token=&quot;123:xyz-xyz&quot; -var telegram_chat_id=&quot;-123&quot; sync.nomad
+</code></pre>
+<p>Alternatively default values can be assigned on top of the job file.</p>
+<p><strong>Important</strong>: These variables will not be stored encrypted.</p>
+<pre><code class="language-bash">variable &quot;server_name&quot; {
+  type = string
+  #default = &quot;nomad.debinux.de&quot;
+}
+
+job &quot;lb&quot; {
+
+  datacenters = [&quot;falkenstein&quot;]
+  type = &quot;system&quot;
+
+  group &quot;web&quot; {
+
+    network {
+      port &quot;http&quot; {
+        to = 8080
+        static = 80
+      }
+      port &quot;https&quot; {
+        to = 8443
+        static = 443
+      }
+    }
+
+    service {
+      name     = &quot;lb-http&quot;
+      port     = &quot;http&quot;
+      provider = &quot;nomad&quot;
+    }
+
+    service {
+      name     = &quot;lb-https&quot;
+      port     = &quot;https&quot;
+      provider = &quot;nomad&quot;
+    }
+
+    restart {
+      attempts = 2
+      interval = &quot;30m&quot;
+      delay = &quot;15s&quot;
+      mode = &quot;fail&quot;
+    }
+
+    task &quot;nginx&quot; {
+
+      driver = &quot;docker&quot;
+
+      config {
+        image = &quot;nginx&quot;
+        ports = [&quot;http&quot;, &quot;https&quot;]
+        auth_soft_fail = true
+        volumes = [
+          &quot;local:/etc/nginx/conf.d&quot;,
+          &quot;www:/var/www&quot;,
+          &quot;tls:/etc/nginx/tls.d&quot;,
+        ]
+      }
+
+      logs {
+        max_files     = 10
+        max_file_size = 15
+      }
+
+      template {
+        data = &lt;&lt;EOH
+{{ with nomadVar &quot;nomad/jobs/system/web/nginx&quot; }}{{ .fullchain_pem }}{{ end }}
+EOH
+        destination = &quot;tls/fullchain.pem&quot;
+        change_mode   = &quot;signal&quot;
+        change_signal = &quot;SIGHUP&quot;
+      }
+
+      template {
+        data = &lt;&lt;EOH
+{{ with nomadVar &quot;nomad/jobs/system/web/nginx&quot; }}{{ .privkey_pem }}{{ end }}
+EOH
+        destination = &quot;tls/privkey.pem&quot;
+        perms = &quot;600&quot;
+        change_mode   = &quot;signal&quot;
+        change_signal = &quot;SIGHUP&quot;
+      }
+
+      template {
+        data = &lt;&lt;EOF
+{{ range nomadServices }}
+  {{ if contains &quot;public-http&quot; .Tags }}
+upstream {{ .Name }} {
+    {{ range nomadService .Name }}
+  server {{ .Address }}:{{ .Port }};
+    {{ else }}
+  server 127.0.0.1:65535;
+    {{ end }}
+}
+  {{ end }}
+{{ end }}
+
+server {
+   listen 8080;
+   server_name ${var.server_name};
+   return 301 https://${var.server_name}$request_uri;
+}
+server {
+  listen 8443;
+  ssl on;
+  ssl_certificate /etc/nginx/tls.d/fullchain.pem;
+  ssl_certificate_key /etc/nginx/tls.d/privkey.pem;
+  root /var/www;
+  server_name ${var.server_name};
+
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
+
+{{ range nomadServices }}
+  {{ if contains &quot;public-http&quot; .Tags }}
+    {{ $service := .Name }}
+    {{ range .Tags }}
+      {{ if . | regexMatch &quot;^{.+}$&quot; }}
+        {{ with $d := . | parseJSON }}
+          {{ if $d.path }}
+  location {{ $d.path }} {
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host ${var.server_name};
+    proxy_pass http://{{ $service }};
+  }
+          {{ end }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+}
+EOF
+        destination   = &quot;local/balancer.conf&quot;
+        change_mode   = &quot;signal&quot;
+        change_signal = &quot;SIGHUP&quot;
+      }
+
+      template {
+        data = &lt;&lt;EOF
+&lt;!DOCTYPE HTML&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;utf-8&quot; /&gt;
+  &lt;title&gt;LB&lt;/title&gt;
+  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot; /&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;container&quot;&gt;
+&lt;pre&gt;
+{{ range nomadServices }}
+  Name: {{ .Name }}
+  {{ range nomadService .Name }}
+    Address: {{ .Address }}
+    AllocID: {{ .AllocID }}
+    Datacenter: {{ .Datacenter }}
+    ID: {{ .ID }}
+    JobID: {{ .JobID }}
+    Port: {{ .Port }}
+    Tags: {{ .Tags }}
+  {{ end }}
+{{ end }}
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+EOF
+        destination   = &quot;www/index.html&quot;
+        change_mode   = &quot;signal&quot;
+        change_signal = &quot;SIGHUP&quot;
+      }
+    }
+  }
+}
+</code></pre>
+<pre><code class="language-bash">variable &quot;telegram_bot_token&quot; {
+  type = string
+  default = &quot;&quot;
+}
+variable &quot;telegram_chat_id&quot; {
+  type = string
+  default = &quot;&quot;
+}
+
+job &quot;sync&quot; {
+
+  datacenters = [&quot;falkenstein&quot;]
+  type = &quot;service&quot;
+
+  group &quot;mutagen&quot; {
+
+    count = 1
+
+    volume &quot;shared-data&quot; {
+      type            = &quot;host&quot;
+      source          = &quot;shared-data&quot;
+      read_only       = false
+    }
+
+    network {
+      mode = &quot;bridge&quot;
+      port &quot;mutagen&quot; {
+        host_network = &quot;nomad-clients&quot;
+        to = 8082
+      }
+    }
+
+    service {
+      name     = &quot;mutagen&quot;
+      port     = &quot;mutagen&quot;
+      provider = &quot;nomad&quot;
+      tags = [&quot;public-http&quot;, jsonencode({
+        path = &quot;/mutagen/status.json&quot;
+      })]
+    }
+
+    task &quot;project&quot; {
+
+      env {
+        PUID = &quot;1000&quot;
+        PGID = &quot;1000&quot;
+        TELEGRAM_BOT_TOKEN = var.telegram_bot_token
+        CHAT_ID = var.telegram_chat_id
+        TZ = &quot;Europe/Berlin&quot;
+      }
+
+      volume_mount {
+        volume      = &quot;shared-data&quot;
+        destination = &quot;/shared-data&quot;
+      }
+
+      driver = &quot;docker&quot;
+      config {
+        image = &quot;debian:stable-slim&quot;
+        ports = [&quot;mutagen&quot;]
+        command = &quot;/bin/bash&quot;
+        args    = [&quot;-c&quot;, &lt;&lt;EOF
+set -o pipefail
+
+trap &quot;exit&quot; INT TERM
+trap &quot;kill 0&quot; EXIT
+
+# Prepare
+BACKGROUND_TASKS=
+[ -f /root/.mutagen/daemon/daemon.lock ] &amp;&amp; rm /root/.mutagen/daemon/daemon.*
+apt update
+apt upgrade -y
+apt install -y openssh-client jq curl socat
+
+#~
+#~ Generic functions
+#~
+
+log_msg() {
+  local input=&quot;&quot;
+  [[ -p /dev/stdin ]] &amp;&amp; input=$(cat -) || input=$1
+
+  # Using bash pattern replacement is difficult in a command argument template, so we are using tr
+  [[ -z &quot;$(echo $input | tr -d &quot; \t\n\r&quot;)&quot; ]] || [[ &quot;$input&quot; == &quot;''&quot; ]] &amp;&amp; return 0
+
+  local now=$(date -R)
+  printf &quot;🕙 %s - %s\n&quot; &quot;$now&quot; &quot;$input&quot;
+  if [[ -z $TELEGRAM_BOT_TOKEN ]] || [[ -z $CHAT_ID ]]; then
+    return 0
+  fi
+  local data=$(jq --null-input \
+    --arg chat_id $CHAT_ID \
+    --arg parse_mode HTML \
+    --arg msg &quot;$(printf &quot;&lt;b&gt;Sync notification&lt;/b&gt;\n&lt;i&gt;🕙 %s&lt;/i&gt;\n\n&lt;pre&gt;%s&lt;/pre&gt;&quot; &quot;$now&quot; &quot;$input&quot;)&quot; \
+    '{&quot;chat_id&quot;: $chat_id, &quot;text&quot;: $msg, &quot;parse_mode&quot;: $parse_mode}'
+    )
+  curl -s -o /dev/null -H 'Content-Type: application/json' \
+    -d &quot;$data&quot; \
+    -X POST \
+    https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage
+}
+
+if [ $EXPECTED_NODES -lt 2 ]; then
+  log_msg &quot;Critical: Need at least 2 nodes&quot;
+  exit 1
+fi
+
+until /local/mutagen project start -f /local/mutagen.yml 2&gt;&amp;1 | log_msg; do
+  /local/mutagen project terminate -f /local/mutagen.yml 2&gt;&amp;1 | log_msg
+  sleep 10
+done
+
+#~
+#~ Checks / Workers
+#~
+
+mutagen_nodes() {
+  local init=1
+  while true; do
+    ACTIVE_NODES=$(($(local/mutagen sync list --template &quot;{{ len . }}&quot;) + 1))
+    if [ $ACTIVE_NODES -ne $EXPECTED_NODES ]; then
+      log_msg &quot;Warning: Active node count does not match expected nodes.&quot;
+      init=1
+    elif [ $init -eq 1 ]; then
+      # Example how to escape var:
+      #log_msg &quot;$$${init}&quot;
+      log_msg &quot;Running with $ACTIVE_NODES nodes: the party is complete!&quot;
+      init=0
+    fi
+    sleep 60
+  done
+}
+
+mutagen_status() {
+  while true; do
+    while read job; do
+      status=$(local/mutagen sync list $job --template \
+        &quot;{{ range . }}{{ .Status }}{{ end }}&quot;)
+      if [[ $status =~ (Halt|Unknown|halt|unknown) ]]; then
+        log_msg &quot;$job is in critical state:
+$status
+Resetting...&quot;
+        local/mutagen sync reset $job 2&gt;&amp;1 | log_msg
+      fi
+    done &lt; &lt;(local/mutagen sync list --template \
+      &quot;{{ range . }}{{ .Identifier }}
+{{ end }}&quot;)
+    sleep 10
+  done
+}
+
+mutagen_json() {
+  while true; do
+    log_msg &quot;Spawned socat listener for Mutagen status&quot;
+    socat TCP-LISTEN:8082,crlf,reuseaddr,fork SYSTEM:&quot;echo HTTP/1.1 200 OK; echo Content-Type\: application/json; echo; local/wrapper.sh&quot;
+  done
+}
+
+mutagen_conflicts() {
+  prev_err=0
+  while true; do
+
+    alpha_sync_problems=$(local/mutagen sync list --template &quot;{{ range . }}{{ json . }}{{ end }}&quot; | \
+      jq '{host: .alpha.host, problems: (try .alpha.scanProblems[])}')
+    beta_sync_problems=$(local/mutagen sync list --template &quot;{{ range . }}{{ json . }}{{ end }}&quot; | \
+      jq '{host: .beta.host, problems: (try .beta.scanProblems[])}')
+
+    if [[ ! -z &quot;$alpha_sync_problems&quot; ]] || \
+       [[ ! -z &quot;$beta_sync_problems&quot; ]]; then
+
+      prev_err=1
+
+      log_msg &quot;Detected scan problems:
+$(printf &quot;%s\n%s\n&quot; &quot;$alpha_sync_problems&quot; &quot;$beta_sync_problems&quot;)
+Trying to fix problems...&quot;
+
+      tmp_file=$(mktemp)
+      local/mutagen sync list --template &quot;{{ range . }}{{ json . }}{{ end }}&quot; | jq '
+      (&quot;ssh -p &quot; + (.alpha.port|tostring) + &quot; user@&quot; + .alpha.host + &quot; sudo /usr/local/sbin/permfix &quot;) as $alpha |
+      (&quot;ssh -p &quot; + (.beta.port|tostring) + &quot; user@&quot; + .beta.host + &quot; sudo /usr/local/sbin/permfix &quot;) as $beta |
+        ($alpha) + (&quot;/shared-data/&quot; + try .alpha.scanProblems[].path | @base64 + &quot;;&quot;),
+        ($beta) + (&quot;/shared-data/&quot; + try .beta.scanProblems[].path | @base64 + &quot;;&quot;)' -r &gt; $tmp_file
+      bash $tmp_file
+      rm $tmp_file
+
+    else
+      if [ $prev_err -eq 1 ]; then
+        log_msg &quot;✅ - Fixed scan problems&quot;
+      fi
+      prev_err=0
+    fi
+
+    sleep 5
+  done
+}
+
+
+#~
+#~ Spawn workers
+#~
+
+(
+while true; do
+  if ! mutagen_nodes; then
+    log_msg &quot;mutagen_nodes error&quot;
+  fi
+done
+) &amp;
+PID=$!
+log_msg &quot;Spawned mutagen_nodes with PID $PID&quot;
+BACKGROUND_TASKS+=$PID:
+
+(
+while true; do
+  if ! mutagen_json; then
+    log_msg &quot;mutagen_json error&quot;
+  fi
+done
+) &amp;
+PID=$!
+log_msg &quot;Spawned mutagen_json with PID $PID&quot;
+BACKGROUND_TASKS+=$PID:
+
+(
+while true; do
+  if ! mutagen_status; then
+    log_msg &quot;mutagen_status error&quot;
+  fi
+done
+) &amp;
+PID=$!
+log_msg &quot;Spawned mutagen_status with PID $PID&quot;
+BACKGROUND_TASKS+=$PID:
+
+(
+while true; do
+  if ! mutagen_conflicts; then
+    log_msg &quot;mutagen_conflicts error&quot;
+  fi
+done
+) &amp;
+PID=$!
+log_msg &quot;Spawned mutagen_conflicts with PID $PID&quot;
+BACKGROUND_TASKS+=$PID:
+
+#~
+#~ Kill self/task (PID 1) if any worker died
+#~
+
+while true; do
+  IFS=:
+  for bg_task in $BACKGROUND_TASKS; do
+    if ! kill -0 $bg_task 1&gt;&amp;2; then
+      log_msg &quot;Task $bg_task died, bye...&quot;
+      kill -TERM 1
+    fi
+    sleep 10
+  done
+done
+
+EOF
+        ]
+        volumes = [
+          &quot;ssh:/root/.ssh&quot;,
+        ]
+      }
+
+      template {
+        data = &lt;&lt;EOF
+EXPECTED_NODES={{ len (nomadService &quot;sshd&quot;) }}
+CHAT_ID={{ env &quot;CHAT_ID&quot; }}
+TELEGRAM_BOT_TOKEN={{ env &quot;TELEGRAM_BOT_TOKEN&quot; }}
+EOF
+        destination = &quot;local/file.env&quot;
+        env = true
+      }
+
+      template {
+        data = &lt;&lt;EOF
+local/mutagen sync list --template '{{ `{{ json . }}` }}' | jq
+EOF
+        destination = &quot;local/wrapper.sh&quot;
+        perms = &quot;755&quot;
+      }
+
+      template {
+        data = &lt;&lt;EOF
+sync:
+  defaults:
+    permissions:
+      defaultGroup: &quot;id:{{ env &quot;PUID&quot; }}&quot;
+      defaultOwner: &quot;id:{{ env &quot;PGID&quot; }}&quot;
+      defaultFileMode: 0600
+      defaultDirectoryMode: 0700
+    flushOnCreate: true
+    stageMode: &quot;internal&quot;
+    ignore:
+      vcs: true
+{{ range $idx, $srv := nomadService &quot;sshd&quot; }}{{ if ne $idx 0 }}
+# {{ len (nomadService &quot;sshd&quot;) }}
+  job-{{ $idx }}:
+    alpha: &quot;user@{{ with nomadService &quot;sshd&quot; }}{{ with index . 0 }}{{ .Address }}:{{ .Port }}{{ end }}{{ end }}:/shared-data&quot;
+    beta: &quot;user@{{ $srv.Address }}:{{ $srv.Port }}:/shared-data&quot;
+    mode: &quot;two-way-resolved&quot;
+{{ end }}{{ else }}{{ end }}
+EOF
+        destination   = &quot;local/mutagen.yml&quot;
+        change_mode   = &quot;restart&quot;
+      }
+
+      template {
+        data = &lt;&lt;EOH
+{{ with nomadVar &quot;nomad/jobs/sync/mutagen/project&quot; }}{{ .id_ed25519 }}{{ end }}
+EOH
+        destination = &quot;ssh/id_ed25519&quot;
+        change_mode   = &quot;restart&quot;
+        perms = &quot;600&quot;
+      }
+
+      template {
+        data = &lt;&lt;EOH
+Host *
+  IdentityFile ~/.ssh/id_ed25519
+  StrictHostKeyChecking no
+EOH
+        destination = &quot;ssh/config&quot;
+        change_mode   = &quot;restart&quot;
+        perms = &quot;600&quot;
+      }
+
+      artifact {
+        source      = &quot;https://github.com/mutagen-io/mutagen/releases/download/v0.16.3/mutagen_linux_amd64_v0.16.3.tar.gz&quot;
+        destination = &quot;local&quot;
+      }
+    }
+  }
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="quick-enter-containers"><a class="header" href="#quick-enter-containers">Quick enter containers</a></h1>
+<p>This script refers to <code>nomad-env.json</code>.</p>
+<pre><code class="language-bash">for nomad in $(jq -r keys[] ~/nomad-env.json); do
+  ssh $nomad bash &lt;&lt;'EOF'
+cat &lt;&lt;'ALIASES'&gt;&gt; ~/.bashrc
+alias nomad_sshd='docker exec -it $(docker ps -qf name=sshd) bash'
+alias nomad_sync='docker exec -it $(docker ps -qf name=project) bash'
+alias nomad_nginx='docker exec -it $(docker ps -qf name=nginx) bash'
+ALIASES
+EOF
+done
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+    </body>
+</html>

@@ -1,0 +1,713 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Mutagen - Nomad</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../index.html"><strong aria-hidden="true">1.</strong> Description</a></li><li class="chapter-item expanded "><a href="../preparation.html"><strong aria-hidden="true">2.</strong> Preparation</a></li><li class="chapter-item expanded "><a href="../basic-setup.html"><strong aria-hidden="true">3.</strong> Basic setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Nomad cluster</li><li class="chapter-item expanded "><a href="../nomad/encryption.html"><strong aria-hidden="true">4.</strong> Encryption</a></li><li class="chapter-item expanded affix "><li class="part-title">System Jobs</li><li class="chapter-item expanded "><a href="../system/nginx.html"><strong aria-hidden="true">5.</strong> Nginx</a></li><li class="chapter-item expanded "><a href="../system/sshd.html"><strong aria-hidden="true">6.</strong> SSHd</a></li><li class="chapter-item expanded affix "><li class="part-title">Service jobs</li><li class="chapter-item expanded "><a href="../service/sync.html" class="active"><strong aria-hidden="true">7.</strong> Mutagen</a></li><li class="chapter-item expanded affix "><li class="part-title">Helper scripts</li><li class="chapter-item expanded "><a href="../scripts/quick-enter.html"><strong aria-hidden="true">8.</strong> Quick enter containers</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Nomad</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="mutagen-job-file"><a class="header" href="#mutagen-job-file">Mutagen job file</a></h1>
+<p>This job file must be passed &quot;telegram_bot_token&quot; and &quot;telegram_chat_id&quot; variables <strong>if Telegram notifications should be enabled</strong>:</p>
+<pre><code class="language-bash">nomad run -var telegram_bot_token=&quot;123:xyz-xyz&quot; -var telegram_chat_id=&quot;-123&quot; sync.nomad
+</code></pre>
+<p>Alternatively default values can be assigned on top of the job file.</p>
+<p><strong>Important</strong>: These variables will not be stored encrypted.</p>
+<pre><code class="language-bash">variable &quot;server_name&quot; {
+  type = string
+  #default = &quot;nomad.debinux.de&quot;
+}
+
+job &quot;lb&quot; {
+
+  datacenters = [&quot;falkenstein&quot;]
+  type = &quot;system&quot;
+
+  group &quot;web&quot; {
+
+    network {
+      port &quot;http&quot; {
+        to = 8080
+        static = 80
+      }
+      port &quot;https&quot; {
+        to = 8443
+        static = 443
+      }
+    }
+
+    service {
+      name     = &quot;lb-http&quot;
+      port     = &quot;http&quot;
+      provider = &quot;nomad&quot;
+    }
+
+    service {
+      name     = &quot;lb-https&quot;
+      port     = &quot;https&quot;
+      provider = &quot;nomad&quot;
+    }
+
+    restart {
+      attempts = 2
+      interval = &quot;30m&quot;
+      delay = &quot;15s&quot;
+      mode = &quot;fail&quot;
+    }
+
+    task &quot;nginx&quot; {
+
+      driver = &quot;docker&quot;
+
+      config {
+        image = &quot;nginx&quot;
+        ports = [&quot;http&quot;, &quot;https&quot;]
+        auth_soft_fail = true
+        volumes = [
+          &quot;local:/etc/nginx/conf.d&quot;,
+          &quot;www:/var/www&quot;,
+          &quot;tls:/etc/nginx/tls.d&quot;,
+        ]
+      }
+
+      logs {
+        max_files     = 10
+        max_file_size = 15
+      }
+
+      template {
+        data = &lt;&lt;EOH
+{{ with nomadVar &quot;nomad/jobs/system/web/nginx&quot; }}{{ .fullchain_pem }}{{ end }}
+EOH
+        destination = &quot;tls/fullchain.pem&quot;
+        change_mode   = &quot;signal&quot;
+        change_signal = &quot;SIGHUP&quot;
+      }
+
+      template {
+        data = &lt;&lt;EOH
+{{ with nomadVar &quot;nomad/jobs/system/web/nginx&quot; }}{{ .privkey_pem }}{{ end }}
+EOH
+        destination = &quot;tls/privkey.pem&quot;
+        perms = &quot;600&quot;
+        change_mode   = &quot;signal&quot;
+        change_signal = &quot;SIGHUP&quot;
+      }
+
+      template {
+        data = &lt;&lt;EOF
+{{ range nomadServices }}
+  {{ if contains &quot;public-http&quot; .Tags }}
+upstream {{ .Name }} {
+    {{ range nomadService .Name }}
+  server {{ .Address }}:{{ .Port }};
+    {{ else }}
+  server 127.0.0.1:65535;
+    {{ end }}
+}
+  {{ end }}
+{{ end }}
+
+server {
+   listen 8080;
+   server_name ${var.server_name};
+   return 301 https://${var.server_name}$request_uri;
+}
+server {
+  listen 8443;
+  ssl on;
+  ssl_certificate /etc/nginx/tls.d/fullchain.pem;
+  ssl_certificate_key /etc/nginx/tls.d/privkey.pem;
+  root /var/www;
+  server_name ${var.server_name};
+
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
+
+{{ range nomadServices }}
+  {{ if contains &quot;public-http&quot; .Tags }}
+    {{ $service := .Name }}
+    {{ range .Tags }}
+      {{ if . | regexMatch &quot;^{.+}$&quot; }}
+        {{ with $d := . | parseJSON }}
+          {{ if $d.path }}
+  location {{ $d.path }} {
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host ${var.server_name};
+    proxy_pass http://{{ $service }};
+  }
+          {{ end }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+}
+EOF
+        destination   = &quot;local/balancer.conf&quot;
+        change_mode   = &quot;signal&quot;
+        change_signal = &quot;SIGHUP&quot;
+      }
+
+      template {
+        data = &lt;&lt;EOF
+&lt;!DOCTYPE HTML&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;utf-8&quot; /&gt;
+  &lt;title&gt;LB&lt;/title&gt;
+  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot; /&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;container&quot;&gt;
+&lt;pre&gt;
+{{ range nomadServices }}
+  Name: {{ .Name }}
+  {{ range nomadService .Name }}
+    Address: {{ .Address }}
+    AllocID: {{ .AllocID }}
+    Datacenter: {{ .Datacenter }}
+    ID: {{ .ID }}
+    JobID: {{ .JobID }}
+    Port: {{ .Port }}
+    Tags: {{ .Tags }}
+  {{ end }}
+{{ end }}
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+EOF
+        destination   = &quot;www/index.html&quot;
+        change_mode   = &quot;signal&quot;
+        change_signal = &quot;SIGHUP&quot;
+      }
+    }
+  }
+}
+</code></pre>
+<pre><code class="language-bash">variable &quot;telegram_bot_token&quot; {
+  type = string
+  default = &quot;&quot;
+}
+variable &quot;telegram_chat_id&quot; {
+  type = string
+  default = &quot;&quot;
+}
+
+job &quot;sync&quot; {
+
+  datacenters = [&quot;falkenstein&quot;]
+  type = &quot;service&quot;
+
+  group &quot;mutagen&quot; {
+
+    count = 1
+
+    volume &quot;shared-data&quot; {
+      type            = &quot;host&quot;
+      source          = &quot;shared-data&quot;
+      read_only       = false
+    }
+
+    network {
+      mode = &quot;bridge&quot;
+      port &quot;mutagen&quot; {
+        host_network = &quot;nomad-clients&quot;
+        to = 8082
+      }
+    }
+
+    service {
+      name     = &quot;mutagen&quot;
+      port     = &quot;mutagen&quot;
+      provider = &quot;nomad&quot;
+      tags = [&quot;public-http&quot;, jsonencode({
+        path = &quot;/mutagen/status.json&quot;
+      })]
+    }
+
+    task &quot;project&quot; {
+
+      env {
+        PUID = &quot;1000&quot;
+        PGID = &quot;1000&quot;
+        TELEGRAM_BOT_TOKEN = var.telegram_bot_token
+        CHAT_ID = var.telegram_chat_id
+        TZ = &quot;Europe/Berlin&quot;
+      }
+
+      volume_mount {
+        volume      = &quot;shared-data&quot;
+        destination = &quot;/shared-data&quot;
+      }
+
+      driver = &quot;docker&quot;
+      config {
+        image = &quot;debian:stable-slim&quot;
+        ports = [&quot;mutagen&quot;]
+        command = &quot;/bin/bash&quot;
+        args    = [&quot;-c&quot;, &lt;&lt;EOF
+set -o pipefail
+
+trap &quot;exit&quot; INT TERM
+trap &quot;kill 0&quot; EXIT
+
+# Prepare
+BACKGROUND_TASKS=
+[ -f /root/.mutagen/daemon/daemon.lock ] &amp;&amp; rm /root/.mutagen/daemon/daemon.*
+apt update
+apt upgrade -y
+apt install -y openssh-client jq curl socat
+
+#~
+#~ Generic functions
+#~
+
+log_msg() {
+  local input=&quot;&quot;
+  [[ -p /dev/stdin ]] &amp;&amp; input=$(cat -) || input=$1
+
+  # Using bash pattern replacement is difficult in a command argument template, so we are using tr
+  [[ -z &quot;$(echo $input | tr -d &quot; \t\n\r&quot;)&quot; ]] || [[ &quot;$input&quot; == &quot;''&quot; ]] &amp;&amp; return 0
+
+  local now=$(date -R)
+  printf &quot;🕙 %s - %s\n&quot; &quot;$now&quot; &quot;$input&quot;
+  if [[ -z $TELEGRAM_BOT_TOKEN ]] || [[ -z $CHAT_ID ]]; then
+    return 0
+  fi
+  local data=$(jq --null-input \
+    --arg chat_id $CHAT_ID \
+    --arg parse_mode HTML \
+    --arg msg &quot;$(printf &quot;&lt;b&gt;Sync notification&lt;/b&gt;\n&lt;i&gt;🕙 %s&lt;/i&gt;\n\n&lt;pre&gt;%s&lt;/pre&gt;&quot; &quot;$now&quot; &quot;$input&quot;)&quot; \
+    '{&quot;chat_id&quot;: $chat_id, &quot;text&quot;: $msg, &quot;parse_mode&quot;: $parse_mode}'
+    )
+  curl -s -o /dev/null -H 'Content-Type: application/json' \
+    -d &quot;$data&quot; \
+    -X POST \
+    https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage
+}
+
+if [ $EXPECTED_NODES -lt 2 ]; then
+  log_msg &quot;Critical: Need at least 2 nodes&quot;
+  exit 1
+fi
+
+until /local/mutagen project start -f /local/mutagen.yml 2&gt;&amp;1 | log_msg; do
+  /local/mutagen project terminate -f /local/mutagen.yml 2&gt;&amp;1 | log_msg
+  sleep 10
+done
+
+#~
+#~ Checks / Workers
+#~
+
+mutagen_nodes() {
+  local init=1
+  while true; do
+    ACTIVE_NODES=$(($(local/mutagen sync list --template &quot;{{ len . }}&quot;) + 1))
+    if [ $ACTIVE_NODES -ne $EXPECTED_NODES ]; then
+      log_msg &quot;Warning: Active node count does not match expected nodes.&quot;
+      init=1
+    elif [ $init -eq 1 ]; then
+      # Example how to escape var:
+      #log_msg &quot;$$${init}&quot;
+      log_msg &quot;Running with $ACTIVE_NODES nodes: the party is complete!&quot;
+      init=0
+    fi
+    sleep 60
+  done
+}
+
+mutagen_status() {
+  while true; do
+    while read job; do
+      status=$(local/mutagen sync list $job --template \
+        &quot;{{ range . }}{{ .Status }}{{ end }}&quot;)
+      if [[ $status =~ (Halt|Unknown|halt|unknown) ]]; then
+        log_msg &quot;$job is in critical state:
+$status
+Resetting...&quot;
+        local/mutagen sync reset $job 2&gt;&amp;1 | log_msg
+      fi
+    done &lt; &lt;(local/mutagen sync list --template \
+      &quot;{{ range . }}{{ .Identifier }}
+{{ end }}&quot;)
+    sleep 10
+  done
+}
+
+mutagen_json() {
+  while true; do
+    log_msg &quot;Spawned socat listener for Mutagen status&quot;
+    socat TCP-LISTEN:8082,crlf,reuseaddr,fork SYSTEM:&quot;echo HTTP/1.1 200 OK; echo Content-Type\: application/json; echo; local/wrapper.sh&quot;
+  done
+}
+
+mutagen_conflicts() {
+  prev_err=0
+  while true; do
+
+    alpha_sync_problems=$(local/mutagen sync list --template &quot;{{ range . }}{{ json . }}{{ end }}&quot; | \
+      jq '{host: .alpha.host, problems: (try .alpha.scanProblems[])}')
+    beta_sync_problems=$(local/mutagen sync list --template &quot;{{ range . }}{{ json . }}{{ end }}&quot; | \
+      jq '{host: .beta.host, problems: (try .beta.scanProblems[])}')
+
+    if [[ ! -z &quot;$alpha_sync_problems&quot; ]] || \
+       [[ ! -z &quot;$beta_sync_problems&quot; ]]; then
+
+      prev_err=1
+
+      log_msg &quot;Detected scan problems:
+$(printf &quot;%s\n%s\n&quot; &quot;$alpha_sync_problems&quot; &quot;$beta_sync_problems&quot;)
+Trying to fix problems...&quot;
+
+      tmp_file=$(mktemp)
+      local/mutagen sync list --template &quot;{{ range . }}{{ json . }}{{ end }}&quot; | jq '
+      (&quot;ssh -p &quot; + (.alpha.port|tostring) + &quot; user@&quot; + .alpha.host + &quot; sudo /usr/local/sbin/permfix &quot;) as $alpha |
+      (&quot;ssh -p &quot; + (.beta.port|tostring) + &quot; user@&quot; + .beta.host + &quot; sudo /usr/local/sbin/permfix &quot;) as $beta |
+        ($alpha) + (&quot;/shared-data/&quot; + try .alpha.scanProblems[].path | @base64 + &quot;;&quot;),
+        ($beta) + (&quot;/shared-data/&quot; + try .beta.scanProblems[].path | @base64 + &quot;;&quot;)' -r &gt; $tmp_file
+      bash $tmp_file
+      rm $tmp_file
+
+    else
+      if [ $prev_err -eq 1 ]; then
+        log_msg &quot;✅ - Fixed scan problems&quot;
+      fi
+      prev_err=0
+    fi
+
+    sleep 5
+  done
+}
+
+
+#~
+#~ Spawn workers
+#~
+
+(
+while true; do
+  if ! mutagen_nodes; then
+    log_msg &quot;mutagen_nodes error&quot;
+  fi
+done
+) &amp;
+PID=$!
+log_msg &quot;Spawned mutagen_nodes with PID $PID&quot;
+BACKGROUND_TASKS+=$PID:
+
+(
+while true; do
+  if ! mutagen_json; then
+    log_msg &quot;mutagen_json error&quot;
+  fi
+done
+) &amp;
+PID=$!
+log_msg &quot;Spawned mutagen_json with PID $PID&quot;
+BACKGROUND_TASKS+=$PID:
+
+(
+while true; do
+  if ! mutagen_status; then
+    log_msg &quot;mutagen_status error&quot;
+  fi
+done
+) &amp;
+PID=$!
+log_msg &quot;Spawned mutagen_status with PID $PID&quot;
+BACKGROUND_TASKS+=$PID:
+
+(
+while true; do
+  if ! mutagen_conflicts; then
+    log_msg &quot;mutagen_conflicts error&quot;
+  fi
+done
+) &amp;
+PID=$!
+log_msg &quot;Spawned mutagen_conflicts with PID $PID&quot;
+BACKGROUND_TASKS+=$PID:
+
+#~
+#~ Kill self/task (PID 1) if any worker died
+#~
+
+while true; do
+  IFS=:
+  for bg_task in $BACKGROUND_TASKS; do
+    if ! kill -0 $bg_task 1&gt;&amp;2; then
+      log_msg &quot;Task $bg_task died, bye...&quot;
+      kill -TERM 1
+    fi
+    sleep 10
+  done
+done
+
+EOF
+        ]
+        volumes = [
+          &quot;ssh:/root/.ssh&quot;,
+        ]
+      }
+
+      template {
+        data = &lt;&lt;EOF
+EXPECTED_NODES={{ len (nomadService &quot;sshd&quot;) }}
+CHAT_ID={{ env &quot;CHAT_ID&quot; }}
+TELEGRAM_BOT_TOKEN={{ env &quot;TELEGRAM_BOT_TOKEN&quot; }}
+EOF
+        destination = &quot;local/file.env&quot;
+        env = true
+      }
+
+      template {
+        data = &lt;&lt;EOF
+local/mutagen sync list --template '{{ `{{ json . }}` }}' | jq
+EOF
+        destination = &quot;local/wrapper.sh&quot;
+        perms = &quot;755&quot;
+      }
+
+      template {
+        data = &lt;&lt;EOF
+sync:
+  defaults:
+    permissions:
+      defaultGroup: &quot;id:{{ env &quot;PUID&quot; }}&quot;
+      defaultOwner: &quot;id:{{ env &quot;PGID&quot; }}&quot;
+      defaultFileMode: 0600
+      defaultDirectoryMode: 0700
+    flushOnCreate: true
+    stageMode: &quot;internal&quot;
+    ignore:
+      vcs: true
+{{ range $idx, $srv := nomadService &quot;sshd&quot; }}{{ if ne $idx 0 }}
+# {{ len (nomadService &quot;sshd&quot;) }}
+  job-{{ $idx }}:
+    alpha: &quot;user@{{ with nomadService &quot;sshd&quot; }}{{ with index . 0 }}{{ .Address }}:{{ .Port }}{{ end }}{{ end }}:/shared-data&quot;
+    beta: &quot;user@{{ $srv.Address }}:{{ $srv.Port }}:/shared-data&quot;
+    mode: &quot;two-way-resolved&quot;
+{{ end }}{{ else }}{{ end }}
+EOF
+        destination   = &quot;local/mutagen.yml&quot;
+        change_mode   = &quot;restart&quot;
+      }
+
+      template {
+        data = &lt;&lt;EOH
+{{ with nomadVar &quot;nomad/jobs/sync/mutagen/project&quot; }}{{ .id_ed25519 }}{{ end }}
+EOH
+        destination = &quot;ssh/id_ed25519&quot;
+        change_mode   = &quot;restart&quot;
+        perms = &quot;600&quot;
+      }
+
+      template {
+        data = &lt;&lt;EOH
+Host *
+  IdentityFile ~/.ssh/id_ed25519
+  StrictHostKeyChecking no
+EOH
+        destination = &quot;ssh/config&quot;
+        change_mode   = &quot;restart&quot;
+        perms = &quot;600&quot;
+      }
+
+      artifact {
+        source      = &quot;https://github.com/mutagen-io/mutagen/releases/download/v0.16.3/mutagen_linux_amd64_v0.16.3.tar.gz&quot;
+        destination = &quot;local&quot;
+      }
+    }
+  }
+}
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../system/sshd.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next" href="../scripts/quick-enter.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../system/sshd.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next" href="../scripts/quick-enter.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </body>
+</html>
