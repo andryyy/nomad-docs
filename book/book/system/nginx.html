@@ -80,7 +80,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="../index.html"><strong aria-hidden="true">1.</strong> Description</a></li><li class="chapter-item expanded "><a href="../preparation.html"><strong aria-hidden="true">2.</strong> Preparation</a></li><li class="chapter-item expanded "><a href="../basic-setup.html"><strong aria-hidden="true">3.</strong> Basic setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Nomad cluster</li><li class="chapter-item expanded "><a href="../nomad/encryption.html"><strong aria-hidden="true">4.</strong> Encryption</a></li><li class="chapter-item expanded affix "><li class="part-title">System Jobs</li><li class="chapter-item expanded "><a href="../system/nginx.html" class="active"><strong aria-hidden="true">5.</strong> Nginx</a></li><li class="chapter-item expanded "><a href="../system/sshd.html"><strong aria-hidden="true">6.</strong> SSHd</a></li><li class="chapter-item expanded affix "><li class="part-title">Service jobs</li><li class="chapter-item expanded "><a href="../service/sync.html"><strong aria-hidden="true">7.</strong> Mutagen</a></li><li class="chapter-item expanded affix "><li class="part-title">Helper scripts</li><li class="chapter-item expanded "><a href="../scripts/quick-enter.html"><strong aria-hidden="true">8.</strong> Quick enter containers</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../index.html"><strong aria-hidden="true">1.</strong> Description</a></li><li class="chapter-item expanded "><a href="../preparation.html"><strong aria-hidden="true">2.</strong> Preparation</a></li><li class="chapter-item expanded "><a href="../basic-setup.html"><strong aria-hidden="true">3.</strong> Basic setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Nomad cluster</li><li class="chapter-item expanded "><a href="../nomad/encryption.html"><strong aria-hidden="true">4.</strong> Encryption</a></li><li class="chapter-item expanded affix "><li class="part-title">System Jobs</li><li class="chapter-item expanded "><a href="../system/nginx.html" class="active"><strong aria-hidden="true">5.</strong> Nginx</a></li><li class="chapter-item expanded "><a href="../system/sshd.html"><strong aria-hidden="true">6.</strong> SSHd</a></li><li class="chapter-item expanded affix "><li class="part-title">Service jobs</li><li class="chapter-item expanded "><a href="../service/sync.html"><strong aria-hidden="true">7.</strong> Mutagen</a></li><li class="chapter-item expanded affix "><li class="part-title">Tools and scripts</li><li class="chapter-item expanded "><a href="../tools/damon.html"><strong aria-hidden="true">8.</strong> Damon</a></li><li class="chapter-item expanded "><a href="../scripts/quick-enter.html"><strong aria-hidden="true">9.</strong> Quick enter containers</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -221,6 +221,11 @@ job &quot;lb&quot; {
         max_file_size = 15
       }
 
+      artifact {
+        source      = &quot;git::https://github.com/andryyy/nomad-docs&quot;
+        destination = &quot;www/nomad-docs&quot;
+      }
+
       template {
         data = &lt;&lt;EOH
 {{ with nomadVar &quot;nomad/jobs/system/web/nginx&quot; }}{{ .fullchain_pem }}{{ end }}
@@ -259,6 +264,7 @@ server {
    server_name ${var.server_name};
    return 301 https://${var.server_name}$request_uri;
 }
+
 server {
   listen 8443;
   ssl on;
@@ -266,10 +272,6 @@ server {
   ssl_certificate_key /etc/nginx/tls.d/privkey.pem;
   root /var/www;
   server_name ${var.server_name};
-
-  location / {
-    try_files $uri $uri/ /index.html;
-  }
 
 {{ range nomadServices }}
   {{ if contains &quot;public-http&quot; .Tags }}
@@ -290,6 +292,13 @@ server {
   {{ end }}
 {{ end }}
 
+  location /docs {
+    limit_except GET {
+      deny all;
+    }
+    alias /var/www/nomad-docs/book/book;
+  }
+
 }
 EOF
         destination   = &quot;local/balancer.conf&quot;
@@ -309,9 +318,11 @@ EOF
 &lt;body&gt;
 &lt;div id=&quot;container&quot;&gt;
 &lt;pre&gt;
+# https://pkg.go.dev/github.com/hashicorp/consul-template/dependency#NomadService
 {{ range nomadServices }}
   Name: {{ .Name }}
   {{ range nomadService .Name }}
+    Node: {{ .Node }}
     Address: {{ .Address }}
     AllocID: {{ .AllocID }}
     Datacenter: {{ .Datacenter }}

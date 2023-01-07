@@ -13,5 +13,8 @@
 # Service jobs
 - [Mutagen](service/sync.md)
 
-# Helper scripts
+# Tools and scripts
+## Tools
+ - [Damon](tools/damon.md)
+## Scripts
 - [Quick enter containers](scripts/quick-enter.md)
