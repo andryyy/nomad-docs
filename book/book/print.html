@@ -81,7 +81,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Prepare environment</li><li class="chapter-item expanded "><a href="preparation.html"><strong aria-hidden="true">1.</strong> Preparation</a></li><li class="chapter-item expanded "><a href="basic-setup.html"><strong aria-hidden="true">2.</strong> Basic setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Nomad cluster</li><li class="chapter-item expanded "><a href="nomad/encryption.html"><strong aria-hidden="true">3.</strong> Encryption</a></li><li class="chapter-item expanded affix "><li class="part-title">System Jobs</li><li class="chapter-item expanded "><a href="system/nginx.html"><strong aria-hidden="true">4.</strong> Nginx</a></li><li class="chapter-item expanded "><a href="system/sshd.html"><strong aria-hidden="true">5.</strong> SSHd</a></li><li class="chapter-item expanded affix "><li class="part-title">Service jobs</li><li class="chapter-item expanded "><a href="service/sync.html"><strong aria-hidden="true">6.</strong> Mutagen</a></li><li class="chapter-item expanded affix "><li class="part-title">Tools</li><li class="chapter-item expanded "><a href="tools/damon.html"><strong aria-hidden="true">7.</strong> Damon</a></li><li class="chapter-item expanded affix "><li class="part-title">Scripts</li><li class="chapter-item expanded "><a href="scripts/quick-enter.html"><strong aria-hidden="true">8.</strong> Quick-enter containers</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Prepare environment</li><li class="chapter-item expanded "><a href="preparation.html"><strong aria-hidden="true">1.</strong> Preparation</a></li><li class="chapter-item expanded "><a href="basic-setup.html"><strong aria-hidden="true">2.</strong> Basic setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Nomad cluster</li><li class="chapter-item expanded "><a href="nomad/encryption.html"><strong aria-hidden="true">3.</strong> Encryption</a></li><li class="chapter-item expanded affix "><li class="part-title">System Jobs</li><li class="chapter-item expanded "><a href="system/nginx.html"><strong aria-hidden="true">4.</strong> Nginx</a></li><li class="chapter-item expanded "><a href="system/sshd.html"><strong aria-hidden="true">5.</strong> SSHd</a></li><li class="chapter-item expanded affix "><li class="part-title">Service jobs</li><li class="chapter-item expanded "><a href="service/sync.html"><strong aria-hidden="true">6.</strong> Mutagen</a></li><li class="chapter-item expanded affix "><li class="part-title">Tools</li><li class="chapter-item expanded "><a href="tools/damon.html"><strong aria-hidden="true">7.</strong> Damon</a></li><li class="chapter-item expanded affix "><li class="part-title">Scripts</li><li class="chapter-item expanded "><a href="scripts/quick-enter.html"><strong aria-hidden="true">8.</strong> Quick-enter containers</a></li><li class="chapter-item expanded affix "><li class="part-title">Server debug</li><li class="chapter-item expanded "><a href="server_debug/services.html"><strong aria-hidden="true">9.</strong> Nomad services</a></li><li class="chapter-item expanded "><a href="server_debug/mutagen_status.html"><strong aria-hidden="true">10.</strong> Mutagen status</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -501,12 +501,17 @@ job &quot;lb&quot; {
   group &quot;web&quot; {
 
     network {
+      # Using the same port for &quot;to&quot; and &quot;static&quot; is important:
+      # Some web apps (like mdBook) will read the port (i.e. 8443) from the Host header and re-use it in redirects.
+      # Applications may then redirect the user to the port used internally (&quot;to&quot;).
+      # Redirects by DNAT are not transparent to applications like Nginx and would require some workarounds.
+      # The given ports should match. Using 8443 for to _and_ static is fine.
       port &quot;http&quot; {
-        to = 8080
+        to = 80
         static = 80
       }
       port &quot;https&quot; {
-        to = 8443
+        to = 443
         static = 443
       }
     }
@@ -551,7 +556,7 @@ job &quot;lb&quot; {
       }
 
       artifact {
-        source      = &quot;git::https://github.com/andryyy/nomad-docs&quot;
+        source      = &quot;https://github.com/andryyy/nomad-docs/archive/refs/heads/main.zip&quot;
         destination = &quot;www/nomad-docs&quot;
       }
 
@@ -576,6 +581,11 @@ EOH
 
       template {
         data = &lt;&lt;EOF
+map $http_x_forwarded_proto $host_port {
+  default 80;
+  https 443;
+}
+
 {{ range nomadServices }}
   {{ if contains &quot;public-http&quot; .Tags }}
 upstream {{ .Name }} {
@@ -589,14 +599,13 @@ upstream {{ .Name }} {
 {{ end }}
 
 server {
-   listen 8080;
+   listen 80;
    server_name ${var.server_name};
    return 301 https://${var.server_name}$request_uri;
 }
 
 server {
-  listen 8443;
-  ssl on;
+  listen 443 ssl;
   ssl_certificate /etc/nginx/tls.d/fullchain.pem;
   ssl_certificate_key /etc/nginx/tls.d/privkey.pem;
   root /var/www;
@@ -606,13 +615,21 @@ server {
   {{ if contains &quot;public-http&quot; .Tags }}
     {{ $service := .Name }}
     {{ range .Tags }}
-      {{ if . | regexMatch &quot;^{.+}$&quot; }}
+      {{ if . | regexMatch &quot;^{\&quot;.+\&quot;}$&quot; }}
         {{ with $d := . | parseJSON }}
           {{ if $d.path }}
   location {{ $d.path }} {
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP  $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header Host ${var.server_name};
+    client_max_body_size 0;
+    proxy_redirect off;
     proxy_pass http://{{ $service }};
+            {{ if $d.limit_except }}
+    limit_except {{ $d.limit_except }} {
+      deny all;
+    }
+            {{ end }}
   }
           {{ end }}
         {{ end }}
@@ -625,7 +642,7 @@ server {
     limit_except GET {
       deny all;
     }
-    alias /var/www/nomad-docs/book/book;
+    alias /var/www/nomad-docs/nomad-docs-main/book/book;
   }
 
 }
@@ -666,7 +683,7 @@ EOF
 &lt;/body&gt;
 &lt;/html&gt;
 EOF
-        destination   = &quot;www/index.html&quot;
+        destination   = &quot;www/services.html&quot;
         change_mode   = &quot;signal&quot;
         change_signal = &quot;SIGHUP&quot;
       }
@@ -831,12 +848,17 @@ job &quot;lb&quot; {
   group &quot;web&quot; {
 
     network {
+      # Using the same port for &quot;to&quot; and &quot;static&quot; is important:
+      # Some web apps (like mdBook) will read the port (i.e. 8443) from the Host header and re-use it in redirects.
+      # Applications may then redirect the user to the port used internally (&quot;to&quot;).
+      # Redirects by DNAT are not transparent to applications like Nginx and would require some workarounds.
+      # The given ports should match. Using 8443 for to _and_ static is fine.
       port &quot;http&quot; {
-        to = 8080
+        to = 80
         static = 80
       }
       port &quot;https&quot; {
-        to = 8443
+        to = 443
         static = 443
       }
     }
@@ -881,7 +903,7 @@ job &quot;lb&quot; {
       }
 
       artifact {
-        source      = &quot;git::https://github.com/andryyy/nomad-docs&quot;
+        source      = &quot;https://github.com/andryyy/nomad-docs/archive/refs/heads/main.zip&quot;
         destination = &quot;www/nomad-docs&quot;
       }
 
@@ -906,6 +928,11 @@ EOH
 
       template {
         data = &lt;&lt;EOF
+map $http_x_forwarded_proto $host_port {
+  default 80;
+  https 443;
+}
+
 {{ range nomadServices }}
   {{ if contains &quot;public-http&quot; .Tags }}
 upstream {{ .Name }} {
@@ -919,14 +946,13 @@ upstream {{ .Name }} {
 {{ end }}
 
 server {
-   listen 8080;
+   listen 80;
    server_name ${var.server_name};
    return 301 https://${var.server_name}$request_uri;
 }
 
 server {
-  listen 8443;
-  ssl on;
+  listen 443 ssl;
   ssl_certificate /etc/nginx/tls.d/fullchain.pem;
   ssl_certificate_key /etc/nginx/tls.d/privkey.pem;
   root /var/www;
@@ -936,13 +962,21 @@ server {
   {{ if contains &quot;public-http&quot; .Tags }}
     {{ $service := .Name }}
     {{ range .Tags }}
-      {{ if . | regexMatch &quot;^{.+}$&quot; }}
+      {{ if . | regexMatch &quot;^{\&quot;.+\&quot;}$&quot; }}
         {{ with $d := . | parseJSON }}
           {{ if $d.path }}
   location {{ $d.path }} {
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP  $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header Host ${var.server_name};
+    client_max_body_size 0;
+    proxy_redirect off;
     proxy_pass http://{{ $service }};
+            {{ if $d.limit_except }}
+    limit_except {{ $d.limit_except }} {
+      deny all;
+    }
+            {{ end }}
   }
           {{ end }}
         {{ end }}
@@ -955,7 +989,7 @@ server {
     limit_except GET {
       deny all;
     }
-    alias /var/www/nomad-docs/book/book;
+    alias /var/www/nomad-docs/nomad-docs-main/book/book;
   }
 
 }
@@ -996,7 +1030,7 @@ EOF
 &lt;/body&gt;
 &lt;/html&gt;
 EOF
-        destination   = &quot;www/index.html&quot;
+        destination   = &quot;www/services.html&quot;
         change_mode   = &quot;signal&quot;
         change_signal = &quot;SIGHUP&quot;
       }
@@ -1041,7 +1075,8 @@ job &quot;sync&quot; {
       port     = &quot;mutagen&quot;
       provider = &quot;nomad&quot;
       tags = [&quot;public-http&quot;, jsonencode({
-        path = &quot;/mutagen/status.json&quot;
+        path = &quot;/mutagen/status.json&quot;,
+        limit_except = &quot;GET&quot;
       })]
     }
 
@@ -1353,12 +1388,16 @@ EOH
   ssh $nomad bash &lt;&lt;'EOF'
 cat &lt;&lt;'ALIASES'&gt;&gt; ~/.bashrc
 alias nomad_sshd='docker exec -it $(docker ps -qf name=sshd) bash'
-alias nomad_sync='docker exec -it $(docker ps -qf name=project) bash'
+alias nomad_sync='docker exec -it $(docker ps -qf name=sync) bash'
 alias nomad_nginx='docker exec -it $(docker ps -qf name=nginx) bash'
 ALIASES
 EOF
 done
 </code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="nomad-services"><a class="header" href="#nomad-services">Nomad services</a></h1>
+<p><a href="server_debug/%22/services.html%22">Mutagen status overview (JSON)</a></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="mutagen-status"><a class="header" href="#mutagen-status">Mutagen status</a></h1>
+<p><a href="server_debug/%22/mutagen/status.json%22">Mutagen status overview (JSON)</a></p>
 
                     </main>
 
