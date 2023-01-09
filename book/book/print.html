@@ -81,7 +81,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Prepare environment</li><li class="chapter-item expanded "><a href="preparation.html"><strong aria-hidden="true">1.</strong> Preparation</a></li><li class="chapter-item expanded "><a href="basic-setup.html"><strong aria-hidden="true">2.</strong> Basic setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Nomad cluster</li><li class="chapter-item expanded "><a href="nomad/encryption.html"><strong aria-hidden="true">3.</strong> Encryption</a></li><li class="chapter-item expanded affix "><li class="part-title">System Jobs</li><li class="chapter-item expanded "><a href="system/nginx.html"><strong aria-hidden="true">4.</strong> Nginx</a></li><li class="chapter-item expanded "><a href="system/sshd.html"><strong aria-hidden="true">5.</strong> SSHd</a></li><li class="chapter-item expanded affix "><li class="part-title">Service jobs</li><li class="chapter-item expanded "><a href="service/sync.html"><strong aria-hidden="true">6.</strong> Mutagen</a></li><li class="chapter-item expanded affix "><li class="part-title">Tools</li><li class="chapter-item expanded "><a href="tools/damon.html"><strong aria-hidden="true">7.</strong> Damon</a></li><li class="chapter-item expanded affix "><li class="part-title">Scripts</li><li class="chapter-item expanded "><a href="scripts/quick-enter.html"><strong aria-hidden="true">8.</strong> Quick-enter containers</a></li><li class="chapter-item expanded affix "><li class="part-title">Server debug</li><li class="chapter-item expanded "><a href="server_debug/services.html"><strong aria-hidden="true">9.</strong> Nomad services</a></li><li class="chapter-item expanded "><a href="server_debug/mutagen_status.html"><strong aria-hidden="true">10.</strong> Mutagen status</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Prepare environment</li><li class="chapter-item expanded "><a href="preparation.html"><strong aria-hidden="true">1.</strong> Preparation</a></li><li class="chapter-item expanded "><a href="basic-setup.html"><strong aria-hidden="true">2.</strong> Basic setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Nomad cluster</li><li class="chapter-item expanded "><a href="nomad/encryption.html"><strong aria-hidden="true">3.</strong> Encryption</a></li><li class="chapter-item expanded affix "><li class="part-title">System Jobs</li><li class="chapter-item expanded "><a href="system/nginx.html"><strong aria-hidden="true">4.</strong> Nginx</a></li><li class="chapter-item expanded "><a href="system/sshd.html"><strong aria-hidden="true">5.</strong> SSHd</a></li><li class="chapter-item expanded affix "><li class="part-title">Service jobs</li><li class="chapter-item expanded "><a href="service/sync.html"><strong aria-hidden="true">6.</strong> Mutagen</a></li><li class="chapter-item expanded "><a href="service/mariadb.html"><strong aria-hidden="true">7.</strong> MariaDB</a></li><li class="chapter-item expanded affix "><li class="part-title">Tools</li><li class="chapter-item expanded "><a href="tools/damon.html"><strong aria-hidden="true">8.</strong> Damon</a></li><li class="chapter-item expanded affix "><li class="part-title">Scripts</li><li class="chapter-item expanded "><a href="scripts/quick-enter.html"><strong aria-hidden="true">9.</strong> Quick-enter containers</a></li><li class="chapter-item expanded affix "><li class="part-title">Server debug</li><li class="chapter-item expanded "><a href="server_debug/services.html"><strong aria-hidden="true">10.</strong> Nomad services</a></li><li class="chapter-item expanded "><a href="server_debug/mutagen_status.html"><strong aria-hidden="true">11.</strong> Mutagen status</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -1372,6 +1372,130 @@ EOH
       artifact {
         source      = &quot;https://github.com/mutagen-io/mutagen/releases/download/v0.16.3/mutagen_linux_amd64_v0.16.3.tar.gz&quot;
         destination = &quot;local&quot;
+      }
+    }
+  }
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="mariadb-job-file"><a class="header" href="#mariadb-job-file">MariaDB job file</a></h1>
+<pre><code class="language-bash">job &quot;databases&quot; {
+  datacenters = [&quot;falkenstein&quot;]
+  type = &quot;service&quot;
+
+  group &quot;mariadb&quot; {
+    count = 1
+
+    volume &quot;shared-data&quot; {
+      type = &quot;host&quot;
+      source = &quot;shared-data&quot;
+      read_only = false
+    }
+
+    network {
+      mode = &quot;bridge&quot;
+      port &quot;mariadb&quot; {
+        host_network = &quot;nomad-clients&quot;
+        to = 3306
+      }
+    }
+
+    service {
+      name     = &quot;mariadb&quot;
+      port     = &quot;mariadb&quot;
+      provider = &quot;nomad&quot;
+      check {
+        name     = &quot;mariadb_probe&quot;
+        type     = &quot;tcp&quot;
+        interval = &quot;10s&quot;
+        timeout  = &quot;2s&quot;
+      }
+    }
+
+    task &quot;sync-check-prestart&quot; {
+      driver = &quot;docker&quot;
+      config {
+        image = &quot;curlimages/curl&quot;
+        entrypoint = [&quot;/bin/sh&quot;]
+        args    = [&quot;-c&quot;, &lt;&lt;EOF
+i=1
+while true; do
+  until curl --output /dev/null --silent --head -m 3 --fail $MUTAGEN_HTTP; do
+    echo &quot;Waiting for Mutagen HTTP response...&quot;
+    sleep 1
+  done
+  MUTAGEN_READY_NODES=$(curl -s $MUTAGEN_HTTP | grep -io '\&quot;status\&quot;:\&quot;watching\&quot;' | wc -l)
+  echo &quot;Mutagen reports $MUTAGEN_READY_NODES nodes to be watching.&quot;
+  echo &quot;There are $SSHD_JOBS SSHd jobs of which all but one need to be watching.&quot;
+  if [ $(curl -s $MUTAGEN_HTTP | grep -io '\&quot;status\&quot;:\&quot;watching\&quot;' | wc -l) -eq $MUTAGEN_EXPECTED_JOBS ]; then
+    echo &quot;Loop $i: Expected jobs ($MUTAGEN_EXPECTED_JOBS) match reported value, good.&quot;
+    exit 0
+  else
+    echo &quot;Loop $i - Mutagen seems not to be ready. Watching nodes: $MUTAGEN_READY_NODES of $MUTAGEN_EXPECTED_JOBS&quot;
+    sleep 1
+    i=$((i+1))
+    if [ $i -gt 10 ]; then
+      exit 1
+    fi
+  fi
+done
+EOF
+]
+      }
+      template {
+        data = &lt;&lt;EOF
+MUTAGEN_HTTP=http://{{ with nomadService &quot;mutagen&quot; }}{{ with index . 0 }}{{ .Address }}:{{ .Port }}{{ end }}{{ end }}
+MUTAGEN_EXPECTED_JOBS={{ subtract 1 (len (nomadService &quot;sshd&quot;)) }}
+SSHD_JOBS={{ len (nomadService &quot;sshd&quot;) }}
+EOF
+        destination = &quot;local/file.env&quot;
+        env = true
+      }
+
+      lifecycle {
+        hook    = &quot;prestart&quot;
+        sidecar = false
+      }
+    }
+
+    task &quot;itkram&quot; {
+      driver = &quot;docker&quot;
+      env {
+        PUID = &quot;1000&quot;
+        PGID = &quot;1000&quot;
+        UMASK = &quot;0066&quot;
+        TZ = &quot;Europe/Berlin&quot;
+        DATADIR = &quot;/shared-data/itkram_db&quot;
+      }
+      config {
+        image = &quot;linuxserver/mariadb&quot;
+        ports = [&quot;mariadb&quot;]
+        volumes = [
+          &quot;config:/config&quot;,
+          &quot;custom-init-d:/custom-cont-init.d&quot;
+        ]
+      }
+      logs {
+        max_files     = 10
+        max_file_size = 15
+      }
+      template {
+        data = &lt;&lt;EOH
+{{ with nomadVar &quot;nomad/jobs/databases/mariadb/itkram&quot; }}{{ .config_env }}{{ end }}
+EOH
+        destination = &quot;config/env&quot;
+        change_mode   = &quot;restart&quot;
+      }
+      volume_mount {
+        volume      = &quot;shared-data&quot;
+        destination = &quot;/shared-data&quot;
+      }
+      template {
+        data = &lt;&lt;EOH
+# Here if you need me
+echo &quot;I am alive&quot;
+EOH
+        destination = &quot;custom-init-d/prepare&quot;
+        perms = &quot;755&quot;
       }
     }
   }

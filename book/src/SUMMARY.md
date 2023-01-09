@@ -13,6 +13,7 @@
 
 # Service jobs
 - [Mutagen](service/sync.md)
+- [MariaDB](service/mariadb.md)
 
 # Tools
 - [Damon](tools/damon.md)
