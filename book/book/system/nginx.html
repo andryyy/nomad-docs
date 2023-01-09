@@ -238,7 +238,7 @@ job &quot;lb&quot; {
 
       template {
         data = &lt;&lt;EOH
-{{ with nomadVar &quot;nomad/jobs/system/web/nginx&quot; }}{{ .fullchain_pem }}{{ end }}
+{{ with nomadVar &quot;nomad/jobs/lb/web/nginx&quot; }}{{ .fullchain_pem }}{{ end }}
 EOH
         destination = &quot;tls/fullchain.pem&quot;
         change_mode   = &quot;signal&quot;
@@ -247,7 +247,7 @@ EOH
 
       template {
         data = &lt;&lt;EOH
-{{ with nomadVar &quot;nomad/jobs/system/web/nginx&quot; }}{{ .privkey_pem }}{{ end }}
+{{ with nomadVar &quot;nomad/jobs/lb/web/nginx&quot; }}{{ .privkey_pem }}{{ end }}
 EOH
         destination = &quot;tls/privkey.pem&quot;
         perms = &quot;600&quot;
