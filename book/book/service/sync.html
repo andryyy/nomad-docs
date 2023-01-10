@@ -434,7 +434,7 @@ BACKGROUND_TASKS=
 apt update
 apt upgrade -y
 apt install -y openssh-client jq curl socat libuv1-dev libssl-dev
-pip install git+https://github.com/cirospaciari/socketify.py.git@main#socketify
+pip install socketify
 
 #~
 #~ Generic functions
@@ -513,10 +513,10 @@ Resetting...&quot;
   done
 }
 
-mutagen_json() {
+mutagen_socketify() {
   while true; do
-    log_msg &quot;Spawned socat listener for Mutagen status&quot;
-    socat TCP-LISTEN:8082,crlf,reuseaddr,fork SYSTEM:&quot;echo HTTP/1.1 200 OK; echo Content-Type\: application/json; echo; local/wrapper.sh&quot;
+    log_msg &quot;Spawned socketify listener for Mutagen&quot;
+    python local/socketify-app.py
   done
 }
 
@@ -576,13 +576,13 @@ BACKGROUND_TASKS+=$PID:
 
 (
 while true; do
-  if ! mutagen_json; then
-    log_msg &quot;mutagen_json error&quot;
+  if ! mutagen_socketify; then
+    log_msg &quot;mutagen_socketify error&quot;
   fi
 done
 ) &amp;
 PID=$!
-log_msg &quot;Spawned mutagen_json with PID $PID&quot;
+log_msg &quot;Spawned mutagen_socketify with PID $PID&quot;
 BACKGROUND_TASKS+=$PID:
 
 (
@@ -641,14 +641,6 @@ EOF
 
       template {
         data = &lt;&lt;EOF
-local/mutagen sync list --template '{{ `{{ json . }}` }}' | jq
-EOF
-        destination = &quot;local/wrapper.sh&quot;
-        perms = &quot;755&quot;
-      }
-
-      template {
-        data = &lt;&lt;EOF
 sync:
   defaults:
     permissions:
@@ -669,6 +661,35 @@ sync:
 {{ end }}{{ else }}{{ end }}
 EOF
         destination   = &quot;local/mutagen.yml&quot;
+        change_mode   = &quot;restart&quot;
+      }
+
+      template {
+        data = &lt;&lt;EOF
+from socketify import App
+import subprocess
+
+def mutagen_json():
+  result = subprocess.check_output([&quot;local/mutagen&quot;, &quot;sync&quot;, &quot;list&quot;, &quot;--template&quot;, &quot;{{ `{{ json . }}` }}&quot;], stderr=subprocess.STDOUT)
+  return result
+
+def mutagen_flush():
+  result = subprocess.check_output([&quot;local/mutagen&quot;, &quot;project&quot;, &quot;flush&quot;, &quot;-f&quot;, &quot;/local/mutagen.yml&quot;], stderr=subprocess.STDOUT)
+  return result
+
+def mutagen_ab_status():
+  result = subprocess.check_output([&quot;local/mutagen&quot;, &quot;sync&quot;, &quot;list&quot;, &quot;--template&quot;, &quot;&quot;&quot;{{ `{{ range . }}{{ .Alpha.Host }}:{{ .Beta.Host }}:{{ .Status }}
+{{ end }}` }}&quot;&quot;&quot;], stderr=subprocess.STDOUT)
+  return result
+
+app = App()
+app.get(&quot;/mutagen/status.json&quot;, lambda res, req: res.end(mutagen_json()))
+app.get(&quot;/mutagen/health&quot;, lambda res, req: res.end(mutagen_ab_status()))
+app.get(&quot;/mutagen/flush&quot;, lambda res, req: res.end(mutagen_flush()))
+app.listen(8082, lambda config: print(&quot;socketify-app listening on port %d\n&quot; % config.port),)
+app.run()
+EOF
+        destination   = &quot;local/socketify-app.py&quot;
         change_mode   = &quot;restart&quot;
       }
 
