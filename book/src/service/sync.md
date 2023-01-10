@@ -11,9 +11,5 @@ Alternatively default values can be assigned on top of the job file.
 **Important**: These variables will not be stored encrypted.
 
 ```bash
-{{#include ../../../../jobs/nginx/nginx.nomad}}
-```
-
-```bash
 {{#include ../../../../jobs/sync/sync.nomad}}
 ```
