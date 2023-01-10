@@ -83,7 +83,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Prepare environment</li><li class="chapter-item expanded "><a href="preparation.html"><strong aria-hidden="true">1.</strong> Preparation</a></li><li class="chapter-item expanded "><a href="basic-setup.html"><strong aria-hidden="true">2.</strong> Basic setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Nomad cluster</li><li class="chapter-item expanded "><a href="nomad/encryption.html"><strong aria-hidden="true">3.</strong> Encryption</a></li><li class="chapter-item expanded "><a href="nomad/services_and_folders.html"><strong aria-hidden="true">4.</strong> Services and folders</a></li><li class="chapter-item expanded "><a href="nomad/server_config.html"><strong aria-hidden="true">5.</strong> Configuration</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="nomad/server_config.html"><strong aria-hidden="true">5.1.</strong> Server agent configuration</a></li><li class="chapter-item expanded "><a href="nomad/client_config.html"><strong aria-hidden="true">5.2.</strong> Client agent configuration</a></li><li class="chapter-item expanded "><a href="nomad/client_agent_access.html"><strong aria-hidden="true">5.3.</strong> Accessing the client</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">System Jobs</li><li class="chapter-item expanded "><a href="system/nginx.html"><strong aria-hidden="true">6.</strong> Nginx</a></li><li class="chapter-item expanded "><a href="system/sshd.html"><strong aria-hidden="true">7.</strong> SSHd</a></li><li class="chapter-item expanded affix "><li class="part-title">Service jobs</li><li class="chapter-item expanded "><a href="service/sync.html"><strong aria-hidden="true">8.</strong> Mutagen</a></li><li class="chapter-item expanded "><a href="service/mariadb.html"><strong aria-hidden="true">9.</strong> MariaDB</a></li><li class="chapter-item expanded affix "><li class="part-title">Tools</li><li class="chapter-item expanded "><a href="tools/damon.html"><strong aria-hidden="true">10.</strong> Damon</a></li><li class="chapter-item expanded "><a href="tools/wander.html"><strong aria-hidden="true">11.</strong> Wander</a></li><li class="chapter-item expanded affix "><li class="part-title">Scripts</li><li class="chapter-item expanded "><a href="scripts/quick-enter.html"><strong aria-hidden="true">12.</strong> Quick-enter containers</a></li><li class="chapter-item expanded affix "><li class="part-title">Server debug</li><li class="chapter-item expanded "><a href="server_debug/services.html"><strong aria-hidden="true">13.</strong> Nomad services</a></li><li class="chapter-item expanded "><a href="server_debug/mutagen_status.html"><strong aria-hidden="true">14.</strong> Mutagen status</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Prepare environment</li><li class="chapter-item expanded "><a href="preparation.html"><strong aria-hidden="true">1.</strong> Preparation</a></li><li class="chapter-item expanded "><a href="basic-setup.html"><strong aria-hidden="true">2.</strong> Basic setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Nomad cluster</li><li class="chapter-item expanded "><a href="nomad/encryption.html"><strong aria-hidden="true">3.</strong> Encryption</a></li><li class="chapter-item expanded "><a href="nomad/services_and_folders.html"><strong aria-hidden="true">4.</strong> Services and folders</a></li><li class="chapter-item expanded "><a href="nomad/server_config.html"><strong aria-hidden="true">5.</strong> Configuration</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="nomad/server_config.html"><strong aria-hidden="true">5.1.</strong> Server agent configuration</a></li><li class="chapter-item expanded "><a href="nomad/client_config.html"><strong aria-hidden="true">5.2.</strong> Client agent configuration</a></li><li class="chapter-item expanded "><a href="nomad/client_agent_access.html"><strong aria-hidden="true">5.3.</strong> Accessing the client</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">System Jobs</li><li class="chapter-item expanded "><a href="system/nginx.html"><strong aria-hidden="true">6.</strong> Nginx</a></li><li class="chapter-item expanded "><a href="system/sshd.html"><strong aria-hidden="true">7.</strong> SSHd</a></li><li class="chapter-item expanded affix "><li class="part-title">Service jobs</li><li class="chapter-item expanded "><a href="service/sync.html"><strong aria-hidden="true">8.</strong> Mutagen</a></li><li class="chapter-item expanded "><a href="service/mariadb.html"><strong aria-hidden="true">9.</strong> MariaDB</a></li><li class="chapter-item expanded affix "><li class="part-title">Tools</li><li class="chapter-item expanded "><a href="tools/damon.html"><strong aria-hidden="true">10.</strong> Damon</a></li><li class="chapter-item expanded "><a href="tools/wander.html"><strong aria-hidden="true">11.</strong> Wander</a></li><li class="chapter-item expanded affix "><li class="part-title">Scripts</li><li class="chapter-item expanded "><a href="scripts/quick-enter.html"><strong aria-hidden="true">12.</strong> Quick-enter containers</a></li><li class="chapter-item expanded affix "><li class="part-title">Server debug</li><li class="chapter-item expanded "><a href="server_debug/services.html"><strong aria-hidden="true">13.</strong> Nomad services</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -1248,10 +1248,10 @@ job &quot;sync&quot; {
       name     = &quot;mutagen&quot;
       port     = &quot;mutagen&quot;
       provider = &quot;nomad&quot;
-      tags = [&quot;public-http&quot;, jsonencode({
-        path = &quot;/mutagen/status.json&quot;,
-        limit_except = &quot;GET&quot;
-      })]
+      # tags = [&quot;public-http&quot;, jsonencode({
+      #   path = &quot;/mutagen/status.json&quot;,
+      #   limit_except = &quot;GET&quot;
+      # })]
     }
 
     task &quot;project&quot; {
@@ -1285,7 +1285,7 @@ BACKGROUND_TASKS=
 [ -f /root/.mutagen/daemon/daemon.lock ] &amp;&amp; rm /root/.mutagen/daemon/daemon.*
 apt update
 apt upgrade -y
-apt install -y openssh-client jq curl socat libuv1-dev libssl-dev
+apt install -y openssh-client jq curl libuv1-dev libssl-dev
 pip install socketify
 
 #~
@@ -1562,7 +1562,8 @@ app = App()
 app.get(&quot;/mutagen/status.json&quot;, mutagen_json)
 app.get(&quot;/mutagen/health.json&quot;, mutagen_health)
 app.get(&quot;/mutagen/flush&quot;, mutagen_flush)
-app.listen(8083, lambda config: print(&quot;socketify-app listening on port %d\n&quot; % config.port),)
+app.any(&quot;/*&quot;, mutagen_json)
+app.listen(8082, lambda config: print(&quot;socketify-app listening on port %d\n&quot; % config.port),)
 app.run()
 EOF
         destination   = &quot;local/socketify-app.py&quot;
@@ -1637,33 +1638,26 @@ EOH
         image = &quot;curlimages/curl&quot;
         entrypoint = [&quot;/bin/sh&quot;]
         args    = [&quot;-c&quot;, &lt;&lt;EOF
-i=1
+i=0
 while true; do
-  until curl --output /dev/null --silent --head -m 3 --fail $MUTAGEN_HTTP; do
-    echo &quot;Waiting for Mutagen HTTP response...&quot;
-    sleep 1
-  done
-  MUTAGEN_READY_NODES=$(curl -s $MUTAGEN_HTTP | grep -io '\&quot;status\&quot;:\&quot;watching\&quot;' | wc -l)
-  echo &quot;Mutagen reports $MUTAGEN_READY_NODES nodes to be watching.&quot;
-  echo &quot;There are $SSHD_JOBS SSHd jobs of which all but one need to be watching.&quot;
-  if [ $(curl -s $MUTAGEN_HTTP | grep -io '\&quot;status\&quot;:\&quot;watching\&quot;' | wc -l) -eq $MUTAGEN_EXPECTED_JOBS ]; then
-    echo &quot;Loop $i: Expected jobs ($MUTAGEN_EXPECTED_JOBS) match reported value, good.&quot;
+  i=$((i+1))
+  if curl --output /dev/null --silent --head -m 3 --fail $MUTAGEN_HTTP; then
+    echo &quot;Loop $i: Mutagen is healthy.&quot;
     exit 0
-  else
-    echo &quot;Loop $i - Mutagen seems not to be ready. Watching nodes: $MUTAGEN_READY_NODES of $MUTAGEN_EXPECTED_JOBS&quot;
-    sleep 1
-    i=$((i+1))
-    if [ $i -gt 10 ]; then
-      exit 1
-    fi
   fi
+  if [ $i -gt 10 ]; then
+    echo &quot;Loop $i: Mutagen is unhealthy, giving up.&quot;
+    exit 1
+  fi
+  echo &quot;Loop $i: Mutagen is unhealthy, trying again...&quot;
+  sleep 3
 done
 EOF
 ]
       }
       template {
         data = &lt;&lt;EOF
-MUTAGEN_HTTP=http://{{ with nomadService &quot;mutagen&quot; }}{{ with index . 0 }}{{ .Address }}:{{ .Port }}{{ end }}{{ end }}
+MUTAGEN_HTTP=http://{{ with nomadService &quot;mutagen&quot; }}{{ with index . 0 }}{{ .Address }}:{{ .Port }}{{ end }}{{ end }}/mutagen/health.json
 MUTAGEN_EXPECTED_JOBS={{ subtract 1 (len (nomadService &quot;sshd&quot;)) }}
 SSHD_JOBS={{ len (nomadService &quot;sshd&quot;) }}
 EOF
@@ -1745,8 +1739,6 @@ done
 <div style="break-before: page; page-break-before: always;"></div><h1 id="nomad-services"><a class="header" href="#nomad-services">Nomad services</a></h1>
 <p>See <a href="https://pkg.go.dev/github.com/hashicorp/consul-template/dependency#NomadService">https://pkg.go.dev/github.com/hashicorp/consul-template/dependency#NomadService</a> for a reference of available keys.</p>
 <p><a href="server_debug//services.html">Nomad service overview</a></p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="mutagen-status"><a class="header" href="#mutagen-status">Mutagen status</a></h1>
-<p><a href="server_debug//mutagen/status.json">Mutagen status overview (JSON)</a></p>
 
                     </main>
 

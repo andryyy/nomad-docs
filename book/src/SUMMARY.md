@@ -29,4 +29,3 @@
 
 # Server debug
 - [Nomad services](server_debug/services.md)
-- [Mutagen status](server_debug/mutagen_status.md)
