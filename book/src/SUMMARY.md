@@ -22,6 +22,7 @@
 
 # Tools
 - [Damon](tools/damon.md)
+- [Wander](tools/wander.md)
 
 # Scripts
 - [Quick-enter containers](scripts/quick-enter.md)
