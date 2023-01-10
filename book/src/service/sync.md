@@ -15,5 +15,5 @@ Alternatively default values can be assigned on top of the job file.
 ```
 
 ```bash
-{{#include ../../../../jobs/sync.nomad}}
+{{#include ../../../../jobs/sync/sync.nomad}}
 ```

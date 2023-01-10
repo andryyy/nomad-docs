@@ -1479,7 +1479,7 @@ job &quot;sync&quot; {
 
       driver = &quot;docker&quot;
       config {
-        image = &quot;debian:stable-slim&quot;
+        image = &quot;python:3&quot;
         ports = [&quot;mutagen&quot;]
         command = &quot;/bin/bash&quot;
         args    = [&quot;-c&quot;, &lt;&lt;EOF
@@ -1493,7 +1493,8 @@ BACKGROUND_TASKS=
 [ -f /root/.mutagen/daemon/daemon.lock ] &amp;&amp; rm /root/.mutagen/daemon/daemon.*
 apt update
 apt upgrade -y
-apt install -y openssh-client jq curl socat
+apt install -y openssh-client jq curl socat libuv1-dev libssl-dev
+pip install git+https://github.com/cirospaciari/socketify.py.git@main#socketify
 
 #~
 #~ Generic functions
