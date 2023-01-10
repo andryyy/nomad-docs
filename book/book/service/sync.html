@@ -460,25 +460,49 @@ EOF
         data = &lt;&lt;EOF
 from socketify import App
 import subprocess
+import json
 
-def mutagen_json():
-  result = subprocess.check_output([&quot;local/mutagen&quot;, &quot;sync&quot;, &quot;list&quot;, &quot;--template&quot;, &quot;{{ `{{ json . }}` }}&quot;], stderr=subprocess.STDOUT)
-  return result
+def mutagen_json(res, req):
+  print(f&quot;Request headers: {req.get_headers()}&quot;)
+  res.write_header(&quot;Content-Type&quot;, &quot;application/json&quot;)
+  ret = subprocess.check_output([&quot;local/mutagen&quot;, &quot;sync&quot;, &quot;list&quot;, &quot;--template&quot;, &quot;{{ `{{ json . }}` }}&quot;])
+  try:
+    json.loads(ret)
+    res.write_status(200).end(ret)
+  except:
+    res.write_status(503).end(json.dumps({&quot;status&quot;: &quot;cannot decode mutagen response&quot;}))
 
-def mutagen_flush():
-  result = subprocess.check_output([&quot;local/mutagen&quot;, &quot;project&quot;, &quot;flush&quot;, &quot;-f&quot;, &quot;/local/mutagen.yml&quot;], stderr=subprocess.STDOUT)
-  return result
+def mutagen_flush(res, req):
+  print(f&quot;Request headers: {req.get_headers()}&quot;)
+  res.write_header(&quot;Content-Type&quot;, &quot;text/plain&quot;)
+  ret = subprocess.run([&quot;local/mutagen&quot;, &quot;project&quot;, &quot;flush&quot;, &quot;-f&quot;, &quot;/local/mutagen.yml&quot;],
+    stdout=subprocess.DEVNULL,
+    stderr=subprocess.DEVNULL)
+  if ret.returncode == 0:
+    res.write_status(200).end(&quot;&quot;)
+  else:
+    res.write_status(503).end(&quot;&quot;)
 
-def mutagen_ab_status():
-  result = subprocess.check_output([&quot;local/mutagen&quot;, &quot;sync&quot;, &quot;list&quot;, &quot;--template&quot;, &quot;&quot;&quot;{{ `{{ range . }}{{ .Alpha.Host }}:{{ .Beta.Host }}:{{ .Status }}
-{{ end }}` }}&quot;&quot;&quot;], stderr=subprocess.STDOUT)
-  return result
+def mutagen_health(res, req):
+  print(f&quot;Request headers: {req.get_headers()}&quot;)
+  res.write_header(&quot;Content-Type&quot;, &quot;application/json&quot;)
+  ret = subprocess.check_output([&quot;local/mutagen&quot;, &quot;sync&quot;, &quot;list&quot;, &quot;--template&quot;, &quot;{{ `{{ json . }}` }}&quot;])
+  try:
+    for job in json.loads(ret):
+      for data in [job[&quot;alpha&quot;][&quot;scanned&quot;], job[&quot;alpha&quot;][&quot;connected&quot;], job[&quot;beta&quot;][&quot;scanned&quot;], job[&quot;beta&quot;][&quot;connected&quot;]]:
+        if data != True:
+          res.write_status(500).end(json.dumps({&quot;status&quot;: &quot;unhealthy: at least one node is not connected or has not finished a scan&quot;}))
+      if job[&quot;status&quot;] != &quot;watching&quot;:
+        res.write_status(500).end(json.dumps({&quot;status&quot;: &quot;unhealthy: at least one node is not in watching mode&quot;}))
+    res.write_status(200).end(json.dumps({&quot;status&quot;: &quot;healthy&quot;}))
+  except:
+    res.write_status(503).end(json.dumps({&quot;status&quot;: &quot;cannot decode mutagen response&quot;}))
 
 app = App()
-app.get(&quot;/mutagen/status.json&quot;, lambda res, req: res.end(mutagen_json()))
-app.get(&quot;/mutagen/health&quot;, lambda res, req: res.end(mutagen_ab_status()))
-app.get(&quot;/mutagen/flush&quot;, lambda res, req: res.end(mutagen_flush()))
-app.listen(8082, lambda config: print(&quot;socketify-app listening on port %d\n&quot; % config.port),)
+app.get(&quot;/mutagen/status.json&quot;, mutagen_json)
+app.get(&quot;/mutagen/health.json&quot;, mutagen_health)
+app.get(&quot;/mutagen/flush&quot;, mutagen_flush)
+app.listen(8083, lambda config: print(&quot;socketify-app listening on port %d\n&quot; % config.port),)
 app.run()
 EOF
         destination   = &quot;local/socketify-app.py&quot;
