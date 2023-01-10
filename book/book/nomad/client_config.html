@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Nomad services - Nomad</title>
+        <title>Client agent configuration - Nomad</title>
 
 
         <!-- Custom HTML head -->
@@ -82,7 +82,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Prepare environment</li><li class="chapter-item expanded "><a href="../preparation.html"><strong aria-hidden="true">1.</strong> Preparation</a></li><li class="chapter-item expanded "><a href="../basic-setup.html"><strong aria-hidden="true">2.</strong> Basic setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Nomad cluster</li><li class="chapter-item expanded "><a href="../nomad/encryption.html"><strong aria-hidden="true">3.</strong> Encryption</a></li><li class="chapter-item expanded "><a href="../nomad/services_and_folders.html"><strong aria-hidden="true">4.</strong> Services and folders</a></li><li class="chapter-item expanded "><a href="../nomad/server_config.html"><strong aria-hidden="true">5.</strong> Configuration</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../nomad/server_config.html"><strong aria-hidden="true">5.1.</strong> Server agent configuration</a></li><li class="chapter-item expanded "><a href="../nomad/client_config.html"><strong aria-hidden="true">5.2.</strong> Client agent configuration</a></li><li class="chapter-item expanded "><a href="../nomad/client_agent_access.html"><strong aria-hidden="true">5.3.</strong> Accessing the client</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">System Jobs</li><li class="chapter-item expanded "><a href="../system/nginx.html"><strong aria-hidden="true">6.</strong> Nginx</a></li><li class="chapter-item expanded "><a href="../system/sshd.html"><strong aria-hidden="true">7.</strong> SSHd</a></li><li class="chapter-item expanded affix "><li class="part-title">Service jobs</li><li class="chapter-item expanded "><a href="../service/sync.html"><strong aria-hidden="true">8.</strong> Mutagen</a></li><li class="chapter-item expanded "><a href="../service/mariadb.html"><strong aria-hidden="true">9.</strong> MariaDB</a></li><li class="chapter-item expanded affix "><li class="part-title">Tools</li><li class="chapter-item expanded "><a href="../tools/damon.html"><strong aria-hidden="true">10.</strong> Damon</a></li><li class="chapter-item expanded affix "><li class="part-title">Scripts</li><li class="chapter-item expanded "><a href="../scripts/quick-enter.html"><strong aria-hidden="true">11.</strong> Quick-enter containers</a></li><li class="chapter-item expanded affix "><li class="part-title">Server debug</li><li class="chapter-item expanded "><a href="../server_debug/services.html" class="active"><strong aria-hidden="true">12.</strong> Nomad services</a></li><li class="chapter-item expanded "><a href="../server_debug/mutagen_status.html"><strong aria-hidden="true">13.</strong> Mutagen status</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Prepare environment</li><li class="chapter-item expanded "><a href="../preparation.html"><strong aria-hidden="true">1.</strong> Preparation</a></li><li class="chapter-item expanded "><a href="../basic-setup.html"><strong aria-hidden="true">2.</strong> Basic setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Nomad cluster</li><li class="chapter-item expanded "><a href="../nomad/encryption.html"><strong aria-hidden="true">3.</strong> Encryption</a></li><li class="chapter-item expanded "><a href="../nomad/services_and_folders.html"><strong aria-hidden="true">4.</strong> Services and folders</a></li><li class="chapter-item expanded "><a href="../nomad/server_config.html"><strong aria-hidden="true">5.</strong> Configuration</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../nomad/server_config.html"><strong aria-hidden="true">5.1.</strong> Server agent configuration</a></li><li class="chapter-item expanded "><a href="../nomad/client_config.html" class="active"><strong aria-hidden="true">5.2.</strong> Client agent configuration</a></li><li class="chapter-item expanded "><a href="../nomad/client_agent_access.html"><strong aria-hidden="true">5.3.</strong> Accessing the client</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">System Jobs</li><li class="chapter-item expanded "><a href="../system/nginx.html"><strong aria-hidden="true">6.</strong> Nginx</a></li><li class="chapter-item expanded "><a href="../system/sshd.html"><strong aria-hidden="true">7.</strong> SSHd</a></li><li class="chapter-item expanded affix "><li class="part-title">Service jobs</li><li class="chapter-item expanded "><a href="../service/sync.html"><strong aria-hidden="true">8.</strong> Mutagen</a></li><li class="chapter-item expanded "><a href="../service/mariadb.html"><strong aria-hidden="true">9.</strong> MariaDB</a></li><li class="chapter-item expanded affix "><li class="part-title">Tools</li><li class="chapter-item expanded "><a href="../tools/damon.html"><strong aria-hidden="true">10.</strong> Damon</a></li><li class="chapter-item expanded affix "><li class="part-title">Scripts</li><li class="chapter-item expanded "><a href="../scripts/quick-enter.html"><strong aria-hidden="true">11.</strong> Quick-enter containers</a></li><li class="chapter-item expanded affix "><li class="part-title">Server debug</li><li class="chapter-item expanded "><a href="../server_debug/services.html"><strong aria-hidden="true">12.</strong> Nomad services</a></li><li class="chapter-item expanded "><a href="../server_debug/mutagen_status.html"><strong aria-hidden="true">13.</strong> Mutagen status</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -146,19 +146,75 @@
                         <!-- Page table of contents -->
                         <div class="sidetoc"><nav class="pagetoc"></nav></div>
 
-                        <h1 id="nomad-services"><a class="header" href="#nomad-services">Nomad services</a></h1>
-<p>See <a href="https://pkg.go.dev/github.com/hashicorp/consul-template/dependency#NomadService">https://pkg.go.dev/github.com/hashicorp/consul-template/dependency#NomadService</a> for a reference of available keys.</p>
-<p><a href="/services.html">Nomad service overview</a></p>
+                        <h1 id="client-agent-configuration"><a class="header" href="#client-agent-configuration">Client agent configuration</a></h1>
+<p>The client agent configuration is a bit more technical. As described in the beginning a client agent deploys workloads on the machine it is installed on.</p>
+<p>The client is able to fingerprint most of the hosts capabilities, but it can obvioulsy not know about host volumes you want to expose to tasks or detect networks and assign them roles.</p>
+<p>This time we will only be using bind_addr and remove redundant comments in the configuration file.</p>
+<p><strong>Important</strong>: In the configuration below I made the Nomad client aware of two host networks:</p>
+<ol>
+<li>&quot;nomad-clients&quot; via 10.200.200.0/24</li>
+<li>&quot;nomad-servers&quot; via 10.200.200.0/24</li>
+</ol>
+<p>Revalidate the correct interfaces in the JSON config file created in the beginning. The interface must match the host interface on the specific machine. The interface names do not have to be the same for all machines, the names must match though.</p>
+<pre><code class="language-bash">for nomad in $(jq -r keys[] ~/nomad-env.json); do
+  ssh $nomad bash &lt;&lt;EOF
+  cat &lt;&lt;CLIENT &gt; /etc/nomad.d/client.hcl
+data_dir = &quot;/opt/nomad/data&quot;
+datacenter = &quot;falkenstein&quot;
+bind_addr = &quot;$(jq -r &quot;.\&quot;$nomad\&quot;.client&quot; ~/nomad-env.json)&quot;
+
+server {
+  enabled = false
+}
+
+client {
+  enabled = true
+  server_join {
+    retry_join = [&quot;server-1.nomad.cluster&quot;, &quot;server-2.nomad.cluster&quot;, &quot;server-3.nomad.cluster&quot;]
+  }
+  host_volume &quot;shared-data&quot; {
+    path = &quot;/opt/nomad-vols/shared-data&quot;
+    read_only = false
+  }
+  host_network &quot;nomad-clients&quot; {
+    interface = &quot;$(jq -r &quot;.\&quot;$nomad\&quot;.client_interface&quot; ~/nomad-env.json)&quot;
+  }
+  host_network &quot;nomad-servers&quot; {
+    interface = &quot;$(jq -r &quot;.\&quot;$nomad\&quot;.server_interface&quot; ~/nomad-env.json)&quot;
+  }
+}
+
+tls {
+  rpc = true
+  http = true
+  ca_file = &quot;/etc/nomad.d/pki/nomad-ca.pem&quot;
+  cert_file = &quot;/etc/nomad.d/pki/client.pem&quot;
+  key_file = &quot;/etc/nomad.d/pki/client-key.pem&quot;
+  verify_server_hostname = true
+  verify_https_client = true
+}
+CLIENT
+EOF
+done
+</code></pre>
+<p>Enable and start the client agents <strong>after validating the client configuration</strong>:</p>
+<pre><code class="language-bash">for nomad in $(jq -r keys[] ~/nomad-env.json); do
+  ssh $nomad bash &lt;&lt;'EOF'
+    systemctl enable --now nomad-client.service
+EOF
+done
+</code></pre>
+<p>This is a great opportunity to check the Nomad web UI provided by the server agent. You can find <code>unique.network.ip-address</code> in the client details for each client agent listed in the UI. The network interface used to fingerprint the network details is the interface assigned the default route on your machine. This behavior can be adjusted using the &quot;network_interface&quot; parameter in the &quot;client&quot; stanza of your configuration.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../scripts/quick-enter.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../nomad/server_config.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next" href="../server_debug/mutagen_status.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="../nomad/client_agent_access.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -168,11 +224,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../scripts/quick-enter.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../nomad/server_config.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next" href="../server_debug/mutagen_status.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="../nomad/client_agent_access.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

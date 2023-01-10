@@ -9,6 +9,7 @@
 
         <!-- Custom HTML head -->
         
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
@@ -30,17 +31,18 @@
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="style.css">
 
     </head>
     <body>
         <!-- Provide site root to javascript -->
-        <script>
+        <script type="text/javascript">
             var path_to_root = "";
             var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
-        <script>
+        <script type="text/javascript">
             try {
                 var theme = localStorage.getItem('mdbook-theme');
                 var sidebar = localStorage.getItem('mdbook-sidebar');
@@ -56,7 +58,7 @@
         </script>
 
         <!-- Set the theme before any content is loaded, prevents flash -->
-        <script>
+        <script type="text/javascript">
             var theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
@@ -68,7 +70,7 @@
         </script>
 
         <!-- Hide / unhide sidebar before it is displayed -->
-        <script>
+        <script type="text/javascript">
             var html = document.querySelector('html');
             var sidebar = 'hidden';
             if (document.body.clientWidth >= 1080) {
@@ -81,7 +83,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Prepare environment</li><li class="chapter-item expanded "><a href="preparation.html"><strong aria-hidden="true">1.</strong> Preparation</a></li><li class="chapter-item expanded "><a href="basic-setup.html"><strong aria-hidden="true">2.</strong> Basic setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Nomad cluster</li><li class="chapter-item expanded "><a href="nomad/encryption.html"><strong aria-hidden="true">3.</strong> Encryption</a></li><li class="chapter-item expanded affix "><li class="part-title">System Jobs</li><li class="chapter-item expanded "><a href="system/nginx.html"><strong aria-hidden="true">4.</strong> Nginx</a></li><li class="chapter-item expanded "><a href="system/sshd.html"><strong aria-hidden="true">5.</strong> SSHd</a></li><li class="chapter-item expanded affix "><li class="part-title">Service jobs</li><li class="chapter-item expanded "><a href="service/sync.html"><strong aria-hidden="true">6.</strong> Mutagen</a></li><li class="chapter-item expanded "><a href="service/mariadb.html"><strong aria-hidden="true">7.</strong> MariaDB</a></li><li class="chapter-item expanded affix "><li class="part-title">Tools</li><li class="chapter-item expanded "><a href="tools/damon.html"><strong aria-hidden="true">8.</strong> Damon</a></li><li class="chapter-item expanded affix "><li class="part-title">Scripts</li><li class="chapter-item expanded "><a href="scripts/quick-enter.html"><strong aria-hidden="true">9.</strong> Quick-enter containers</a></li><li class="chapter-item expanded affix "><li class="part-title">Server debug</li><li class="chapter-item expanded "><a href="server_debug/services.html"><strong aria-hidden="true">10.</strong> Nomad services</a></li><li class="chapter-item expanded "><a href="server_debug/mutagen_status.html"><strong aria-hidden="true">11.</strong> Mutagen status</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Prepare environment</li><li class="chapter-item expanded "><a href="preparation.html"><strong aria-hidden="true">1.</strong> Preparation</a></li><li class="chapter-item expanded "><a href="basic-setup.html"><strong aria-hidden="true">2.</strong> Basic setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Nomad cluster</li><li class="chapter-item expanded "><a href="nomad/encryption.html"><strong aria-hidden="true">3.</strong> Encryption</a></li><li class="chapter-item expanded "><a href="nomad/services_and_folders.html"><strong aria-hidden="true">4.</strong> Services and folders</a></li><li class="chapter-item expanded "><a href="nomad/server_config.html"><strong aria-hidden="true">5.</strong> Configuration</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="nomad/server_config.html"><strong aria-hidden="true">5.1.</strong> Server agent configuration</a></li><li class="chapter-item expanded "><a href="nomad/client_config.html"><strong aria-hidden="true">5.2.</strong> Client agent configuration</a></li><li class="chapter-item expanded "><a href="nomad/client_agent_access.html"><strong aria-hidden="true">5.3.</strong> Accessing the client</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">System Jobs</li><li class="chapter-item expanded "><a href="system/nginx.html"><strong aria-hidden="true">6.</strong> Nginx</a></li><li class="chapter-item expanded "><a href="system/sshd.html"><strong aria-hidden="true">7.</strong> SSHd</a></li><li class="chapter-item expanded affix "><li class="part-title">Service jobs</li><li class="chapter-item expanded "><a href="service/sync.html"><strong aria-hidden="true">8.</strong> Mutagen</a></li><li class="chapter-item expanded "><a href="service/mariadb.html"><strong aria-hidden="true">9.</strong> MariaDB</a></li><li class="chapter-item expanded affix "><li class="part-title">Tools</li><li class="chapter-item expanded "><a href="tools/damon.html"><strong aria-hidden="true">10.</strong> Damon</a></li><li class="chapter-item expanded affix "><li class="part-title">Scripts</li><li class="chapter-item expanded "><a href="scripts/quick-enter.html"><strong aria-hidden="true">11.</strong> Quick-enter containers</a></li><li class="chapter-item expanded affix "><li class="part-title">Server debug</li><li class="chapter-item expanded "><a href="server_debug/services.html"><strong aria-hidden="true">12.</strong> Nomad services</a></li><li class="chapter-item expanded "><a href="server_debug/mutagen_status.html"><strong aria-hidden="true">13.</strong> Mutagen status</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -99,7 +101,7 @@
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
@@ -132,7 +134,7 @@
                 </div>
 
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
-                <script>
+                <script type="text/javascript">
                     document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
                     document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
                     Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
@@ -142,6 +144,9 @@
 
                 <div id="content" class="content">
                     <main>
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
                         <h1 id="description"><a class="header" href="#description">Description</a></h1>
 <p>For our Nomad cluster to function properly, we will create three machines, where each machine is installed two agents on: a server and a client.</p>
 <p>This is not what either Hashicorp or me recommend for production setups, but read on:</p>
@@ -465,6 +470,383 @@ done
 <p><strong>Important</strong>: You may find yourself not being able to import the client certificate in iOS when using OpenSSL &gt;= v3.
 To be able to create an importable file, you need to append the <code>-legacy</code> flag to the command above.</p>
 <p>Scrolling back to the top you may remember the port forwarding added to my <code>.ssh/config</code> file. That's how I will be able to access the UI whenever I need to.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="services-and-folders"><a class="header" href="#services-and-folders">Services and folders</a></h1>
+<p>Nomad will be running as server and client agent on the same host. By default a Nomad service file will run the agent as root, no matter its purpose: being a client or a server.</p>
+<p>Nomad recommends to run the client agent as root while protecting its data store from unprivileged access.
+A client agent needs to spawn containers, create protected environments (&quot;chroot&quot;) and do some other low level operations which mostly require root(-like) access. It is not impossible to use a non-root user, but that will require thoroughly testing.</p>
+<p>The server agent should run with lowest privileges with full access to its data directory.</p>
+<p>Another consideration is to remove the OOM score from the server agent as well as any limit adjustments while keeping them active for the client.</p>
+<p>It is very important for the client not to be killed due to other processes claiming system resources it has no control over. The most important reason a client should not to be placed on the same node as a server is unpredicted availability of system resources. This will not apply to all workloads and also depends a lot on the expected usage in relation to available resources.
+Preventing it from being killed is not a solution to the problem, but it will help the cluster to notice a problem and act on it.</p>
+<h2 id="nomad-data-folder-structure"><a class="header" href="#nomad-data-folder-structure">Nomad data folder structure</a></h2>
+<p>Making sure to be using a proper Nomad data folder structure includes setting the ownership and permissions accordingly for each agent configuration. This step is necessary due to the nature of a default Nomad installation to be run as root no matter what. Default data directories can be problematic.</p>
+<pre><code class="language-bash">for nomad in $(jq -r keys[] ~/nomad-env.json); do
+  ssh $nomad bash &lt;&lt;'EOF'
+    # This may be dangerous, validate you are not removing a directory in production!
+    rm -rf /opt/nomad/data
+    # (Re-)Create the folder structure
+    mkdir -p /opt/nomad/data/{server,client}
+    # All belong to nomad
+    chown -R nomad: /opt/nomad
+    # Except for client data, we can lock this folder up
+    chown root: /opt/nomad/data/client
+    chmod 700 /opt/nomad/data/client
+EOF
+done
+</code></pre>
+<h2 id="create-a-host-volume-on-all-client-agents"><a class="header" href="#create-a-host-volume-on-all-client-agents">Create a host volume on all client agents</a></h2>
+<p>For host volumes used in any Nomad job we will create a new directory <code>/opt/nomad-vols</code> containing <code>shared-data</code> for the directory synchronized by Mutagen:</p>
+<pre><code class="language-bash">for nomad in $(jq -r keys[] ~/nomad-env.json); do
+  ssh $nomad bash &lt;&lt;'EOF'
+    mkdir -p /opt/nomad-vols/shared-data;
+    chown root: /opt/nomad-vols
+EOF
+done
+</code></pre>
+<p><strong>Hint</strong>: Using a host volume in a protected environment (&quot;chroot&quot;) requires permissions to be set to nobody:nogroup for the task to be able to write to it. There is no need to act now, this is just a friendly note to remember.</p>
+<p>A host volume is defined in a client configuration.</p>
+<h2 id="server-agent-service-files"><a class="header" href="#server-agent-service-files">Server agent service files</a></h2>
+<p>Create the service files for the <strong>server</strong> agents on each machine:</p>
+<pre><code class="language-bash">for nomad in $(jq -r keys[] ~/nomad-env.json); do
+  ssh $nomad bash &lt;&lt;'EOF'
+    cat &lt;&lt;'SERVICE' &gt; /etc/systemd/system/nomad-server.service
+[Unit]
+Description=Nomad server
+Documentation=https://nomadproject.io/docs/
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecReload=/bin/kill -HUP $MAINPID
+ExecStart=/usr/bin/nomad agent -config /etc/nomad.d/server.hcl
+User=nomad
+Group=nomad
+Restart=on-failure
+RestartSec=2
+KillMode=process
+KillSignal=SIGINT
+
+[Install]
+WantedBy=multi-user.target
+SERVICE
+EOF
+done
+</code></pre>
+<h2 id="client-agent-service-files"><a class="header" href="#client-agent-service-files">Client agent service files</a></h2>
+<p>Create the service files for the <strong>client</strong> agents on each machine:</p>
+<pre><code class="language-bash">for nomad in $(jq -r keys[] ~/nomad-env.json); do
+  ssh $nomad bash &lt;&lt;'EOF'
+    cat &lt;&lt;'SERVICE' &gt; /etc/systemd/system/nomad-client.service
+[Unit]
+Description=Nomad client
+Documentation=https://nomadproject.io/docs/
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecReload=/bin/kill -HUP $MAINPID
+ExecStart=/usr/bin/nomad agent -config /etc/nomad.d/client.hcl
+Restart=on-failure
+RestartSec=2
+KillMode=process
+KillSignal=SIGINT
+LimitNOFILE=65536
+LimitNPROC=infinity
+TasksMax=infinity
+OOMScoreAdjust=-1000
+
+[Install]
+WantedBy=multi-user.target
+SERVICE
+EOF
+done
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="server-agent-configuration"><a class="header" href="#server-agent-configuration">Server agent configuration</a></h1>
+<p>Let's start with the server configuration. In case you wonder and missed the hint in the previous chapter: there is no need to define the host volume in a server agent configuration.</p>
+<p>The server agent will be aware of the capabilities of a client and delegate tasks to matching client agents. A client missing a host volume will not be taken into consideration for a deployment.</p>
+<p><strong>Hint:</strong> See the <code>gossip_key</code> variable, don't miss it.</p>
+<pre><code class="language-bash">gossip_key=$(openssl rand -base64 32)
+for nomad in $(jq -r keys[] ~/nomad-env.json); do
+  server_ip=$(jq -r &quot;.\&quot;$nomad\&quot;.server&quot; ~/nomad-env.json)
+  ssh $nomad bash &lt;&lt;EOF
+    cat &lt;&lt;SERVER &gt; /etc/nomad.d/server.hcl
+# data_dir will be suffixed by the agent configuration automatically: server/ or client/
+data_dir = &quot;/opt/nomad/data&quot;
+
+# We deploy in Falkenstein, this is only important in job files to be created later on.
+datacenter = &quot;falkenstein&quot;
+
+# All services of the server agent will bind to the bind_addr defined IP address: rpc, http and serf (gossip)
+# The bind_addr can be overruled by the addresses stanza where each service IP binding can be defined by itself.
+# Ports can be defined using the ports stanza.
+# It seems like you also need to define an advertise stanza in conjunction with the addresses stanza.
+# This is especially helpful with NAT: the advertise stanza also accepts ports.
+# For a better understanding we will use bind_addr, ports, addresses and advertise stanzas using all default ports.
+# This will do exactly the same as only defining bind_addr, I just want to make you aware of what is possible:
+# Note: External IPs are being discovered by the network fingerprinting mechanism in Nomad.
+
+bind_addr = &quot;${server_ip}&quot;
+ports {
+  http = 4646
+  rpc  = 4647
+  serf = 4648
+}
+advertise {
+  http = &quot;${server_ip}:4646&quot;
+  rpc  = &quot;${server_ip}:4647&quot;
+  serf = &quot;${server_ip}:4648&quot;
+}
+addresses {
+  http = &quot;${server_ip}&quot;
+  rpc  = &quot;${server_ip}&quot;
+  serf = &quot;${server_ip}&quot;
+}
+
+server {
+  # Yes, we are a server agent
+  enabled = true
+  # We will only bootstrap the cluster when all server agents can gossip
+  bootstrap_expect = 3
+  server_join {
+    # Our join mechanism is to retry until success. We can define ourself here, too, that's fine.
+    # Use hostnames as defined in the certificate!
+    retry_join = [&quot;server-1.nomad.cluster&quot;, &quot;server-2.nomad.cluster&quot;, &quot;server-3.nomad.cluster&quot;]
+  }
+  # The key for gossip encryption created previously using openssl.
+  # The value is the same for all nodes obviously.
+  encrypt = &quot;${gossip_key}&quot;
+}
+
+client {
+  # Not a client agent
+  enabled = false
+}
+
+tls {
+  # We do want to encrypt RPC traffic
+  rpc = true
+  # We do want to encrypt HTTP traffic
+  http = true
+  ca_file = &quot;/etc/nomad.d/pki/nomad-ca.pem&quot;
+  cert_file = &quot;/etc/nomad.d/pki/server.pem&quot;
+  key_file = &quot;/etc/nomad.d/pki/server-key.pem&quot;
+
+  # verify_server_hostname will require the role (&quot;client&quot;, &quot;server&quot;) and region (&quot;global&quot;) to be verified.
+  # Setting it to false results in only the CA to be verified.
+  # Servers from other or unwanted regions could join a cluster when they should not be allowed to.
+  verify_server_hostname = true
+
+  # We do only want to allow access to the HTTP API using a client certificate.
+  # Affects curl, Nomad CLI, and others
+  # We will catch this up later.
+  verify_https_client = true
+}
+SERVER
+EOF
+done
+</code></pre>
+<p>After validating the server configuration we are now able to enable and start the server agent service:</p>
+<pre><code class="language-bash">for nomad in $(jq -r keys[] ~/nomad-env.json); do
+  ssh $nomad bash &lt;&lt;'EOF'
+    systemctl enable --now nomad-server.service;
+EOF
+done
+</code></pre>
+<p>I can now login to one of my three Nomad machines and check wether a cluster leader was elected:</p>
+<pre><code class="language-bash">root@nomad-1:~# nomad server members
+Name            Address       Port  Status  Leader  Raft Version  Build  Datacenter   Region
+nomad-1.global  10.100.100.2  4648  alive   false   3             1.4.3  falkenstein  global
+nomad-2.global  10.100.100.3  4648  alive   true    3             1.4.3  falkenstein  global
+nomad-3.global  10.100.100.4  4648  alive   false   3             1.4.3  falkenstein  global
+</code></pre>
+<p>Sometimes you may find yourself in a situation where a server agent does not feel like joining the gang.</p>
+<p>Often it is a matter of an existing Nomad data directory bootstrapped from a previous configuration. Since we are just starting a new cluster, we can safely stop the service and remove the data directories. Keep in mind to recreate it with proper permission and ownership as described in the previous chapter.</p>
+<p>Whatever you decide to do: your first contact point should always be the log files: <code>journalctl -u nomad-server -f</code></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="server-agent-configuration-1"><a class="header" href="#server-agent-configuration-1">Server agent configuration</a></h1>
+<p>Let's start with the server configuration. In case you wonder and missed the hint in the previous chapter: there is no need to define the host volume in a server agent configuration.</p>
+<p>The server agent will be aware of the capabilities of a client and delegate tasks to matching client agents. A client missing a host volume will not be taken into consideration for a deployment.</p>
+<p><strong>Hint:</strong> See the <code>gossip_key</code> variable, don't miss it.</p>
+<pre><code class="language-bash">gossip_key=$(openssl rand -base64 32)
+for nomad in $(jq -r keys[] ~/nomad-env.json); do
+  server_ip=$(jq -r &quot;.\&quot;$nomad\&quot;.server&quot; ~/nomad-env.json)
+  ssh $nomad bash &lt;&lt;EOF
+    cat &lt;&lt;SERVER &gt; /etc/nomad.d/server.hcl
+# data_dir will be suffixed by the agent configuration automatically: server/ or client/
+data_dir = &quot;/opt/nomad/data&quot;
+
+# We deploy in Falkenstein, this is only important in job files to be created later on.
+datacenter = &quot;falkenstein&quot;
+
+# All services of the server agent will bind to the bind_addr defined IP address: rpc, http and serf (gossip)
+# The bind_addr can be overruled by the addresses stanza where each service IP binding can be defined by itself.
+# Ports can be defined using the ports stanza.
+# It seems like you also need to define an advertise stanza in conjunction with the addresses stanza.
+# This is especially helpful with NAT: the advertise stanza also accepts ports.
+# For a better understanding we will use bind_addr, ports, addresses and advertise stanzas using all default ports.
+# This will do exactly the same as only defining bind_addr, I just want to make you aware of what is possible:
+# Note: External IPs are being discovered by the network fingerprinting mechanism in Nomad.
+
+bind_addr = &quot;${server_ip}&quot;
+ports {
+  http = 4646
+  rpc  = 4647
+  serf = 4648
+}
+advertise {
+  http = &quot;${server_ip}:4646&quot;
+  rpc  = &quot;${server_ip}:4647&quot;
+  serf = &quot;${server_ip}:4648&quot;
+}
+addresses {
+  http = &quot;${server_ip}&quot;
+  rpc  = &quot;${server_ip}&quot;
+  serf = &quot;${server_ip}&quot;
+}
+
+server {
+  # Yes, we are a server agent
+  enabled = true
+  # We will only bootstrap the cluster when all server agents can gossip
+  bootstrap_expect = 3
+  server_join {
+    # Our join mechanism is to retry until success. We can define ourself here, too, that's fine.
+    # Use hostnames as defined in the certificate!
+    retry_join = [&quot;server-1.nomad.cluster&quot;, &quot;server-2.nomad.cluster&quot;, &quot;server-3.nomad.cluster&quot;]
+  }
+  # The key for gossip encryption created previously using openssl.
+  # The value is the same for all nodes obviously.
+  encrypt = &quot;${gossip_key}&quot;
+}
+
+client {
+  # Not a client agent
+  enabled = false
+}
+
+tls {
+  # We do want to encrypt RPC traffic
+  rpc = true
+  # We do want to encrypt HTTP traffic
+  http = true
+  ca_file = &quot;/etc/nomad.d/pki/nomad-ca.pem&quot;
+  cert_file = &quot;/etc/nomad.d/pki/server.pem&quot;
+  key_file = &quot;/etc/nomad.d/pki/server-key.pem&quot;
+
+  # verify_server_hostname will require the role (&quot;client&quot;, &quot;server&quot;) and region (&quot;global&quot;) to be verified.
+  # Setting it to false results in only the CA to be verified.
+  # Servers from other or unwanted regions could join a cluster when they should not be allowed to.
+  verify_server_hostname = true
+
+  # We do only want to allow access to the HTTP API using a client certificate.
+  # Affects curl, Nomad CLI, and others
+  # We will catch this up later.
+  verify_https_client = true
+}
+SERVER
+EOF
+done
+</code></pre>
+<p>After validating the server configuration we are now able to enable and start the server agent service:</p>
+<pre><code class="language-bash">for nomad in $(jq -r keys[] ~/nomad-env.json); do
+  ssh $nomad bash &lt;&lt;'EOF'
+    systemctl enable --now nomad-server.service;
+EOF
+done
+</code></pre>
+<p>I can now login to one of my three Nomad machines and check wether a cluster leader was elected:</p>
+<pre><code class="language-bash">root@nomad-1:~# nomad server members
+Name            Address       Port  Status  Leader  Raft Version  Build  Datacenter   Region
+nomad-1.global  10.100.100.2  4648  alive   false   3             1.4.3  falkenstein  global
+nomad-2.global  10.100.100.3  4648  alive   true    3             1.4.3  falkenstein  global
+nomad-3.global  10.100.100.4  4648  alive   false   3             1.4.3  falkenstein  global
+</code></pre>
+<p>Sometimes you may find yourself in a situation where a server agent does not feel like joining the gang.</p>
+<p>Often it is a matter of an existing Nomad data directory bootstrapped from a previous configuration. Since we are just starting a new cluster, we can safely stop the service and remove the data directories. Keep in mind to recreate it with proper permission and ownership as described in the previous chapter.</p>
+<p>Whatever you decide to do: your first contact point should always be the log files: <code>journalctl -u nomad-server -f</code></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="client-agent-configuration"><a class="header" href="#client-agent-configuration">Client agent configuration</a></h1>
+<p>The client agent configuration is a bit more technical. As described in the beginning a client agent deploys workloads on the machine it is installed on.</p>
+<p>The client is able to fingerprint most of the hosts capabilities, but it can obvioulsy not know about host volumes you want to expose to tasks or detect networks and assign them roles.</p>
+<p>This time we will only be using bind_addr and remove redundant comments in the configuration file.</p>
+<p><strong>Important</strong>: In the configuration below I made the Nomad client aware of two host networks:</p>
+<ol>
+<li>&quot;nomad-clients&quot; via 10.200.200.0/24</li>
+<li>&quot;nomad-servers&quot; via 10.200.200.0/24</li>
+</ol>
+<p>Revalidate the correct interfaces in the JSON config file created in the beginning. The interface must match the host interface on the specific machine. The interface names do not have to be the same for all machines, the names must match though.</p>
+<pre><code class="language-bash">for nomad in $(jq -r keys[] ~/nomad-env.json); do
+  ssh $nomad bash &lt;&lt;EOF
+  cat &lt;&lt;CLIENT &gt; /etc/nomad.d/client.hcl
+data_dir = &quot;/opt/nomad/data&quot;
+datacenter = &quot;falkenstein&quot;
+bind_addr = &quot;$(jq -r &quot;.\&quot;$nomad\&quot;.client&quot; ~/nomad-env.json)&quot;
+
+server {
+  enabled = false
+}
+
+client {
+  enabled = true
+  server_join {
+    retry_join = [&quot;server-1.nomad.cluster&quot;, &quot;server-2.nomad.cluster&quot;, &quot;server-3.nomad.cluster&quot;]
+  }
+  host_volume &quot;shared-data&quot; {
+    path = &quot;/opt/nomad-vols/shared-data&quot;
+    read_only = false
+  }
+  host_network &quot;nomad-clients&quot; {
+    interface = &quot;$(jq -r &quot;.\&quot;$nomad\&quot;.client_interface&quot; ~/nomad-env.json)&quot;
+  }
+  host_network &quot;nomad-servers&quot; {
+    interface = &quot;$(jq -r &quot;.\&quot;$nomad\&quot;.server_interface&quot; ~/nomad-env.json)&quot;
+  }
+}
+
+tls {
+  rpc = true
+  http = true
+  ca_file = &quot;/etc/nomad.d/pki/nomad-ca.pem&quot;
+  cert_file = &quot;/etc/nomad.d/pki/client.pem&quot;
+  key_file = &quot;/etc/nomad.d/pki/client-key.pem&quot;
+  verify_server_hostname = true
+  verify_https_client = true
+}
+CLIENT
+EOF
+done
+</code></pre>
+<p>Enable and start the client agents <strong>after validating the client configuration</strong>:</p>
+<pre><code class="language-bash">for nomad in $(jq -r keys[] ~/nomad-env.json); do
+  ssh $nomad bash &lt;&lt;'EOF'
+    systemctl enable --now nomad-client.service
+EOF
+done
+</code></pre>
+<p>This is a great opportunity to check the Nomad web UI provided by the server agent. You can find <code>unique.network.ip-address</code> in the client details for each client agent listed in the UI. The network interface used to fingerprint the network details is the interface assigned the default route on your machine. This behavior can be adjusted using the &quot;network_interface&quot; parameter in the &quot;client&quot; stanza of your configuration.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="accessing-the-client"><a class="header" href="#accessing-the-client">Accessing the client</a></h1>
+<p>As a quick note before getting into the topic I want to remark that connecting to the HTTP API of the client agent using the &quot;nomad&quot; binary is not something Nomad administrators will have to do daily. Also remember that Nomad client agents are usually not installed on the same machine as Nomad server agents. This is a self-made problem.</p>
+<p>Commands related to the Nomad client agent will not work as &quot;NOMAD_ADDR&quot; is set to the local servers agent IP address:</p>
+<pre><code class="language-bash">root@nomad-1:~# nomad node status -self
+Nomad not running in client mode
+</code></pre>
+<p>Setting the value of &quot;NOMAD_ADDR&quot; to a clients IP binding does not result in a successful response either:</p>
+<pre><code class="language-bash">root@nomad-1:~# NOMAD_ADDR=https://10.200.200.2:4646
+root@nomad-1:~# nomad node status -self
+Error querying agent info: failed querying self endpoint: Get &quot;https://10.200.200.2:4646/v1/agent/self&quot;: x509: cannot validate certificate for 10.200.200.2 because it doesn't contain any IP SANs
+</code></pre>
+<p><strong>Use a valid hostname used in the client agents certificate.</strong></p>
+<p>The &quot;nomad&quot; binary will refuse to connect to a clients IP address as we did not include any in our certificate. So let's write a tiny wrapper to access the client correctly:</p>
+<pre><code class="language-bash">for nomad in $(jq -r keys[] ~/nomad-env.json); do
+  ssh $nomad bash &lt;&lt;'EOF'
+cat &lt;&lt;'PROFILE'&gt;&gt; ~/.profile
+complete -C /usr/bin/nomad nomad_client # for autocomplete
+nomad_client() { local NOMAD_ADDR=https://client-1.nomad.cluster:4646; nomad &quot;${@}&quot;; }
+PROFILE
+EOF
+done
+</code></pre>
+<p>Now we can query the Nomad client agent using the wrapper function:</p>
+<pre><code class="language-bash">root@nomad-n:~# nomad_client node status -self -verbose
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="nginx-job-file"><a class="header" href="#nginx-job-file">Nginx job file</a></h1>
 <p>The Nginx job file will run as system type and spawn a worker on all Nomad hosts in the defined datacenter.</p>
 <p>The provided template will create a Nginx upstream and location block for each Nomad service with the following tags:</p>
@@ -810,7 +1192,7 @@ EOH
 
       template {
         data = &lt;&lt;EOH
-{{ with nomadVar &quot;nomad/jobs/system/sync/sshd&quot; }}{{ .id_ed25519_pub }}{{ end }}
+{{ with nomadVar &quot;nomad/jobs/sshd/sync/sshd&quot; }}{{ .id_ed25519_pub }}{{ end }}
 EOH
         destination = &quot;secrets/authorized_keys&quot;
         change_mode   = &quot;restart&quot;
@@ -1545,22 +1927,23 @@ done
 
 
 
-        <script>
+        <script type="text/javascript">
             window.playground_copyable = true;
         </script>
 
 
-        <script src="elasticlunr.min.js"></script>
-        <script src="mark.min.js"></script>
-        <script src="searcher.js"></script>
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
 
-        <script src="clipboard.min.js"></script>
-        <script src="highlight.js"></script>
-        <script src="book.js"></script>
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
+        <script type="text/javascript" src="sidebar.js"></script>
 
-        <script>
+        <script type="text/javascript">
         window.addEventListener('load', function() {
             window.setTimeout(window.print, 100);
         });

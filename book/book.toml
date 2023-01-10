@@ -1,3 +1,7 @@
 [book]
 title = "Nomad"
 authors = ["André Peters"]
+
+[output.html]
+additional-css = ["style.css"]
+additional-js = ["sidebar.js"]

@@ -6,6 +6,11 @@
 
 # Nomad cluster
 - [Encryption](nomad/encryption.md)
+- [Services and folders](nomad/services_and_folders.md)
+- [Configuration](nomad/server_config.md)
+  - [Server agent configuration](nomad/server_config.md)
+  - [Client agent configuration](nomad/client_config.md)
+  - [Accessing the client](nomad/client_agent_access.md)
 
 # System Jobs
 - [Nginx](system/nginx.md)
