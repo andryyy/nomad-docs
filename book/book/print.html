@@ -1248,10 +1248,10 @@ job &quot;sync&quot; {
       name     = &quot;mutagen&quot;
       port     = &quot;mutagen&quot;
       provider = &quot;nomad&quot;
-      # tags = [&quot;public-http&quot;, jsonencode({
-      #   path = &quot;/mutagen/status.json&quot;,
-      #   limit_except = &quot;GET&quot;
-      # })]
+      tags = [&quot;public-http&quot;, jsonencode({
+        path = &quot;/mutagen/&quot;,
+        limit_except = &quot;GET&quot;
+      })]
     }
 
     task &quot;project&quot; {
@@ -1285,8 +1285,8 @@ BACKGROUND_TASKS=
 [ -f /root/.mutagen/daemon/daemon.lock ] &amp;&amp; rm /root/.mutagen/daemon/daemon.*
 apt update
 apt upgrade -y
-apt install -y openssh-client jq curl libuv1-dev libssl-dev
-pip install socketify
+apt install -y openssh-client jq curl
+pip install flask
 
 #~
 #~ Generic functions
@@ -1365,10 +1365,10 @@ Resetting...&quot;
   done
 }
 
-mutagen_socketify() {
+mutagen_flask() {
   while true; do
-    log_msg &quot;Spawned socketify listener for Mutagen&quot;
-    python local/socketify-app.py
+    log_msg &quot;Spawned flask listener for Mutagen&quot;
+    flask --app local/flask-app.py run --host=0.0.0.0 --port=8082
   done
 }
 
@@ -1428,13 +1428,13 @@ BACKGROUND_TASKS+=$PID:
 
 (
 while true; do
-  if ! mutagen_socketify; then
-    log_msg &quot;mutagen_socketify error&quot;
+  if ! mutagen_flask; then
+    log_msg &quot;mutagen_flask error&quot;
   fi
 done
 ) &amp;
 PID=$!
-log_msg &quot;Spawned mutagen_socketify with PID $PID&quot;
+log_msg &quot;Spawned mutagen_flask with PID $PID&quot;
 BACKGROUND_TASKS+=$PID:
 
 (
@@ -1518,55 +1518,46 @@ EOF
 
       template {
         data = &lt;&lt;EOF
-from socketify import App
+from flask import Flask, Response
 import subprocess
 import json
 
-def mutagen_json(res, req):
-  print(f&quot;Request headers: {req.get_headers()}&quot;)
-  res.write_header(&quot;Content-Type&quot;, &quot;application/json&quot;)
+app = Flask(__name__)
+
+@app.route(&quot;/mutagen/status.json&quot;)
+def mutagen_json():
   ret = subprocess.check_output([&quot;local/mutagen&quot;, &quot;sync&quot;, &quot;list&quot;, &quot;--template&quot;, &quot;{{ `{{ json . }}` }}&quot;])
   try:
     json.loads(ret)
-    res.write_status(200).end(ret)
+    return Response(ret, status=200, mimetype=&quot;application/json&quot;)
   except:
-    res.write_status(503).end(json.dumps({&quot;status&quot;: &quot;cannot decode mutagen response&quot;}))
+    return Response('{&quot;status&quot;: &quot;cannot decode mutagen response&quot;}', status=503, mimetype=&quot;application/json&quot;)
 
-def mutagen_flush(res, req):
-  print(f&quot;Request headers: {req.get_headers()}&quot;)
-  res.write_header(&quot;Content-Type&quot;, &quot;text/plain&quot;)
+@app.route(&quot;/mutagen/flush&quot;)
+def mutagen_flush():
   ret = subprocess.run([&quot;local/mutagen&quot;, &quot;project&quot;, &quot;flush&quot;, &quot;-f&quot;, &quot;/local/mutagen.yml&quot;],
     stdout=subprocess.DEVNULL,
     stderr=subprocess.DEVNULL)
   if ret.returncode == 0:
-    res.write_status(200).end(&quot;&quot;)
+    return Response(str(ret.returncode), status=200, mimetype=&quot;text/plain&quot;)
   else:
-    res.write_status(503).end(&quot;&quot;)
+    return Response(str(ret.returncode), status=500, mimetype=&quot;text/plain&quot;)
 
-def mutagen_health(res, req):
-  print(f&quot;Request headers: {req.get_headers()}&quot;)
-  res.write_header(&quot;Content-Type&quot;, &quot;application/json&quot;)
+@app.route(&quot;/mutagen/health.json&quot;)
+def mutagen_health():
   ret = subprocess.check_output([&quot;local/mutagen&quot;, &quot;sync&quot;, &quot;list&quot;, &quot;--template&quot;, &quot;{{ `{{ json . }}` }}&quot;])
   try:
     for job in json.loads(ret):
       for data in [job[&quot;alpha&quot;][&quot;scanned&quot;], job[&quot;alpha&quot;][&quot;connected&quot;], job[&quot;beta&quot;][&quot;scanned&quot;], job[&quot;beta&quot;][&quot;connected&quot;]]:
         if data != True:
-          res.write_status(500).end(json.dumps({&quot;status&quot;: &quot;unhealthy: at least one node is not connected or has not finished a scan&quot;}))
+          return Response('{&quot;status&quot;: &quot;unhealthy: at least one node is not connected or has not finished a scan&quot;}', status=500, mimetype=&quot;application/json&quot;)
       if job[&quot;status&quot;] != &quot;watching&quot;:
-        res.write_status(500).end(json.dumps({&quot;status&quot;: &quot;unhealthy: at least one node is not in watching mode&quot;}))
-    res.write_status(200).end(json.dumps({&quot;status&quot;: &quot;healthy&quot;}))
+        return Response('{&quot;status&quot;: &quot;unhealthy: at least one node is not in watching mode&quot;}', status=500, mimetype=&quot;application/json&quot;)
+    return Response('{&quot;status&quot;: &quot;healthy&quot;}', status=200, mimetype=&quot;application/json&quot;)
   except:
-    res.write_status(503).end(json.dumps({&quot;status&quot;: &quot;cannot decode mutagen response&quot;}))
-
-app = App()
-app.get(&quot;/mutagen/status.json&quot;, mutagen_json)
-app.get(&quot;/mutagen/health.json&quot;, mutagen_health)
-app.get(&quot;/mutagen/flush&quot;, mutagen_flush)
-app.any(&quot;/*&quot;, mutagen_json)
-app.listen(8082, lambda config: print(&quot;socketify-app listening on port %d\n&quot; % config.port),)
-app.run()
+    return Response('{&quot;status&quot;: &quot;cannot decode mutagen response&quot;}', status=503, mimetype=&quot;application/json&quot;)
 EOF
-        destination   = &quot;local/socketify-app.py&quot;
+        destination   = &quot;local/flask-app.py&quot;
         change_mode   = &quot;restart&quot;
       }
 
@@ -1658,8 +1649,6 @@ EOF
       template {
         data = &lt;&lt;EOF
 MUTAGEN_HTTP=http://{{ with nomadService &quot;mutagen&quot; }}{{ with index . 0 }}{{ .Address }}:{{ .Port }}{{ end }}{{ end }}/mutagen/health.json
-MUTAGEN_EXPECTED_JOBS={{ subtract 1 (len (nomadService &quot;sshd&quot;)) }}
-SSHD_JOBS={{ len (nomadService &quot;sshd&quot;) }}
 EOF
         destination = &quot;local/file.env&quot;
         env = true
@@ -1667,6 +1656,32 @@ EOF
 
       lifecycle {
         hook    = &quot;prestart&quot;
+        sidecar = false
+      }
+    }
+
+    task &quot;sync-check-poststop&quot; {
+      driver = &quot;docker&quot;
+      config {
+        image = &quot;curlimages/curl&quot;
+        entrypoint = [&quot;/bin/sh&quot;]
+        args    = [&quot;-c&quot;, &lt;&lt;EOF
+echo &quot;Flushing Mutagen cache...&quot;
+echo -n &quot;Return code: &quot;
+curl $MUTAGEN_HTTP
+EOF
+]
+      }
+      template {
+        data = &lt;&lt;EOF
+MUTAGEN_HTTP=http://{{ with nomadService &quot;mutagen&quot; }}{{ with index . 0 }}{{ .Address }}:{{ .Port }}{{ end }}{{ end }}/mutagen/flush
+EOF
+        destination = &quot;local/file.env&quot;
+        env = true
+      }
+
+      lifecycle {
+        hook    = &quot;poststop&quot;
         sidecar = false
       }
     }

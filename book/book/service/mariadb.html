@@ -206,8 +206,6 @@ EOF
       template {
         data = &lt;&lt;EOF
 MUTAGEN_HTTP=http://{{ with nomadService &quot;mutagen&quot; }}{{ with index . 0 }}{{ .Address }}:{{ .Port }}{{ end }}{{ end }}/mutagen/health.json
-MUTAGEN_EXPECTED_JOBS={{ subtract 1 (len (nomadService &quot;sshd&quot;)) }}
-SSHD_JOBS={{ len (nomadService &quot;sshd&quot;) }}
 EOF
         destination = &quot;local/file.env&quot;
         env = true
@@ -215,6 +213,32 @@ EOF
 
       lifecycle {
         hook    = &quot;prestart&quot;
+        sidecar = false
+      }
+    }
+
+    task &quot;sync-check-poststop&quot; {
+      driver = &quot;docker&quot;
+      config {
+        image = &quot;curlimages/curl&quot;
+        entrypoint = [&quot;/bin/sh&quot;]
+        args    = [&quot;-c&quot;, &lt;&lt;EOF
+echo &quot;Flushing Mutagen cache...&quot;
+echo -n &quot;Return code: &quot;
+curl $MUTAGEN_HTTP
+EOF
+]
+      }
+      template {
+        data = &lt;&lt;EOF
+MUTAGEN_HTTP=http://{{ with nomadService &quot;mutagen&quot; }}{{ with index . 0 }}{{ .Address }}:{{ .Port }}{{ end }}{{ end }}/mutagen/flush
+EOF
+        destination = &quot;local/file.env&quot;
+        env = true
+      }
+
+      lifecycle {
+        hook    = &quot;poststop&quot;
         sidecar = false
       }
     }
