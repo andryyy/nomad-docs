@@ -1373,43 +1373,15 @@ mutagen_flask() {
 }
 
 mutagen_conflicts() {
-  prev_err=0
+  # Settle...
+  sleep 10
   while true; do
-
-    alpha_sync_problems=$(local/mutagen sync list --template &quot;{{ range . }}{{ json . }}{{ end }}&quot; | \
-      jq '{host: .alpha.host, problems: (try .alpha.scanProblems[])}')
-    beta_sync_problems=$(local/mutagen sync list --template &quot;{{ range . }}{{ json . }}{{ end }}&quot; | \
-      jq '{host: .beta.host, problems: (try .beta.scanProblems[])}')
-
-    if [[ ! -z &quot;$alpha_sync_problems&quot; ]] || \
-       [[ ! -z &quot;$beta_sync_problems&quot; ]]; then
-
-      prev_err=1
-
-      log_msg &quot;Detected scan problems:
-$(printf &quot;%s\n%s\n&quot; &quot;$alpha_sync_problems&quot; &quot;$beta_sync_problems&quot;)
-Trying to fix problems...&quot;
-
-      tmp_file=$(mktemp)
-      local/mutagen sync list --template &quot;{{ range . }}{{ json . }}{{ end }}&quot; | jq '
-      (&quot;ssh -p &quot; + (.alpha.port|tostring) + &quot; user@&quot; + .alpha.host + &quot; sudo /usr/local/sbin/permfix &quot;) as $alpha |
-      (&quot;ssh -p &quot; + (.beta.port|tostring) + &quot; user@&quot; + .beta.host + &quot; sudo /usr/local/sbin/permfix &quot;) as $beta |
-        ($alpha) + (&quot;/shared-data/&quot; + try .alpha.scanProblems[].path | @base64 + &quot;;&quot;),
-        ($beta) + (&quot;/shared-data/&quot; + try .beta.scanProblems[].path | @base64 + &quot;;&quot;)' -r &gt; $tmp_file
-      bash $tmp_file
-      rm $tmp_file
-
-    else
-      if [ $prev_err -eq 1 ]; then
-        log_msg &quot;✅ - Fixed scan problems&quot;
-      fi
-      prev_err=0
+    if ! curl -s --fail -o /dev/null http://localhost:8082/mutagen/scanproblems/report; then
+      curl -s http://localhost:8082/mutagen/scanproblems/fix | log_msg
     fi
-
     sleep 5
   done
 }
-
 
 #~
 #~ Spawn workers
@@ -1521,7 +1493,11 @@ EOF
 from flask import Flask, Response
 import subprocess
 import json
+import base64
+import locale
+import os
 
+enc = locale.getpreferredencoding()
 app = Flask(__name__)
 
 @app.route(&quot;/mutagen/status.json&quot;)
@@ -1543,6 +1519,57 @@ def mutagen_flush():
   else:
     return Response(str(ret.returncode), status=500, mimetype=&quot;text/plain&quot;)
 
+# Returns 409 on conflicts else 200; 503 if mutagen cmd fails
+# Report-only on do == &quot;report&quot; anything else will attempt to auto-fix
+@app.route(&quot;/mutagen/scanproblems/&lt;do&gt;&quot;)
+def mutagen_problems(do):
+  ret = subprocess.check_output([&quot;local/mutagen&quot;, &quot;sync&quot;, &quot;list&quot;, &quot;--template&quot;, &quot;{{ `{{ json . }}` }}&quot;])
+  try:
+    response = {}
+    response[&quot;problems&quot;] = []
+    for job in json.loads(ret):
+      for site in [&quot;alpha&quot;, &quot;beta&quot;]:
+        if job[site].get(&quot;scanProblems&quot;):
+          for problem in job[site].get(&quot;scanProblems&quot;):
+            path = problem.get(&quot;path&quot;)
+            if do == &quot;report&quot;:
+              response[&quot;problems&quot;].append({
+                &quot;path&quot;: path,
+                &quot;report_only&quot;: True,
+                &quot;host&quot;: job[site][&quot;host&quot;]
+              })
+              continue
+            if not os.path.abspath(&quot;/shared-data/&quot; + path).startswith(&quot;/shared-data/&quot;):
+              response[&quot;problems&quot;].append({
+                &quot;path&quot;: path,
+                &quot;report_only&quot;: True,
+                &quot;error&quot;: &quot;illegal path&quot;,
+                &quot;host&quot;: job[site][&quot;host&quot;]
+              })
+              continue
+
+            # Start fix logic
+            ssh_user = job[site][&quot;user&quot;]
+            ssh_host = job[site][&quot;host&quot;]
+            ssh_port = job[site][&quot;port&quot;]
+            problem_path_bytes = (&quot;/shared-data/&quot; + path).encode(enc)
+            problem_path_base64 = base64.b64encode(problem_path_bytes).decode(enc)
+
+            command = f&quot;ssh -p {ssh_port} {ssh_user}@{ssh_host} sudo /usr/local/sbin/permfix {problem_path_base64}&quot;
+            ret = subprocess.run(command.split(), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+            response[&quot;problems&quot;].append({
+              &quot;path&quot;: path,
+              &quot;permix_return_code&quot;: ret.returncode,
+              &quot;host&quot;: job[site][&quot;host&quot;]
+            })
+
+    return_code = 409 if response[&quot;problems&quot;] else 200
+    return Response(json.dumps(response), status=return_code, mimetype=&quot;application/json&quot;)
+
+  except Exception as err:
+    return Response('{&quot;status&quot;: &quot;cannot decode mutagen response&quot;}', status=503, mimetype=&quot;application/json&quot;)
+
 @app.route(&quot;/mutagen/health.json&quot;)
 def mutagen_health():
   ret = subprocess.check_output([&quot;local/mutagen&quot;, &quot;sync&quot;, &quot;list&quot;, &quot;--template&quot;, &quot;{{ `{{ json . }}` }}&quot;])
@@ -1553,6 +1580,8 @@ def mutagen_health():
           return Response('{&quot;status&quot;: &quot;unhealthy: at least one node is not connected or has not finished a scan&quot;}', status=500, mimetype=&quot;application/json&quot;)
       if job[&quot;status&quot;] != &quot;watching&quot;:
         return Response('{&quot;status&quot;: &quot;unhealthy: at least one node is not in watching mode&quot;}', status=500, mimetype=&quot;application/json&quot;)
+      if job[&quot;alpha&quot;].get(&quot;scanProblems&quot;) or job[&quot;beta&quot;].get(&quot;scanProblems&quot;):
+        return Response('{&quot;status&quot;: &quot;unhealthy: at least one node reports scan problems&quot;}', status=500, mimetype=&quot;application/json&quot;)
     return Response('{&quot;status&quot;: &quot;healthy&quot;}', status=200, mimetype=&quot;application/json&quot;)
   except:
     return Response('{&quot;status&quot;: &quot;cannot decode mutagen response&quot;}', status=503, mimetype=&quot;application/json&quot;)
@@ -1589,147 +1618,7 @@ EOH
   }
 }
 </code></pre>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="mariadb-job-file"><a class="header" href="#mariadb-job-file">MariaDB job file</a></h1>
-<pre><code class="language-bash">job &quot;databases&quot; {
-  datacenters = [&quot;falkenstein&quot;]
-  type = &quot;service&quot;
-
-  group &quot;mariadb&quot; {
-    count = 1
-
-    volume &quot;shared-data&quot; {
-      type = &quot;host&quot;
-      source = &quot;shared-data&quot;
-      read_only = false
-    }
-
-    network {
-      mode = &quot;bridge&quot;
-      port &quot;mariadb&quot; {
-        host_network = &quot;nomad-clients&quot;
-        to = 3306
-      }
-    }
-
-    service {
-      name     = &quot;mariadb&quot;
-      port     = &quot;mariadb&quot;
-      provider = &quot;nomad&quot;
-      check {
-        name     = &quot;mariadb_probe&quot;
-        type     = &quot;tcp&quot;
-        interval = &quot;10s&quot;
-        timeout  = &quot;2s&quot;
-      }
-    }
-
-    task &quot;sync-check-prestart&quot; {
-      driver = &quot;docker&quot;
-      config {
-        image = &quot;curlimages/curl&quot;
-        entrypoint = [&quot;/bin/sh&quot;]
-        args    = [&quot;-c&quot;, &lt;&lt;EOF
-i=0
-while true; do
-  i=$((i+1))
-  if curl --output /dev/null --silent --head -m 3 --fail $MUTAGEN_HTTP; then
-    echo &quot;Loop $i: Mutagen is healthy.&quot;
-    exit 0
-  fi
-  if [ $i -gt 10 ]; then
-    echo &quot;Loop $i: Mutagen is unhealthy, giving up.&quot;
-    exit 1
-  fi
-  echo &quot;Loop $i: Mutagen is unhealthy, trying again...&quot;
-  sleep 3
-done
-EOF
-]
-      }
-      template {
-        data = &lt;&lt;EOF
-MUTAGEN_HTTP=http://{{ with nomadService &quot;mutagen&quot; }}{{ with index . 0 }}{{ .Address }}:{{ .Port }}{{ end }}{{ end }}/mutagen/health.json
-EOF
-        destination = &quot;local/file.env&quot;
-        env = true
-      }
-
-      lifecycle {
-        hook    = &quot;prestart&quot;
-        sidecar = false
-      }
-    }
-
-    task &quot;sync-check-poststop&quot; {
-      driver = &quot;docker&quot;
-      config {
-        image = &quot;curlimages/curl&quot;
-        entrypoint = [&quot;/bin/sh&quot;]
-        args    = [&quot;-c&quot;, &lt;&lt;EOF
-echo &quot;Flushing Mutagen cache...&quot;
-echo -n &quot;Return code: &quot;
-curl $MUTAGEN_HTTP
-EOF
-]
-      }
-      template {
-        data = &lt;&lt;EOF
-MUTAGEN_HTTP=http://{{ with nomadService &quot;mutagen&quot; }}{{ with index . 0 }}{{ .Address }}:{{ .Port }}{{ end }}{{ end }}/mutagen/flush
-EOF
-        destination = &quot;local/file.env&quot;
-        env = true
-      }
-
-      lifecycle {
-        hook    = &quot;poststop&quot;
-        sidecar = false
-      }
-    }
-
-    task &quot;itkram&quot; {
-      driver = &quot;docker&quot;
-      env {
-        PUID = &quot;1000&quot;
-        PGID = &quot;1000&quot;
-        UMASK = &quot;0066&quot;
-        TZ = &quot;Europe/Berlin&quot;
-        DATADIR = &quot;/shared-data/itkram_db&quot;
-      }
-      config {
-        image = &quot;linuxserver/mariadb&quot;
-        ports = [&quot;mariadb&quot;]
-        volumes = [
-          &quot;config:/config&quot;,
-          &quot;custom-init-d:/custom-cont-init.d&quot;
-        ]
-      }
-      logs {
-        max_files     = 10
-        max_file_size = 15
-      }
-      template {
-        data = &lt;&lt;EOH
-{{ with nomadVar &quot;nomad/jobs/databases/mariadb/itkram&quot; }}{{ .config_env }}{{ end }}
-EOH
-        destination = &quot;config/env&quot;
-        change_mode   = &quot;restart&quot;
-      }
-      volume_mount {
-        volume      = &quot;shared-data&quot;
-        destination = &quot;/shared-data&quot;
-      }
-      template {
-        data = &lt;&lt;EOH
-# Here if you need me
-echo &quot;I am alive&quot;
-EOH
-        destination = &quot;custom-init-d/prepare&quot;
-        perms = &quot;755&quot;
-      }
-    }
-  }
-}
-</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="mariadb"><a class="header" href="#mariadb">MariaDB</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="damon"><a class="header" href="#damon">Damon</a></h1>
 <p>There currently isn't an official release nor a pre-built binary to download, so I compiled it myself:</p>
 <ul>
