@@ -83,7 +83,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Prepare environment</li><li class="chapter-item expanded "><a href="preparation.html"><strong aria-hidden="true">1.</strong> Preparation</a></li><li class="chapter-item expanded "><a href="basic-setup.html"><strong aria-hidden="true">2.</strong> Basic setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Nomad cluster</li><li class="chapter-item expanded "><a href="nomad/encryption.html"><strong aria-hidden="true">3.</strong> Encryption</a></li><li class="chapter-item expanded "><a href="nomad/services_and_folders.html"><strong aria-hidden="true">4.</strong> Services and folders</a></li><li class="chapter-item expanded "><a href="nomad/server_config.html"><strong aria-hidden="true">5.</strong> Configuration</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="nomad/server_config.html"><strong aria-hidden="true">5.1.</strong> Server agent configuration</a></li><li class="chapter-item expanded "><a href="nomad/client_config.html"><strong aria-hidden="true">5.2.</strong> Client agent configuration</a></li><li class="chapter-item expanded "><a href="nomad/client_agent_access.html"><strong aria-hidden="true">5.3.</strong> Accessing the client</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">System Jobs</li><li class="chapter-item expanded "><a href="system/nginx.html"><strong aria-hidden="true">6.</strong> Nginx</a></li><li class="chapter-item expanded "><a href="system/sshd.html"><strong aria-hidden="true">7.</strong> SSHd</a></li><li class="chapter-item expanded affix "><li class="part-title">Service jobs</li><li class="chapter-item expanded "><a href="service/sync.html"><strong aria-hidden="true">8.</strong> Mutagen</a></li><li class="chapter-item expanded "><a href="service/mariadb.html"><strong aria-hidden="true">9.</strong> Databases</a></li><li class="chapter-item expanded affix "><li class="part-title">Tools</li><li class="chapter-item expanded "><a href="tools/damon.html"><strong aria-hidden="true">10.</strong> Damon</a></li><li class="chapter-item expanded "><a href="tools/wander.html"><strong aria-hidden="true">11.</strong> Wander</a></li><li class="chapter-item expanded affix "><li class="part-title">Scripts</li><li class="chapter-item expanded "><a href="scripts/quick-enter.html"><strong aria-hidden="true">12.</strong> Quick-enter containers</a></li><li class="chapter-item expanded affix "><li class="part-title">Server debug</li><li class="chapter-item expanded "><a href="server_debug/services.html"><strong aria-hidden="true">13.</strong> Nomad services</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Prepare environment</li><li class="chapter-item expanded "><a href="preparation.html"><strong aria-hidden="true">1.</strong> Preparation</a></li><li class="chapter-item expanded "><a href="basic-setup.html"><strong aria-hidden="true">2.</strong> Basic setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Nomad cluster</li><li class="chapter-item expanded "><a href="nomad/encryption.html"><strong aria-hidden="true">3.</strong> Encryption</a></li><li class="chapter-item expanded "><a href="nomad/services_and_folders.html"><strong aria-hidden="true">4.</strong> Services and folders</a></li><li class="chapter-item expanded "><a href="nomad/server_config.html"><strong aria-hidden="true">5.</strong> Configuration</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="nomad/server_config.html"><strong aria-hidden="true">5.1.</strong> Server agent configuration</a></li><li class="chapter-item expanded "><a href="nomad/client_config.html"><strong aria-hidden="true">5.2.</strong> Client agent configuration</a></li><li class="chapter-item expanded "><a href="nomad/client_agent_access.html"><strong aria-hidden="true">5.3.</strong> Accessing the client</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">System Jobs</li><li class="chapter-item expanded "><a href="system/nginx.html"><strong aria-hidden="true">6.</strong> Nginx</a></li><li class="chapter-item expanded "><a href="system/sshd.html"><strong aria-hidden="true">7.</strong> SSHd</a></li><li class="chapter-item expanded affix "><li class="part-title">Service jobs</li><li class="chapter-item expanded "><a href="service/sync.html"><strong aria-hidden="true">8.</strong> Mutagen</a></li><li class="chapter-item expanded "><a href="service/databases.html"><strong aria-hidden="true">9.</strong> Databases</a></li><li class="chapter-item expanded affix "><li class="part-title">Tools</li><li class="chapter-item expanded "><a href="tools/damon.html"><strong aria-hidden="true">10.</strong> Damon</a></li><li class="chapter-item expanded "><a href="tools/wander.html"><strong aria-hidden="true">11.</strong> Wander</a></li><li class="chapter-item expanded affix "><li class="part-title">Scripts</li><li class="chapter-item expanded "><a href="scripts/quick-enter.html"><strong aria-hidden="true">12.</strong> Quick-enter containers</a></li><li class="chapter-item expanded affix "><li class="part-title">Server debug</li><li class="chapter-item expanded "><a href="server_debug/services.html"><strong aria-hidden="true">13.</strong> Nomad services</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -1618,7 +1618,308 @@ EOH
   }
 }
 </code></pre>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="databases"><a class="header" href="#databases">Databases</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="databases--caches-job-file"><a class="header" href="#databases--caches-job-file">Databases &amp; caches job file</a></h1>
+<pre><code class="language-bash">job &quot;databases&quot; {
+  datacenters = [&quot;falkenstein&quot;]
+  type = &quot;service&quot;
+
+  group &quot;cache&quot; {
+    count = 1
+
+    restart {
+      attempts = 5
+      interval = &quot;1m&quot;
+      delay = &quot;10s&quot;
+      mode = &quot;fail&quot;
+    }
+
+    network {
+      mode = &quot;bridge&quot;
+      port &quot;redis&quot; {
+        host_network = &quot;nomad-clients&quot;
+        to = 6379
+      }
+    }
+
+    service {
+      name     = &quot;redis&quot;
+      port     = &quot;redis&quot;
+      provider = &quot;nomad&quot;
+      check {
+        name     = &quot;redis_probe&quot;
+        type     = &quot;tcp&quot;
+        interval = &quot;10s&quot;
+        timeout  = &quot;2s&quot;
+      }
+    }
+
+    task &quot;redis&quot; {
+      driver = &quot;docker&quot;
+      env {
+        TZ = &quot;Europe/Berlin&quot;
+      }
+      config {
+        image = &quot;redis:latest&quot;
+        ports = [&quot;redis&quot;]
+      }
+    }
+  }
+
+  group &quot;index&quot; {
+    count = 1
+
+    restart {
+      attempts = 5
+      interval = &quot;1m&quot;
+      delay = &quot;10s&quot;
+      mode = &quot;fail&quot;
+    }
+
+    network {
+      mode = &quot;bridge&quot;
+      port &quot;sonic&quot; {
+        host_network = &quot;nomad-clients&quot;
+        to = 1491
+      }
+    }
+
+    service {
+      name     = &quot;sonic&quot;
+      port     = &quot;sonic&quot;
+      provider = &quot;nomad&quot;
+      check {
+        name     = &quot;sonic_probe&quot;
+        type     = &quot;tcp&quot;
+        interval = &quot;10s&quot;
+        timeout  = &quot;2s&quot;
+      }
+    }
+
+    volume &quot;shared-data&quot; {
+      type = &quot;host&quot;
+      source = &quot;shared-data&quot;
+      read_only = false
+    }
+
+    task &quot;sonic&quot; {
+      driver = &quot;docker&quot;
+      env {
+        TZ = &quot;Europe/Berlin&quot;
+      }
+      config {
+        image = &quot;valeriansaliou/sonic:latest&quot;
+        ports = [&quot;sonic&quot;]
+        command = &quot;sonic&quot;
+        args = [&quot;-c&quot;, &quot;/etc/sonic/sonic.cfg&quot;]
+        volumes = [
+          &quot;sonic:/etc/sonic&quot;,
+        ]
+      }
+      volume_mount {
+        volume      = &quot;shared-data&quot;
+        destination = &quot;/shared-data&quot;
+      }
+      user = &quot;1000:1000&quot;
+      template {
+        data = &lt;&lt;EOF
+{{ with nomadVar &quot;nomad/jobs/databases/index/sonic&quot; }}{{ .sonic_env }}{{ end }}
+EOF
+        destination = &quot;local/file.env&quot;
+        perms = &quot;600&quot;
+        uid = 1000
+        gid = 1000
+        env = true
+      }
+      template {
+        data = &lt;&lt;EOF
+[server]
+log_level = &quot;info&quot;
+
+[channel]
+inet = &quot;0.0.0.0:1491&quot;
+tcp_timeout = 300
+auth_password = &quot;{{ `${env.SONIC_SECRET}` }}&quot;
+
+[channel.search]
+query_limit_default = 50
+query_limit_maximum = 200
+query_alternates_try = 4
+
+suggest_limit_default = 5
+suggest_limit_maximum = 20
+
+list_limit_default = 100
+list_limit_maximum = 500
+
+[store]
+[store.kv]
+path = &quot;/shared-data/sonic/store/kv/&quot;
+retain_word_objects = 1000
+
+[store.kv.pool]
+inactive_after = 1800
+
+[store.kv.database]
+flush_after = 500
+compress = true
+parallelism = 4
+max_files = 100
+max_compactions = 1
+max_flushes = 1
+write_buffer = 32768
+write_ahead_log = true
+
+[store.fst]
+path = &quot;/shared-data/sonic/store/fst/&quot;
+
+[store.fst.pool]
+inactive_after = 300
+
+[store.fst.graph]
+consolidate_after = 180
+max_size = 2048
+max_words = 250000
+EOF
+        destination = &quot;sonic/sonic.cfg&quot;
+      }
+    }
+  }
+
+  group &quot;mariadb&quot; {
+    count = 1
+
+    volume &quot;shared-data&quot; {
+      type = &quot;host&quot;
+      source = &quot;shared-data&quot;
+      read_only = false
+    }
+
+    network {
+      mode = &quot;bridge&quot;
+      port &quot;mariadb&quot; {
+        host_network = &quot;nomad-clients&quot;
+        to = 3306
+      }
+    }
+
+    service {
+      name     = &quot;mariadb&quot;
+      port     = &quot;mariadb&quot;
+      provider = &quot;nomad&quot;
+      check {
+        name     = &quot;mariadb_probe&quot;
+        type     = &quot;tcp&quot;
+        interval = &quot;10s&quot;
+        timeout  = &quot;2s&quot;
+      }
+    }
+
+    task &quot;sync-check-prestart&quot; {
+      driver = &quot;exec&quot;
+      config {
+        command = &quot;/bin/sh&quot;
+        args    = [&quot;-c&quot;, &lt;&lt;EOF
+i=0
+while true; do
+  i=$((i+1))
+  curl --output /dev/null --silent --head -m 3 --fail $MUTAGEN_HTTP &amp;&amp; { echo &quot;Loop $i: Mutagen is healthy.&quot;; exit 0; }
+  [ $i -gt 10 ] &amp;&amp; { echo &quot;Loop $i: Mutagen is unhealthy, giving up.&quot;; exit 1; }
+  echo &quot;Loop $i: Mutagen is unhealthy, trying again...&quot; ; sleep 3 ;
+done
+EOF
+]
+      }
+      template {
+        data = &lt;&lt;EOF
+MUTAGEN_HTTP=http://{{ with nomadService &quot;mutagen&quot; }}{{ with index . 0 }}{{ .Address }}:{{ .Port }}{{ end }}{{ end }}/mutagen/health.json
+EOF
+        destination = &quot;local/file.env&quot;
+        env = true
+      }
+
+      lifecycle {
+        hook    = &quot;prestart&quot;
+        sidecar = false
+      }
+    }
+
+    task &quot;sync-check-poststop&quot; {
+      driver = &quot;exec&quot;
+      config {
+        command = &quot;/bin/sh&quot;
+        args    = [&quot;-c&quot;, &lt;&lt;EOF
+echo &quot;Flushing Mutagen cache...&quot;
+echo -n &quot;Return code: &quot;
+curl $MUTAGEN_HTTP
+EOF
+]
+      }
+      template {
+        data = &lt;&lt;EOF
+MUTAGEN_HTTP=http://{{ with nomadService &quot;mutagen&quot; }}{{ with index . 0 }}{{ .Address }}:{{ .Port }}{{ end }}{{ end }}/mutagen/flush
+EOF
+        destination = &quot;local/file.env&quot;
+        env = true
+      }
+
+      lifecycle {
+        hook    = &quot;poststop&quot;
+        sidecar = false
+      }
+    }
+
+    task &quot;mariadb&quot; {
+      driver = &quot;docker&quot;
+      env {
+        PUID = &quot;1000&quot;
+        PGID = &quot;1000&quot;
+        UMASK = &quot;0066&quot;
+        TZ = &quot;Europe/Berlin&quot;
+        DATADIR = &quot;/shared-data/mariadb&quot;
+      }
+      config {
+        image = &quot;linuxserver/mariadb&quot;
+        ports = [&quot;mariadb&quot;]
+        volumes = [
+          &quot;config:/config&quot;,
+          &quot;custom-init-d:/custom-cont-init.d&quot;
+        ]
+      }
+      logs {
+        max_files     = 10
+        max_file_size = 15
+      }
+      template {
+        data = &lt;&lt;EOH
+# todo: use task name
+{{ with nomadVar &quot;nomad/jobs/databases/mariadb/mariadb&quot; }}{{ .mariadb_env }}{{ end }}
+EOH
+        destination = &quot;config/env&quot;
+        change_mode   = &quot;restart&quot;
+      }
+      volume_mount {
+        volume      = &quot;shared-data&quot;
+        destination = &quot;/shared-data&quot;
+      }
+      template {
+        data = &lt;&lt;EOH
+# Here if you need me
+#/bin/sh
+echo &quot;Starting backup...&quot;
+if [ -d &quot;/shared-data/mariadb&quot; ]; then
+  echo &quot;Found directory&quot;
+  source /config/env
+  mariabackup -uroot -p$MYSQL_ROOT_PASSWORD --backup--target-dir=/shared-data/mariadb-backup
+  mariabackup -uroot -p$MYSQL_ROOT_PASSWORD --prepare --target-dir=/shared-data/mariadb-backup
+fi
+EOH
+        destination = &quot;custom-init-d/prepare&quot;
+        perms = &quot;755&quot;
+      }
+    }
+  }
+}
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="damon"><a class="header" href="#damon">Damon</a></h1>
 <p>There currently isn't an official release nor a pre-built binary to download, so I compiled it myself:</p>
 <ul>
