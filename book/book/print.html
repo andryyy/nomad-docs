@@ -1257,9 +1257,7 @@ sed -i 's/2222/{{ env $task_name_var }}/' /var/run/service/svc-openssh-server/ru
 </code></pre>
 <h2 id="sshdnomad"><a class="header" href="#sshdnomad">sshd.nomad</a></h2>
 <p><strong>Filename</strong>: <code>sshd/sshd.nomad</code></p>
-<pre><code class="language-bash">
-
-job &quot;sshd&quot; {
+<pre><code class="language-bash">job &quot;sshd&quot; {
 
   datacenters = [&quot;falkenstein&quot;]
   type = &quot;system&quot;
