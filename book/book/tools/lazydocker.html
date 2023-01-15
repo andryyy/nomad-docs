@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Nomad services - Nomad</title>
+        <title>Lazydocker - Nomad</title>
 
 
         <!-- Custom HTML head -->
@@ -82,7 +82,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Prepare environment</li><li class="chapter-item expanded "><a href="../preparation.html"><strong aria-hidden="true">1.</strong> Preparation</a></li><li class="chapter-item expanded "><a href="../basic-setup.html"><strong aria-hidden="true">2.</strong> Basic setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Nomad cluster</li><li class="chapter-item expanded "><a href="../nomad/encryption.html"><strong aria-hidden="true">3.</strong> Encryption</a></li><li class="chapter-item expanded "><a href="../nomad/services_and_folders.html"><strong aria-hidden="true">4.</strong> Services and folders</a></li><li class="chapter-item expanded "><a href="../nomad/server_config.html"><strong aria-hidden="true">5.</strong> Configuration</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../nomad/server_config.html"><strong aria-hidden="true">5.1.</strong> Server agent configuration</a></li><li class="chapter-item expanded "><a href="../nomad/client_config.html"><strong aria-hidden="true">5.2.</strong> Client agent configuration</a></li><li class="chapter-item expanded "><a href="../nomad/client_agent_access.html"><strong aria-hidden="true">5.3.</strong> Accessing the client</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">System Jobs</li><li class="chapter-item expanded "><a href="../system/nginx.html"><strong aria-hidden="true">6.</strong> Nginx</a></li><li class="chapter-item expanded "><a href="../system/sshd.html"><strong aria-hidden="true">7.</strong> SSHd</a></li><li class="chapter-item expanded affix "><li class="part-title">Service jobs</li><li class="chapter-item expanded "><a href="../service/sync.html"><strong aria-hidden="true">8.</strong> Mutagen</a></li><li class="chapter-item expanded "><a href="../service/databases.html"><strong aria-hidden="true">9.</strong> Databases</a></li><li class="chapter-item expanded affix "><li class="part-title">Tools</li><li class="chapter-item expanded "><a href="../tools/damon.html"><strong aria-hidden="true">10.</strong> Damon</a></li><li class="chapter-item expanded "><a href="../tools/wander.html"><strong aria-hidden="true">11.</strong> Wander</a></li><li class="chapter-item expanded "><a href="../tools/lazydocker.html"><strong aria-hidden="true">12.</strong> Lazydocker</a></li><li class="chapter-item expanded affix "><li class="part-title">Scripts</li><li class="chapter-item expanded "><a href="../scripts/quick-enter.html"><strong aria-hidden="true">13.</strong> Quick-enter containers</a></li><li class="chapter-item expanded affix "><li class="part-title">Server debug</li><li class="chapter-item expanded "><a href="../server_debug/services.html" class="active"><strong aria-hidden="true">14.</strong> Nomad services</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Prepare environment</li><li class="chapter-item expanded "><a href="../preparation.html"><strong aria-hidden="true">1.</strong> Preparation</a></li><li class="chapter-item expanded "><a href="../basic-setup.html"><strong aria-hidden="true">2.</strong> Basic setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Nomad cluster</li><li class="chapter-item expanded "><a href="../nomad/encryption.html"><strong aria-hidden="true">3.</strong> Encryption</a></li><li class="chapter-item expanded "><a href="../nomad/services_and_folders.html"><strong aria-hidden="true">4.</strong> Services and folders</a></li><li class="chapter-item expanded "><a href="../nomad/server_config.html"><strong aria-hidden="true">5.</strong> Configuration</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../nomad/server_config.html"><strong aria-hidden="true">5.1.</strong> Server agent configuration</a></li><li class="chapter-item expanded "><a href="../nomad/client_config.html"><strong aria-hidden="true">5.2.</strong> Client agent configuration</a></li><li class="chapter-item expanded "><a href="../nomad/client_agent_access.html"><strong aria-hidden="true">5.3.</strong> Accessing the client</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">System Jobs</li><li class="chapter-item expanded "><a href="../system/nginx.html"><strong aria-hidden="true">6.</strong> Nginx</a></li><li class="chapter-item expanded "><a href="../system/sshd.html"><strong aria-hidden="true">7.</strong> SSHd</a></li><li class="chapter-item expanded affix "><li class="part-title">Service jobs</li><li class="chapter-item expanded "><a href="../service/sync.html"><strong aria-hidden="true">8.</strong> Mutagen</a></li><li class="chapter-item expanded "><a href="../service/databases.html"><strong aria-hidden="true">9.</strong> Databases</a></li><li class="chapter-item expanded affix "><li class="part-title">Tools</li><li class="chapter-item expanded "><a href="../tools/damon.html"><strong aria-hidden="true">10.</strong> Damon</a></li><li class="chapter-item expanded "><a href="../tools/wander.html"><strong aria-hidden="true">11.</strong> Wander</a></li><li class="chapter-item expanded "><a href="../tools/lazydocker.html" class="active"><strong aria-hidden="true">12.</strong> Lazydocker</a></li><li class="chapter-item expanded affix "><li class="part-title">Scripts</li><li class="chapter-item expanded "><a href="../scripts/quick-enter.html"><strong aria-hidden="true">13.</strong> Quick-enter containers</a></li><li class="chapter-item expanded affix "><li class="part-title">Server debug</li><li class="chapter-item expanded "><a href="../server_debug/services.html"><strong aria-hidden="true">14.</strong> Nomad services</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -146,18 +146,27 @@
                         <!-- Page table of contents -->
                         <div class="sidetoc"><nav class="pagetoc"></nav></div>
 
-                        <h1 id="nomad-services"><a class="header" href="#nomad-services">Nomad services</a></h1>
-<p>See <a href="https://pkg.go.dev/github.com/hashicorp/consul-template/dependency#NomadService">https://pkg.go.dev/github.com/hashicorp/consul-template/dependency#NomadService</a> for a reference of available keys.</p>
-<p><a href="/services.html">Nomad service overview</a></p>
+                        <h1 id="lazydocker"><a class="header" href="#lazydocker">Lazydocker</a></h1>
+<p><a href="https://github.com/jesseduffield/lazydocker">Lazydocker</a> is a TUI for Docker to quickly access and manage container logs, stats, volumes, and even allows to quickly enter a running container with a shell.</p>
+<p>The latest version can be found <a href="https://github.com/jesseduffield/lazydocker/releases/latest">here</a>.</p>
+<pre><code class="language-bash">wget -O lazydocker.tar.gz https://github.com/jesseduffield/lazydocker/releases/download/v0.20.0/lazydocker_0.20.0_Linux_x86_64.tar.gz
+tar xfz lazydocker.tar.gz --directory=.
+for nomad in $(jq -r keys[] ~/nomad-env.json); do
+  scp lazydocker $nomad:/usr/local/sbin/lazydocker
+done
+</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../scripts/quick-enter.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../tools/wander.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
+                            <a rel="next" href="../scripts/quick-enter.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -165,10 +174,13 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../scripts/quick-enter.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../tools/wander.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
+                    <a rel="next" href="../scripts/quick-enter.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
             </nav>
 
         </div>

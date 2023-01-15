@@ -82,7 +82,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Prepare environment</li><li class="chapter-item expanded "><a href="../preparation.html"><strong aria-hidden="true">1.</strong> Preparation</a></li><li class="chapter-item expanded "><a href="../basic-setup.html"><strong aria-hidden="true">2.</strong> Basic setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Nomad cluster</li><li class="chapter-item expanded "><a href="../nomad/encryption.html"><strong aria-hidden="true">3.</strong> Encryption</a></li><li class="chapter-item expanded "><a href="../nomad/services_and_folders.html"><strong aria-hidden="true">4.</strong> Services and folders</a></li><li class="chapter-item expanded "><a href="../nomad/server_config.html"><strong aria-hidden="true">5.</strong> Configuration</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../nomad/server_config.html"><strong aria-hidden="true">5.1.</strong> Server agent configuration</a></li><li class="chapter-item expanded "><a href="../nomad/client_config.html"><strong aria-hidden="true">5.2.</strong> Client agent configuration</a></li><li class="chapter-item expanded "><a href="../nomad/client_agent_access.html"><strong aria-hidden="true">5.3.</strong> Accessing the client</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">System Jobs</li><li class="chapter-item expanded "><a href="../system/nginx.html"><strong aria-hidden="true">6.</strong> Nginx</a></li><li class="chapter-item expanded "><a href="../system/sshd.html" class="active"><strong aria-hidden="true">7.</strong> SSHd</a></li><li class="chapter-item expanded affix "><li class="part-title">Service jobs</li><li class="chapter-item expanded "><a href="../service/sync.html"><strong aria-hidden="true">8.</strong> Mutagen</a></li><li class="chapter-item expanded "><a href="../service/databases.html"><strong aria-hidden="true">9.</strong> Databases</a></li><li class="chapter-item expanded affix "><li class="part-title">Tools</li><li class="chapter-item expanded "><a href="../tools/damon.html"><strong aria-hidden="true">10.</strong> Damon</a></li><li class="chapter-item expanded "><a href="../tools/wander.html"><strong aria-hidden="true">11.</strong> Wander</a></li><li class="chapter-item expanded affix "><li class="part-title">Scripts</li><li class="chapter-item expanded "><a href="../scripts/quick-enter.html"><strong aria-hidden="true">12.</strong> Quick-enter containers</a></li><li class="chapter-item expanded affix "><li class="part-title">Server debug</li><li class="chapter-item expanded "><a href="../server_debug/services.html"><strong aria-hidden="true">13.</strong> Nomad services</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Prepare environment</li><li class="chapter-item expanded "><a href="../preparation.html"><strong aria-hidden="true">1.</strong> Preparation</a></li><li class="chapter-item expanded "><a href="../basic-setup.html"><strong aria-hidden="true">2.</strong> Basic setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Nomad cluster</li><li class="chapter-item expanded "><a href="../nomad/encryption.html"><strong aria-hidden="true">3.</strong> Encryption</a></li><li class="chapter-item expanded "><a href="../nomad/services_and_folders.html"><strong aria-hidden="true">4.</strong> Services and folders</a></li><li class="chapter-item expanded "><a href="../nomad/server_config.html"><strong aria-hidden="true">5.</strong> Configuration</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../nomad/server_config.html"><strong aria-hidden="true">5.1.</strong> Server agent configuration</a></li><li class="chapter-item expanded "><a href="../nomad/client_config.html"><strong aria-hidden="true">5.2.</strong> Client agent configuration</a></li><li class="chapter-item expanded "><a href="../nomad/client_agent_access.html"><strong aria-hidden="true">5.3.</strong> Accessing the client</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">System Jobs</li><li class="chapter-item expanded "><a href="../system/nginx.html"><strong aria-hidden="true">6.</strong> Nginx</a></li><li class="chapter-item expanded "><a href="../system/sshd.html" class="active"><strong aria-hidden="true">7.</strong> SSHd</a></li><li class="chapter-item expanded affix "><li class="part-title">Service jobs</li><li class="chapter-item expanded "><a href="../service/sync.html"><strong aria-hidden="true">8.</strong> Mutagen</a></li><li class="chapter-item expanded "><a href="../service/databases.html"><strong aria-hidden="true">9.</strong> Databases</a></li><li class="chapter-item expanded affix "><li class="part-title">Tools</li><li class="chapter-item expanded "><a href="../tools/damon.html"><strong aria-hidden="true">10.</strong> Damon</a></li><li class="chapter-item expanded "><a href="../tools/wander.html"><strong aria-hidden="true">11.</strong> Wander</a></li><li class="chapter-item expanded "><a href="../tools/lazydocker.html"><strong aria-hidden="true">12.</strong> Lazydocker</a></li><li class="chapter-item expanded affix "><li class="part-title">Scripts</li><li class="chapter-item expanded "><a href="../scripts/quick-enter.html"><strong aria-hidden="true">13.</strong> Quick-enter containers</a></li><li class="chapter-item expanded affix "><li class="part-title">Server debug</li><li class="chapter-item expanded "><a href="../server_debug/services.html"><strong aria-hidden="true">14.</strong> Nomad services</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -147,7 +147,160 @@
                         <div class="sidetoc"><nav class="pagetoc"></nav></div>
 
                         <h1 id="sshd-job-file"><a class="header" href="#sshd-job-file">SSHd job file</a></h1>
-<pre><code class="language-bash">job &quot;sshd&quot; {
+<p><strong>Important</strong>: Task names must be unique.</p>
+<pre><code class="language-bash">{
+  &quot;tasks&quot;: [
+    {
+      &quot;name&quot;: &quot;sshd_1000_1000&quot;,
+      &quot;uid&quot;: &quot;1000&quot;,
+      &quot;gid&quot;: &quot;1000&quot;,
+      &quot;umask&quot;: &quot;0077&quot;
+    },
+    {
+      &quot;name&quot;: &quot;sshd_999_999&quot;,
+      &quot;uid&quot;: &quot;999&quot;,
+      &quot;gid&quot;: &quot;999&quot;,
+      &quot;umask&quot;: &quot;0022&quot;
+    }
+  ]
+}
+
+</code></pre>
+<pre><code class="language-bash"># All tasks of group sync of job sshd have access
+ssh-keygen -q -t ed25519 -f id_ed25519 -N &quot;&quot; &lt;&lt;&lt;y &gt;/dev/null 2&gt;&amp;1
+for varpath in nomad/jobs/sync/mutagen/project nomad/jobs/sshd/sync; do
+  MODIFY_INDEX=$(nomad var get -out=json ${varpath} 2&gt;/dev/null| jq -r .ModifyIndex)
+  jq --null-input \
+    --arg id_ed25519 &quot;$(cat id_ed25519)&quot; \
+    --arg id_ed25519_pub &quot;$(cat id_ed25519.pub)&quot; \
+    '{&quot;Items&quot;: {&quot;id_ed25519&quot;: $id_ed25519, &quot;id_ed25519_pub&quot;: $id_ed25519_pub}}' | \
+      nomad var put -in=json -check-index=${MODIFY_INDEX} ${varpath} -
+done
+rm id_ed25519.pub id_ed25519
+</code></pre>
+<pre><code class="language-bash">#!/bin/bash
+
+# Tests
+
+## permfix one two ; echo $?
+## assert 1
+
+## permfix nonsense123 ; echo $?
+## assert 2
+
+## permfix $(echo -n '/shared-data/{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }}/i do not exist' | base64) ; echo $?
+## permfix $(echo -n '/shared-data/{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }}/\ &quot;\&quot;  &quot; &quot;&quot;  $$!echo' | base64)
+## assert 3
+
+## permfix $(echo -n '/shared-data/{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }}/../../etc/passwd' | base64) ; echo $?
+## assert 4
+
+## permfix &quot;&quot;
+## assert 5
+
+# We allow a single argument
+if [ $# -ne 1 ]; then
+  exit 1
+fi
+
+# Argument must not be empty
+if [[ ! -z &quot;$1&quot; ]]; then
+  # Argument must be base64 encoded
+  if ! echo &quot;$1&quot; | base64 -d &gt; /dev/null; then
+    exit 2
+  fi
+  # Wrap decoded argument in quotes
+  OBJ=&quot;$(echo &quot;$1&quot; | base64 -d)&quot;
+  # Path must start with /shared-data/{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }}
+  if [[ $(readlink  -f &quot;$OBJ&quot;) =~ ^/shared-data/{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }} ]]; then
+    # Must be directory or file
+    if [ -d &quot;$OBJ&quot; ]; then
+      /bin/chmod --reference=/references/{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }}/ref.dir &quot;$OBJ&quot;
+      /bin/chown --reference=/references/{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }}/ref.dir &quot;$OBJ&quot;
+    elif [ -f &quot;$OBJ&quot; ]; then
+      /bin/chmod --reference=/references/{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }}/ref.file &quot;$OBJ&quot;
+      /bin/chown --reference=/references/{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }}/ref.file &quot;$OBJ&quot;
+    else
+      exit 3
+    fi
+  else
+    exit 4
+  fi
+else
+  exit 5
+fi
+#!/bin/bash
+
+# We need -E for our trap to trigger also in functions
+set -eE
+
+# Kill self on any error
+trap 'kill 1' ERR
+
+# This can be run everytime as it is simply too fast to be outsourced
+echo &quot;Installing packages&quot;
+apk add acl findutils
+
+umask {{ env &quot;UMASK&quot; }}
+echo &quot;Current umask: $(umask)&quot;
+echo &quot;Current umask, sybolic: $(umask -S)&quot;
+
+#  Convert umask to acl syntax
+u=$(umask -S | cut -d',' -f1 | cut -d'=' -f2)
+g=$(umask -S | cut -d',' -f2 | cut -d'=' -f2)
+o=$(umask -S | cut -d',' -f3 | cut -d'=' -f2)
+acl=
+
+for x in &quot;$u&quot; &quot;$g&quot; &quot;$o&quot;; do
+acl=$acl$(printf '%s%s%s' \
+  $([[ $x == *&quot;r&quot;* ]] &amp;&amp; echo r || echo -) \
+  $([[ $x == *&quot;w&quot;* ]] &amp;&amp; echo w || echo -) \
+  $([[ $x == *&quot;x&quot;* ]] &amp;&amp; echo x || echo -)
+)&quot; &quot;
+done
+
+create_acl_file() {
+  [ $# -ne 3 ] &amp;&amp; return 1
+  echo &quot;Creating ACL file:&quot;
+  cat &lt;&lt;EOF | tee /acl_{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }}
+# file: /shared-data/{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }}
+# owner: {{ env &quot;PUID&quot; }}
+# group: {{ env &quot;PGID&quot; }}
+user::$1
+group::$2
+other::$3
+default:user::$1
+default:group::$2
+default:other::$3
+EOF
+}
+
+create_acl_file $acl
+
+echo &quot;Creating reference directory and file&quot;
+install -m 755 --owner=user --group=user \
+  -d /references/{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }}
+sudo -u user -i &lt;&lt;EOF
+umask {{ env &quot;UMASK&quot; }}
+touch /references/{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }}/ref.file
+mkdir /references/{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }}/ref.dir
+EOF
+
+mkdir -p &quot;/shared-data/{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }}&quot;
+cd /
+setfacl --restore=/acl_{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }}
+
+echo &quot;Allowing user to run permfix script as root&quot;
+echo 'user ALL=(ALL) NOPASSWD: /usr/local/sbin/permfix *' &gt;&gt; /etc/sudoers.d/user
+
+{{ $task_name_var := (print &quot;NOMAD_PORT_&quot; (env &quot;NOMAD_TASK_NAME&quot;)) }}
+echo &quot;Set SSHd listen address to dynamic port {{ env $task_name_var }}&quot;
+sed -i 's/2222/{{ env $task_name_var }}/' /etc/s6-overlay/s6-rc.d/svc-openssh-server/run
+sed -i 's/2222/{{ env $task_name_var }}/' /var/run/service/svc-openssh-server/run.user
+</code></pre>
+<pre><code class="language-bash">
+
+job &quot;sshd&quot; {
 
   datacenters = [&quot;falkenstein&quot;]
   type = &quot;system&quot;
@@ -160,28 +313,41 @@
       read_only       = false
     }
 
+
     network {
       mode = &quot;bridge&quot;
-      port &quot;ssh&quot; {
+[[- $variables := (fileContents &quot;variables.json&quot; | parseJSON ) -]]
+[[- range $i, $task := $variables.tasks -]]
+[[- if ne $i 0 -]][[- println &quot;&quot; -]][[- end ]]
+      port &quot;[[ $task.name ]]&quot; {
         host_network = &quot;nomad-clients&quot;
-        to = 2222
+        to = -1
       }
+[[- end ]]
     }
 
-    service {
-      name     = &quot;sshd&quot;
-      port     = &quot;ssh&quot;
-      provider = &quot;nomad&quot;
-    }
+[[- range $i, $task := $variables.tasks -]]
+[[- if ne $i 0 -]][[- println &quot;&quot; -]][[- end ]]
+    task &quot;[[ $task.name ]]&quot; {
 
-    task &quot;sshd&quot; {
+      logs {
+        max_files     = 10
+        max_file_size = 15
+      }
+
+      service {
+        name     = &quot;sshd&quot;
+        port     = &quot;[[ $task.name ]]&quot;
+        provider = &quot;nomad&quot;
+        tags = [&quot;[[ $task.uid ]]:[[ $task.gid ]]&quot;]
+      }
 
       driver = &quot;docker&quot;
 
       env {
-        PUID = &quot;1000&quot;
-        PGID = &quot;1000&quot;
-        UMASK = &quot;0077&quot;
+        PUID = &quot;[[ $task.uid ]]&quot;
+        PGID = &quot;[[ $task.gid ]]&quot;
+        UMASK = &quot;[[ $task.umask ]]&quot;
         # Overwritten in prepare script
         SUDO_ACCESS = &quot;false&quot;
         TZ = &quot;Europe/Berlin&quot;
@@ -191,7 +357,7 @@
 
       config {
         image = &quot;linuxserver/openssh-server&quot;
-        ports = [&quot;ssh&quot;]
+        ports = [&quot;[[ $task.name ]]&quot;]
         volumes = [
           &quot;ssh:/config/.ssh&quot;,
           &quot;custom-init-d:/custom-cont-init.d&quot;,
@@ -199,65 +365,17 @@
         ]
       }
 
-      logs {
-        max_files     = 10
-        max_file_size = 15
-      }
-
       template {
         data = &lt;&lt;EOH
-#~ Install additinal packages
-
-apk add acl findutils
-
-#~ Create ACL file
-
-cat &lt;&lt;EOF&gt; /shared_data_acl
-# file: /shared-data
-# owner: user
-# group: users
-user::rwx
-group::---
-other::---
-default:user::rwx
-default:group::---
-default:other::---
-EOF
-
-#~ Apply ACL
-cd /
-setfacl --restore=/shared_data_acl
-
-#~ Allow user to run sudo cmd
-
-echo 'user ALL=(ALL) NOPASSWD: /usr/local/sbin/permfix *' &gt;&gt; /etc/sudoers.d/user
+[[ fileContents &quot;includes/prepare.sh&quot; ]]
 EOH
-        destination = &quot;custom-init-d/prepare&quot;
+        destination = &quot;custom-init-d/prepare.sh&quot;
         perms = &quot;755&quot;
       }
 
       template {
         data = &lt;&lt;EOH
-#!/bin/bash
-
-if [ $# -ne 1 ]; then
-  exit 1
-fi
-
-if [[ ! -z &quot;$1&quot; ]]; then
-  if ! echo &quot;$1&quot; | base64 -d &gt; /dev/null; then
-    exit 1
-  fi
-  OBJ=&quot;$(echo &quot;$1&quot; | base64 -d)&quot;
-  if [[ $(readlink  -f &quot;$OBJ&quot;) =~ ^/shared-data/ ]]; then
-    if [ -x &quot;$OBJ&quot; ]; then
-      /bin/chmod 700 &quot;$OBJ&quot;
-    else
-      /bin/chmod 600 &quot;$OBJ&quot;
-    fi
-    /bin/chown -R {{ env &quot;PUID&quot; }}:{{ env &quot;PGID&quot; }} &quot;$OBJ&quot;
-  fi
-fi
+[[ fileContents &quot;includes/permfix&quot; ]]
 EOH
         destination = &quot;usr-local-sbin/permfix&quot;
         perms = &quot;755&quot;
@@ -265,7 +383,7 @@ EOH
 
       template {
         data = &lt;&lt;EOH
-{{ with nomadVar &quot;nomad/jobs/sshd/sync/sshd&quot; }}{{ .id_ed25519_pub }}{{ end }}
+{{ with nomadVar &quot;nomad/jobs/sshd/sync&quot; }}{{ .id_ed25519_pub }}{{ end }}
 EOH
         destination = &quot;secrets/authorized_keys&quot;
         change_mode   = &quot;restart&quot;
@@ -276,8 +394,11 @@ EOH
         destination = &quot;/shared-data&quot;
       }
     }
+[[- end ]]
   }
 }
+</code></pre>
+<pre><code class="language-bash">levant deploy ${@} -var-file=variables.json
 </code></pre>
 
                     </main>

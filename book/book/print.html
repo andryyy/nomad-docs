@@ -83,7 +83,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Prepare environment</li><li class="chapter-item expanded "><a href="preparation.html"><strong aria-hidden="true">1.</strong> Preparation</a></li><li class="chapter-item expanded "><a href="basic-setup.html"><strong aria-hidden="true">2.</strong> Basic setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Nomad cluster</li><li class="chapter-item expanded "><a href="nomad/encryption.html"><strong aria-hidden="true">3.</strong> Encryption</a></li><li class="chapter-item expanded "><a href="nomad/services_and_folders.html"><strong aria-hidden="true">4.</strong> Services and folders</a></li><li class="chapter-item expanded "><a href="nomad/server_config.html"><strong aria-hidden="true">5.</strong> Configuration</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="nomad/server_config.html"><strong aria-hidden="true">5.1.</strong> Server agent configuration</a></li><li class="chapter-item expanded "><a href="nomad/client_config.html"><strong aria-hidden="true">5.2.</strong> Client agent configuration</a></li><li class="chapter-item expanded "><a href="nomad/client_agent_access.html"><strong aria-hidden="true">5.3.</strong> Accessing the client</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">System Jobs</li><li class="chapter-item expanded "><a href="system/nginx.html"><strong aria-hidden="true">6.</strong> Nginx</a></li><li class="chapter-item expanded "><a href="system/sshd.html"><strong aria-hidden="true">7.</strong> SSHd</a></li><li class="chapter-item expanded affix "><li class="part-title">Service jobs</li><li class="chapter-item expanded "><a href="service/sync.html"><strong aria-hidden="true">8.</strong> Mutagen</a></li><li class="chapter-item expanded "><a href="service/databases.html"><strong aria-hidden="true">9.</strong> Databases</a></li><li class="chapter-item expanded affix "><li class="part-title">Tools</li><li class="chapter-item expanded "><a href="tools/damon.html"><strong aria-hidden="true">10.</strong> Damon</a></li><li class="chapter-item expanded "><a href="tools/wander.html"><strong aria-hidden="true">11.</strong> Wander</a></li><li class="chapter-item expanded affix "><li class="part-title">Scripts</li><li class="chapter-item expanded "><a href="scripts/quick-enter.html"><strong aria-hidden="true">12.</strong> Quick-enter containers</a></li><li class="chapter-item expanded affix "><li class="part-title">Server debug</li><li class="chapter-item expanded "><a href="server_debug/services.html"><strong aria-hidden="true">13.</strong> Nomad services</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Prepare environment</li><li class="chapter-item expanded "><a href="preparation.html"><strong aria-hidden="true">1.</strong> Preparation</a></li><li class="chapter-item expanded "><a href="basic-setup.html"><strong aria-hidden="true">2.</strong> Basic setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Nomad cluster</li><li class="chapter-item expanded "><a href="nomad/encryption.html"><strong aria-hidden="true">3.</strong> Encryption</a></li><li class="chapter-item expanded "><a href="nomad/services_and_folders.html"><strong aria-hidden="true">4.</strong> Services and folders</a></li><li class="chapter-item expanded "><a href="nomad/server_config.html"><strong aria-hidden="true">5.</strong> Configuration</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="nomad/server_config.html"><strong aria-hidden="true">5.1.</strong> Server agent configuration</a></li><li class="chapter-item expanded "><a href="nomad/client_config.html"><strong aria-hidden="true">5.2.</strong> Client agent configuration</a></li><li class="chapter-item expanded "><a href="nomad/client_agent_access.html"><strong aria-hidden="true">5.3.</strong> Accessing the client</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">System Jobs</li><li class="chapter-item expanded "><a href="system/nginx.html"><strong aria-hidden="true">6.</strong> Nginx</a></li><li class="chapter-item expanded "><a href="system/sshd.html"><strong aria-hidden="true">7.</strong> SSHd</a></li><li class="chapter-item expanded affix "><li class="part-title">Service jobs</li><li class="chapter-item expanded "><a href="service/sync.html"><strong aria-hidden="true">8.</strong> Mutagen</a></li><li class="chapter-item expanded "><a href="service/databases.html"><strong aria-hidden="true">9.</strong> Databases</a></li><li class="chapter-item expanded affix "><li class="part-title">Tools</li><li class="chapter-item expanded "><a href="tools/damon.html"><strong aria-hidden="true">10.</strong> Damon</a></li><li class="chapter-item expanded "><a href="tools/wander.html"><strong aria-hidden="true">11.</strong> Wander</a></li><li class="chapter-item expanded "><a href="tools/lazydocker.html"><strong aria-hidden="true">12.</strong> Lazydocker</a></li><li class="chapter-item expanded affix "><li class="part-title">Scripts</li><li class="chapter-item expanded "><a href="scripts/quick-enter.html"><strong aria-hidden="true">13.</strong> Quick-enter containers</a></li><li class="chapter-item expanded affix "><li class="part-title">Server debug</li><li class="chapter-item expanded "><a href="server_debug/services.html"><strong aria-hidden="true">14.</strong> Nomad services</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -983,6 +983,7 @@ upstream {{ .Name }} {
 server {
    listen 80;
    server_name ${var.server_name};
+   server_tokens off;
    return 301 https://${var.server_name}$request_uri;
 }
 
@@ -990,6 +991,7 @@ server {
   listen 443 ssl;
   ssl_certificate /etc/nginx/tls.d/fullchain.pem;
   ssl_certificate_key /etc/nginx/tls.d/privkey.pem;
+  server_tokens off;
   root /var/www;
   server_name ${var.server_name};
 
@@ -1074,7 +1076,160 @@ EOF
 }
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="sshd-job-file"><a class="header" href="#sshd-job-file">SSHd job file</a></h1>
-<pre><code class="language-bash">job &quot;sshd&quot; {
+<p><strong>Important</strong>: Task names must be unique.</p>
+<pre><code class="language-bash">{
+  &quot;tasks&quot;: [
+    {
+      &quot;name&quot;: &quot;sshd_1000_1000&quot;,
+      &quot;uid&quot;: &quot;1000&quot;,
+      &quot;gid&quot;: &quot;1000&quot;,
+      &quot;umask&quot;: &quot;0077&quot;
+    },
+    {
+      &quot;name&quot;: &quot;sshd_999_999&quot;,
+      &quot;uid&quot;: &quot;999&quot;,
+      &quot;gid&quot;: &quot;999&quot;,
+      &quot;umask&quot;: &quot;0022&quot;
+    }
+  ]
+}
+
+</code></pre>
+<pre><code class="language-bash"># All tasks of group sync of job sshd have access
+ssh-keygen -q -t ed25519 -f id_ed25519 -N &quot;&quot; &lt;&lt;&lt;y &gt;/dev/null 2&gt;&amp;1
+for varpath in nomad/jobs/sync/mutagen/project nomad/jobs/sshd/sync; do
+  MODIFY_INDEX=$(nomad var get -out=json ${varpath} 2&gt;/dev/null| jq -r .ModifyIndex)
+  jq --null-input \
+    --arg id_ed25519 &quot;$(cat id_ed25519)&quot; \
+    --arg id_ed25519_pub &quot;$(cat id_ed25519.pub)&quot; \
+    '{&quot;Items&quot;: {&quot;id_ed25519&quot;: $id_ed25519, &quot;id_ed25519_pub&quot;: $id_ed25519_pub}}' | \
+      nomad var put -in=json -check-index=${MODIFY_INDEX} ${varpath} -
+done
+rm id_ed25519.pub id_ed25519
+</code></pre>
+<pre><code class="language-bash">#!/bin/bash
+
+# Tests
+
+## permfix one two ; echo $?
+## assert 1
+
+## permfix nonsense123 ; echo $?
+## assert 2
+
+## permfix $(echo -n '/shared-data/{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }}/i do not exist' | base64) ; echo $?
+## permfix $(echo -n '/shared-data/{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }}/\ &quot;\&quot;  &quot; &quot;&quot;  $$!echo' | base64)
+## assert 3
+
+## permfix $(echo -n '/shared-data/{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }}/../../etc/passwd' | base64) ; echo $?
+## assert 4
+
+## permfix &quot;&quot;
+## assert 5
+
+# We allow a single argument
+if [ $# -ne 1 ]; then
+  exit 1
+fi
+
+# Argument must not be empty
+if [[ ! -z &quot;$1&quot; ]]; then
+  # Argument must be base64 encoded
+  if ! echo &quot;$1&quot; | base64 -d &gt; /dev/null; then
+    exit 2
+  fi
+  # Wrap decoded argument in quotes
+  OBJ=&quot;$(echo &quot;$1&quot; | base64 -d)&quot;
+  # Path must start with /shared-data/{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }}
+  if [[ $(readlink  -f &quot;$OBJ&quot;) =~ ^/shared-data/{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }} ]]; then
+    # Must be directory or file
+    if [ -d &quot;$OBJ&quot; ]; then
+      /bin/chmod --reference=/references/{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }}/ref.dir &quot;$OBJ&quot;
+      /bin/chown --reference=/references/{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }}/ref.dir &quot;$OBJ&quot;
+    elif [ -f &quot;$OBJ&quot; ]; then
+      /bin/chmod --reference=/references/{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }}/ref.file &quot;$OBJ&quot;
+      /bin/chown --reference=/references/{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }}/ref.file &quot;$OBJ&quot;
+    else
+      exit 3
+    fi
+  else
+    exit 4
+  fi
+else
+  exit 5
+fi
+#!/bin/bash
+
+# We need -E for our trap to trigger also in functions
+set -eE
+
+# Kill self on any error
+trap 'kill 1' ERR
+
+# This can be run everytime as it is simply too fast to be outsourced
+echo &quot;Installing packages&quot;
+apk add acl findutils
+
+umask {{ env &quot;UMASK&quot; }}
+echo &quot;Current umask: $(umask)&quot;
+echo &quot;Current umask, sybolic: $(umask -S)&quot;
+
+#  Convert umask to acl syntax
+u=$(umask -S | cut -d',' -f1 | cut -d'=' -f2)
+g=$(umask -S | cut -d',' -f2 | cut -d'=' -f2)
+o=$(umask -S | cut -d',' -f3 | cut -d'=' -f2)
+acl=
+
+for x in &quot;$u&quot; &quot;$g&quot; &quot;$o&quot;; do
+acl=$acl$(printf '%s%s%s' \
+  $([[ $x == *&quot;r&quot;* ]] &amp;&amp; echo r || echo -) \
+  $([[ $x == *&quot;w&quot;* ]] &amp;&amp; echo w || echo -) \
+  $([[ $x == *&quot;x&quot;* ]] &amp;&amp; echo x || echo -)
+)&quot; &quot;
+done
+
+create_acl_file() {
+  [ $# -ne 3 ] &amp;&amp; return 1
+  echo &quot;Creating ACL file:&quot;
+  cat &lt;&lt;EOF | tee /acl_{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }}
+# file: /shared-data/{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }}
+# owner: {{ env &quot;PUID&quot; }}
+# group: {{ env &quot;PGID&quot; }}
+user::$1
+group::$2
+other::$3
+default:user::$1
+default:group::$2
+default:other::$3
+EOF
+}
+
+create_acl_file $acl
+
+echo &quot;Creating reference directory and file&quot;
+install -m 755 --owner=user --group=user \
+  -d /references/{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }}
+sudo -u user -i &lt;&lt;EOF
+umask {{ env &quot;UMASK&quot; }}
+touch /references/{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }}/ref.file
+mkdir /references/{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }}/ref.dir
+EOF
+
+mkdir -p &quot;/shared-data/{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }}&quot;
+cd /
+setfacl --restore=/acl_{{ env &quot;PUID&quot; }}_{{ env &quot;PGID&quot; }}
+
+echo &quot;Allowing user to run permfix script as root&quot;
+echo 'user ALL=(ALL) NOPASSWD: /usr/local/sbin/permfix *' &gt;&gt; /etc/sudoers.d/user
+
+{{ $task_name_var := (print &quot;NOMAD_PORT_&quot; (env &quot;NOMAD_TASK_NAME&quot;)) }}
+echo &quot;Set SSHd listen address to dynamic port {{ env $task_name_var }}&quot;
+sed -i 's/2222/{{ env $task_name_var }}/' /etc/s6-overlay/s6-rc.d/svc-openssh-server/run
+sed -i 's/2222/{{ env $task_name_var }}/' /var/run/service/svc-openssh-server/run.user
+</code></pre>
+<pre><code class="language-bash">
+
+job &quot;sshd&quot; {
 
   datacenters = [&quot;falkenstein&quot;]
   type = &quot;system&quot;
@@ -1087,28 +1242,41 @@ EOF
       read_only       = false
     }
 
+
     network {
       mode = &quot;bridge&quot;
-      port &quot;ssh&quot; {
+[[- $variables := (fileContents &quot;variables.json&quot; | parseJSON ) -]]
+[[- range $i, $task := $variables.tasks -]]
+[[- if ne $i 0 -]][[- println &quot;&quot; -]][[- end ]]
+      port &quot;[[ $task.name ]]&quot; {
         host_network = &quot;nomad-clients&quot;
-        to = 2222
+        to = -1
       }
+[[- end ]]
     }
 
-    service {
-      name     = &quot;sshd&quot;
-      port     = &quot;ssh&quot;
-      provider = &quot;nomad&quot;
-    }
+[[- range $i, $task := $variables.tasks -]]
+[[- if ne $i 0 -]][[- println &quot;&quot; -]][[- end ]]
+    task &quot;[[ $task.name ]]&quot; {
 
-    task &quot;sshd&quot; {
+      logs {
+        max_files     = 10
+        max_file_size = 15
+      }
+
+      service {
+        name     = &quot;sshd&quot;
+        port     = &quot;[[ $task.name ]]&quot;
+        provider = &quot;nomad&quot;
+        tags = [&quot;[[ $task.uid ]]:[[ $task.gid ]]&quot;]
+      }
 
       driver = &quot;docker&quot;
 
       env {
-        PUID = &quot;1000&quot;
-        PGID = &quot;1000&quot;
-        UMASK = &quot;0077&quot;
+        PUID = &quot;[[ $task.uid ]]&quot;
+        PGID = &quot;[[ $task.gid ]]&quot;
+        UMASK = &quot;[[ $task.umask ]]&quot;
         # Overwritten in prepare script
         SUDO_ACCESS = &quot;false&quot;
         TZ = &quot;Europe/Berlin&quot;
@@ -1118,7 +1286,7 @@ EOF
 
       config {
         image = &quot;linuxserver/openssh-server&quot;
-        ports = [&quot;ssh&quot;]
+        ports = [&quot;[[ $task.name ]]&quot;]
         volumes = [
           &quot;ssh:/config/.ssh&quot;,
           &quot;custom-init-d:/custom-cont-init.d&quot;,
@@ -1126,65 +1294,17 @@ EOF
         ]
       }
 
-      logs {
-        max_files     = 10
-        max_file_size = 15
-      }
-
       template {
         data = &lt;&lt;EOH
-#~ Install additinal packages
-
-apk add acl findutils
-
-#~ Create ACL file
-
-cat &lt;&lt;EOF&gt; /shared_data_acl
-# file: /shared-data
-# owner: user
-# group: users
-user::rwx
-group::---
-other::---
-default:user::rwx
-default:group::---
-default:other::---
-EOF
-
-#~ Apply ACL
-cd /
-setfacl --restore=/shared_data_acl
-
-#~ Allow user to run sudo cmd
-
-echo 'user ALL=(ALL) NOPASSWD: /usr/local/sbin/permfix *' &gt;&gt; /etc/sudoers.d/user
+[[ fileContents &quot;includes/prepare.sh&quot; ]]
 EOH
-        destination = &quot;custom-init-d/prepare&quot;
+        destination = &quot;custom-init-d/prepare.sh&quot;
         perms = &quot;755&quot;
       }
 
       template {
         data = &lt;&lt;EOH
-#!/bin/bash
-
-if [ $# -ne 1 ]; then
-  exit 1
-fi
-
-if [[ ! -z &quot;$1&quot; ]]; then
-  if ! echo &quot;$1&quot; | base64 -d &gt; /dev/null; then
-    exit 1
-  fi
-  OBJ=&quot;$(echo &quot;$1&quot; | base64 -d)&quot;
-  if [[ $(readlink  -f &quot;$OBJ&quot;) =~ ^/shared-data/ ]]; then
-    if [ -x &quot;$OBJ&quot; ]; then
-      /bin/chmod 700 &quot;$OBJ&quot;
-    else
-      /bin/chmod 600 &quot;$OBJ&quot;
-    fi
-    /bin/chown -R {{ env &quot;PUID&quot; }}:{{ env &quot;PGID&quot; }} &quot;$OBJ&quot;
-  fi
-fi
+[[ fileContents &quot;includes/permfix&quot; ]]
 EOH
         destination = &quot;usr-local-sbin/permfix&quot;
         perms = &quot;755&quot;
@@ -1192,7 +1312,7 @@ EOH
 
       template {
         data = &lt;&lt;EOH
-{{ with nomadVar &quot;nomad/jobs/sshd/sync/sshd&quot; }}{{ .id_ed25519_pub }}{{ end }}
+{{ with nomadVar &quot;nomad/jobs/sshd/sync&quot; }}{{ .id_ed25519_pub }}{{ end }}
 EOH
         destination = &quot;secrets/authorized_keys&quot;
         change_mode   = &quot;restart&quot;
@@ -1203,8 +1323,11 @@ EOH
         destination = &quot;/shared-data&quot;
       }
     }
+[[- end ]]
   }
 }
+</code></pre>
+<pre><code class="language-bash">levant deploy ${@} -var-file=variables.json
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="mutagen-job-file"><a class="header" href="#mutagen-job-file">Mutagen job file</a></h1>
 <p>This job file must be passed &quot;telegram_bot_token&quot; and &quot;telegram_chat_id&quot; variables <strong>if Telegram notifications should be enabled</strong>:</p>
@@ -1212,16 +1335,13 @@ EOH
 </code></pre>
 <p>Alternatively default values can be assigned on top of the job file.</p>
 <p><strong>Important</strong>: These variables will not be stored encrypted.</p>
-<pre><code class="language-bash">variable &quot;telegram_bot_token&quot; {
-  type = string
-  default = &quot;&quot;
-}
-variable &quot;telegram_chat_id&quot; {
-  type = string
-  default = &quot;&quot;
-}
+<pre><code class="language-bash">job &quot;sync&quot; {
 
-job &quot;sync&quot; {
+  update {
+    max_parallel  = 1
+    health_check  = &quot;checks&quot;
+    auto_revert = true
+  }
 
   datacenters = [&quot;falkenstein&quot;]
   type = &quot;service&quot;
@@ -1238,7 +1358,7 @@ job &quot;sync&quot; {
 
     network {
       mode = &quot;bridge&quot;
-      port &quot;mutagen&quot; {
+      port &quot;mutagen_flask&quot; {
         host_network = &quot;nomad-clients&quot;
         to = 8082
       }
@@ -1246,21 +1366,24 @@ job &quot;sync&quot; {
 
     service {
       name     = &quot;mutagen&quot;
-      port     = &quot;mutagen&quot;
+      port     = &quot;mutagen_flask&quot;
       provider = &quot;nomad&quot;
-      tags = [&quot;public-http&quot;, jsonencode({
-        path = &quot;/mutagen/&quot;,
-        limit_except = &quot;GET&quot;
-      })]
+      tags = [&quot;public-http&quot;, &quot;{\&quot;path\&quot;: \&quot;/mutagen/\&quot;, \&quot;limit_except\&quot;: \&quot;GET\&quot;}&quot;]
+      check {
+        name     = &quot;mutagen_probe&quot;
+        type     = &quot;http&quot;
+        interval = &quot;10s&quot;
+        timeout  = &quot;2s&quot;
+        path  = &quot;/mutagen/health.json&quot;
+        port  = &quot;mutagen_flask&quot;
+      }
     }
 
     task &quot;project&quot; {
 
       env {
-        PUID = &quot;1000&quot;
-        PGID = &quot;1000&quot;
-        TELEGRAM_BOT_TOKEN = var.telegram_bot_token
-        CHAT_ID = var.telegram_chat_id
+        TELEGRAM_BOT_TOKEN = &quot;[[ .telegram_bot_token ]]&quot;
+        CHAT_ID = &quot;[[ .telegram_chat_id ]]&quot;
         TZ = &quot;Europe/Berlin&quot;
       }
 
@@ -1272,182 +1395,12 @@ job &quot;sync&quot; {
       driver = &quot;docker&quot;
       config {
         image = &quot;python:3&quot;
-        ports = [&quot;mutagen&quot;]
+        ports = [&quot;mutagen_flask&quot;]
         command = &quot;/bin/bash&quot;
-        args    = [&quot;-c&quot;, &lt;&lt;EOF
-set -o pipefail
-
-trap &quot;exit&quot; INT TERM
-trap &quot;kill 0&quot; EXIT
-
-# Prepare
-BACKGROUND_TASKS=
-[ -f /root/.mutagen/daemon/daemon.lock ] &amp;&amp; rm /root/.mutagen/daemon/daemon.*
-apt update
-apt upgrade -y
-apt install -y openssh-client jq curl
-pip install flask
-
-#~
-#~ Generic functions
-#~
-
-log_msg() {
-  local input=&quot;&quot;
-  [[ -p /dev/stdin ]] &amp;&amp; input=$(cat -) || input=$1
-
-  # Using bash pattern replacement is difficult in a command argument template, so we are using tr
-  [[ -z &quot;$(echo $input | tr -d &quot; \t\n\r&quot;)&quot; ]] || [[ &quot;$input&quot; == &quot;''&quot; ]] &amp;&amp; return 0
-
-  local now=$(date -R)
-  printf &quot;🕙 %s - %s\n&quot; &quot;$now&quot; &quot;$input&quot;
-  if [[ -z $TELEGRAM_BOT_TOKEN ]] || [[ -z $CHAT_ID ]]; then
-    return 0
-  fi
-  local data=$(jq --null-input \
-    --arg chat_id $CHAT_ID \
-    --arg parse_mode HTML \
-    --arg msg &quot;$(printf &quot;&lt;b&gt;Sync notification&lt;/b&gt;\n&lt;i&gt;🕙 %s&lt;/i&gt;\n\n&lt;pre&gt;%s&lt;/pre&gt;&quot; &quot;$now&quot; &quot;$input&quot;)&quot; \
-    '{&quot;chat_id&quot;: $chat_id, &quot;text&quot;: $msg, &quot;parse_mode&quot;: $parse_mode}'
-    )
-  curl -s -o /dev/null -H 'Content-Type: application/json' \
-    -d &quot;$data&quot; \
-    -X POST \
-    https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage
-}
-
-if [ $EXPECTED_NODES -lt 2 ]; then
-  log_msg &quot;Critical: Need at least 2 nodes&quot;
-  exit 1
-fi
-
-until /local/mutagen project start -f /local/mutagen.yml 2&gt;&amp;1 | log_msg; do
-  /local/mutagen project terminate -f /local/mutagen.yml 2&gt;&amp;1 | log_msg
-  sleep 10
-done
-
-#~
-#~ Checks / Workers
-#~
-
-mutagen_nodes() {
-  local init=1
-  while true; do
-    ACTIVE_NODES=$(($(local/mutagen sync list --template &quot;{{ len . }}&quot;) + 1))
-    if [ $ACTIVE_NODES -ne $EXPECTED_NODES ]; then
-      log_msg &quot;Warning: Active node count does not match expected nodes.&quot;
-      init=1
-    elif [ $init -eq 1 ]; then
-      # Example how to escape var:
-      #log_msg &quot;$$${init}&quot;
-      log_msg &quot;Running with $ACTIVE_NODES nodes: the party is complete!&quot;
-      init=0
-    fi
-    sleep 60
-  done
-}
-
-mutagen_status() {
-  while true; do
-    while read job; do
-      status=$(local/mutagen sync list $job --template \
-        &quot;{{ range . }}{{ .Status }}{{ end }}&quot;)
-      if [[ $status =~ (Halt|Unknown|halt|unknown) ]]; then
-        log_msg &quot;$job is in critical state:
-$status
-Resetting...&quot;
-        local/mutagen sync reset $job 2&gt;&amp;1 | log_msg
-      fi
-    done &lt; &lt;(local/mutagen sync list --template \
-      &quot;{{ range . }}{{ .Identifier }}
-{{ end }}&quot;)
-    sleep 10
-  done
-}
-
-mutagen_flask() {
-  while true; do
-    log_msg &quot;Spawned flask listener for Mutagen&quot;
-    flask --app local/flask-app.py run --host=0.0.0.0 --port=8082
-  done
-}
-
-mutagen_conflicts() {
-  # Settle...
-  sleep 10
-  while true; do
-    if ! curl -s --fail -o /dev/null http://localhost:8082/mutagen/scanproblems/report; then
-      curl -s http://localhost:8082/mutagen/scanproblems/fix | log_msg
-    fi
-    sleep 5
-  done
-}
-
-#~
-#~ Spawn workers
-#~
-
-(
-while true; do
-  if ! mutagen_nodes; then
-    log_msg &quot;mutagen_nodes error&quot;
-  fi
-done
-) &amp;
-PID=$!
-log_msg &quot;Spawned mutagen_nodes with PID $PID&quot;
-BACKGROUND_TASKS+=$PID:
-
-(
-while true; do
-  if ! mutagen_flask; then
-    log_msg &quot;mutagen_flask error&quot;
-  fi
-done
-) &amp;
-PID=$!
-log_msg &quot;Spawned mutagen_flask with PID $PID&quot;
-BACKGROUND_TASKS+=$PID:
-
-(
-while true; do
-  if ! mutagen_status; then
-    log_msg &quot;mutagen_status error&quot;
-  fi
-done
-) &amp;
-PID=$!
-log_msg &quot;Spawned mutagen_status with PID $PID&quot;
-BACKGROUND_TASKS+=$PID:
-
-(
-while true; do
-  if ! mutagen_conflicts; then
-    log_msg &quot;mutagen_conflicts error&quot;
-  fi
-done
-) &amp;
-PID=$!
-log_msg &quot;Spawned mutagen_conflicts with PID $PID&quot;
-BACKGROUND_TASKS+=$PID:
-
-#~
-#~ Kill self/task (PID 1) if any worker died
-#~
-
-while true; do
-  IFS=:
-  for bg_task in $BACKGROUND_TASKS; do
-    if ! kill -0 $bg_task 1&gt;&amp;2; then
-      log_msg &quot;Task $bg_task died, bye...&quot;
-      kill -TERM 1
-    fi
-    sleep 10
-  done
-done
-
+        args = [&quot;-c&quot;, &lt;&lt;EOF
+[[ fileContents &quot;init.sh&quot; ]]
 EOF
-        ]
+]
         volumes = [
           &quot;ssh:/root/.ssh&quot;,
         ]
@@ -1455,136 +1408,26 @@ EOF
 
       template {
         data = &lt;&lt;EOF
-EXPECTED_NODES={{ len (nomadService &quot;sshd&quot;) }}
 CHAT_ID={{ env &quot;CHAT_ID&quot; }}
 TELEGRAM_BOT_TOKEN={{ env &quot;TELEGRAM_BOT_TOKEN&quot; }}
 EOF
-        destination = &quot;local/file.env&quot;
+        destination = &quot;secrets/file.env&quot;
+        change_mode = &quot;restart&quot;
         env = true
       }
 
       template {
         data = &lt;&lt;EOF
-sync:
-  defaults:
-    permissions:
-      defaultGroup: &quot;id:{{ env &quot;PUID&quot; }}&quot;
-      defaultOwner: &quot;id:{{ env &quot;PGID&quot; }}&quot;
-      defaultFileMode: 0600
-      defaultDirectoryMode: 0700
-    flushOnCreate: true
-    stageMode: &quot;internal&quot;
-    ignore:
-      vcs: true
-{{ range $idx, $srv := nomadService &quot;sshd&quot; }}{{ if ne $idx 0 }}
-# {{ len (nomadService &quot;sshd&quot;) }}
-  job-{{ $idx }}:
-    alpha: &quot;user@{{ with nomadService &quot;sshd&quot; }}{{ with index . 0 }}{{ .Address }}:{{ .Port }}{{ end }}{{ end }}:/shared-data&quot;
-    beta: &quot;user@{{ $srv.Address }}:{{ $srv.Port }}:/shared-data&quot;
-    mode: &quot;two-way-resolved&quot;
-{{ end }}{{ else }}{{ end }}
+[[ fileContents &quot;mutagen.yml&quot; ]]
 EOF
-        destination   = &quot;local/mutagen.yml&quot;
-        change_mode   = &quot;restart&quot;
+        destination = &quot;local/mutagen.yml&quot;
+        change_mode = &quot;signal&quot;
+        change_signal = &quot;SIGUSR1&quot;
       }
 
       template {
         data = &lt;&lt;EOF
-from flask import Flask, Response
-import subprocess
-import json
-import base64
-import locale
-import os
-
-enc = locale.getpreferredencoding()
-app = Flask(__name__)
-
-@app.route(&quot;/mutagen/status.json&quot;)
-def mutagen_json():
-  ret = subprocess.check_output([&quot;local/mutagen&quot;, &quot;sync&quot;, &quot;list&quot;, &quot;--template&quot;, &quot;{{ `{{ json . }}` }}&quot;])
-  try:
-    json.loads(ret)
-    return Response(ret, status=200, mimetype=&quot;application/json&quot;)
-  except:
-    return Response('{&quot;status&quot;: &quot;cannot decode mutagen response&quot;}', status=503, mimetype=&quot;application/json&quot;)
-
-@app.route(&quot;/mutagen/flush&quot;)
-def mutagen_flush():
-  ret = subprocess.run([&quot;local/mutagen&quot;, &quot;project&quot;, &quot;flush&quot;, &quot;-f&quot;, &quot;/local/mutagen.yml&quot;],
-    stdout=subprocess.DEVNULL,
-    stderr=subprocess.DEVNULL)
-  if ret.returncode == 0:
-    return Response(str(ret.returncode), status=200, mimetype=&quot;text/plain&quot;)
-  else:
-    return Response(str(ret.returncode), status=500, mimetype=&quot;text/plain&quot;)
-
-# Returns 409 on conflicts else 200; 503 if mutagen cmd fails
-# Report-only on do == &quot;report&quot; anything else will attempt to auto-fix
-@app.route(&quot;/mutagen/scanproblems/&lt;do&gt;&quot;)
-def mutagen_problems(do):
-  ret = subprocess.check_output([&quot;local/mutagen&quot;, &quot;sync&quot;, &quot;list&quot;, &quot;--template&quot;, &quot;{{ `{{ json . }}` }}&quot;])
-  try:
-    response = {}
-    response[&quot;problems&quot;] = []
-    for job in json.loads(ret):
-      for site in [&quot;alpha&quot;, &quot;beta&quot;]:
-        if job[site].get(&quot;scanProblems&quot;):
-          for problem in job[site].get(&quot;scanProblems&quot;):
-            path = problem.get(&quot;path&quot;)
-            if do == &quot;report&quot;:
-              response[&quot;problems&quot;].append({
-                &quot;path&quot;: path,
-                &quot;report_only&quot;: True,
-                &quot;host&quot;: job[site][&quot;host&quot;]
-              })
-              continue
-            if not os.path.abspath(&quot;/shared-data/&quot; + path).startswith(&quot;/shared-data/&quot;):
-              response[&quot;problems&quot;].append({
-                &quot;path&quot;: path,
-                &quot;report_only&quot;: True,
-                &quot;error&quot;: &quot;illegal path&quot;,
-                &quot;host&quot;: job[site][&quot;host&quot;]
-              })
-              continue
-
-            # Start fix logic
-            ssh_user = job[site][&quot;user&quot;]
-            ssh_host = job[site][&quot;host&quot;]
-            ssh_port = job[site][&quot;port&quot;]
-            problem_path_bytes = (&quot;/shared-data/&quot; + path).encode(enc)
-            problem_path_base64 = base64.b64encode(problem_path_bytes).decode(enc)
-
-            command = f&quot;ssh -p {ssh_port} {ssh_user}@{ssh_host} sudo /usr/local/sbin/permfix {problem_path_base64}&quot;
-            ret = subprocess.run(command.split(), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
-            response[&quot;problems&quot;].append({
-              &quot;path&quot;: path,
-              &quot;permix_return_code&quot;: ret.returncode,
-              &quot;host&quot;: job[site][&quot;host&quot;]
-            })
-
-    return_code = 409 if response[&quot;problems&quot;] else 200
-    return Response(json.dumps(response), status=return_code, mimetype=&quot;application/json&quot;)
-
-  except Exception as err:
-    return Response('{&quot;status&quot;: &quot;cannot decode mutagen response&quot;}', status=503, mimetype=&quot;application/json&quot;)
-
-@app.route(&quot;/mutagen/health.json&quot;)
-def mutagen_health():
-  ret = subprocess.check_output([&quot;local/mutagen&quot;, &quot;sync&quot;, &quot;list&quot;, &quot;--template&quot;, &quot;{{ `{{ json . }}` }}&quot;])
-  try:
-    for job in json.loads(ret):
-      for data in [job[&quot;alpha&quot;][&quot;scanned&quot;], job[&quot;alpha&quot;][&quot;connected&quot;], job[&quot;beta&quot;][&quot;scanned&quot;], job[&quot;beta&quot;][&quot;connected&quot;]]:
-        if data != True:
-          return Response('{&quot;status&quot;: &quot;unhealthy: at least one node is not connected or has not finished a scan&quot;}', status=500, mimetype=&quot;application/json&quot;)
-      if job[&quot;status&quot;] != &quot;watching&quot;:
-        return Response('{&quot;status&quot;: &quot;unhealthy: at least one node is not in watching mode&quot;}', status=500, mimetype=&quot;application/json&quot;)
-      if job[&quot;alpha&quot;].get(&quot;scanProblems&quot;) or job[&quot;beta&quot;].get(&quot;scanProblems&quot;):
-        return Response('{&quot;status&quot;: &quot;unhealthy: at least one node reports scan problems&quot;}', status=500, mimetype=&quot;application/json&quot;)
-    return Response('{&quot;status&quot;: &quot;healthy&quot;}', status=200, mimetype=&quot;application/json&quot;)
-  except:
-    return Response('{&quot;status&quot;: &quot;cannot decode mutagen response&quot;}', status=503, mimetype=&quot;application/json&quot;)
+[[ fileContents &quot;flask-app.py&quot; ]]
 EOF
         destination   = &quot;local/flask-app.py&quot;
         change_mode   = &quot;restart&quot;
@@ -1594,19 +1437,19 @@ EOF
         data = &lt;&lt;EOH
 {{ with nomadVar &quot;nomad/jobs/sync/mutagen/project&quot; }}{{ .id_ed25519 }}{{ end }}
 EOH
-        destination = &quot;ssh/id_ed25519&quot;
-        change_mode   = &quot;restart&quot;
+        destination = &quot;secrets/id_ed25519&quot;
+        change_mode = &quot;noop&quot;
         perms = &quot;600&quot;
       }
 
       template {
         data = &lt;&lt;EOH
 Host *
-  IdentityFile ~/.ssh/id_ed25519
+  IdentityFile /secrets/id_ed25519
   StrictHostKeyChecking no
 EOH
         destination = &quot;ssh/config&quot;
-        change_mode   = &quot;restart&quot;
+        change_mode   = &quot;noop&quot;
         perms = &quot;600&quot;
       }
 
@@ -1653,6 +1496,12 @@ EOH
       }
     }
 
+    volume &quot;shared-data&quot; {
+      type = &quot;host&quot;
+      source = &quot;shared-data&quot;
+      read_only = false
+    }
+
     task &quot;redis&quot; {
       driver = &quot;docker&quot;
       env {
@@ -1661,6 +1510,11 @@ EOH
       config {
         image = &quot;redis:latest&quot;
         ports = [&quot;redis&quot;]
+        args = [&quot;--dir&quot;, &quot;/shared-data/999_999&quot;]
+      }
+      volume_mount {
+        volume      = &quot;shared-data&quot;
+        destination = &quot;/shared-data&quot;
       }
     }
   }
@@ -1753,7 +1607,7 @@ list_limit_maximum = 500
 
 [store]
 [store.kv]
-path = &quot;/shared-data/sonic/store/kv/&quot;
+path = &quot;/shared-data/1000_1000/sonic/store/kv/&quot;
 retain_word_objects = 1000
 
 [store.kv.pool]
@@ -1770,7 +1624,7 @@ write_buffer = 32768
 write_ahead_log = true
 
 [store.fst]
-path = &quot;/shared-data/sonic/store/fst/&quot;
+path = &quot;/shared-data/1000_1000/sonic/store/fst/&quot;
 
 [store.fst.pool]
 inactive_after = 300
@@ -1868,21 +1722,18 @@ EOF
       }
     }
 
-    task &quot;mariadb&quot; {
+    task &quot;mariadb-db1&quot; {
       driver = &quot;docker&quot;
       env {
-        PUID = &quot;1000&quot;
-        PGID = &quot;1000&quot;
-        UMASK = &quot;0066&quot;
         TZ = &quot;Europe/Berlin&quot;
-        DATADIR = &quot;/shared-data/mariadb&quot;
+        MARIADB_AUTO_UPGRADE = &quot;true&quot;
       }
       config {
-        image = &quot;linuxserver/mariadb&quot;
+        image = &quot;mariadb:10&quot;
         ports = [&quot;mariadb&quot;]
         volumes = [
           &quot;config:/config&quot;,
-          &quot;custom-init-d:/custom-cont-init.d&quot;
+          &quot;mysql-conf.d:/etc/mysql/conf.d&quot;
         ]
       }
       logs {
@@ -1894,26 +1745,35 @@ EOF
 # todo: use task name
 {{ with nomadVar &quot;nomad/jobs/databases/mariadb/mariadb&quot; }}{{ .mariadb_env }}{{ end }}
 EOH
-        destination = &quot;config/env&quot;
+        destination = &quot;secrets/env&quot;
         change_mode   = &quot;restart&quot;
+        env = true
       }
       volume_mount {
         volume      = &quot;shared-data&quot;
         destination = &quot;/shared-data&quot;
       }
+#       template {
+#         data = &lt;&lt;EOH
+# # Here if you need me
+# #/bin/sh
+# echo &quot;Starting backup...&quot;
+# if [ -d &quot;/shared-data/mariadb&quot; ]; then
+#   echo &quot;Found directory&quot;
+#   source /config/env
+#   mariabackup -uroot -p$MYSQL_ROOT_PASSWORD --backup--target-dir=/shared-data/mariadb-backup
+#   mariabackup -uroot -p$MYSQL_ROOT_PASSWORD --prepare --target-dir=/shared-data/mariadb-backup
+# fi
+# EOH
+#         destination = &quot;custom-init-d/prepare&quot;
+#         perms = &quot;755&quot;
+#       }
       template {
         data = &lt;&lt;EOH
-# Here if you need me
-#/bin/sh
-echo &quot;Starting backup...&quot;
-if [ -d &quot;/shared-data/mariadb&quot; ]; then
-  echo &quot;Found directory&quot;
-  source /config/env
-  mariabackup -uroot -p$MYSQL_ROOT_PASSWORD --backup--target-dir=/shared-data/mariadb-backup
-  mariabackup -uroot -p$MYSQL_ROOT_PASSWORD --prepare --target-dir=/shared-data/mariadb-backup
-fi
+[mysqld]
+datadir=/shared-data/999_999/db1
 EOH
-        destination = &quot;custom-init-d/prepare&quot;
+        destination = &quot;mysql-conf.d/custom.cnf&quot;
         perms = &quot;755&quot;
       }
     }
@@ -1928,6 +1788,16 @@ EOH
 <div style="break-before: page; page-break-before: always;"></div><h1 id="wander"><a class="header" href="#wander">Wander</a></h1>
 <p><a href="https://github.com/robinovitch61/wander">Wander</a> is a great alternative to &quot;damon&quot; by Hashicorp.</p>
 <p>I found it to be more convenient compared to &quot;damon&quot;.</p>
+<p>The exec functionality does, as of writing this article in Jan 2023, not work with TLS-enabled Nomad stacks.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="lazydocker"><a class="header" href="#lazydocker">Lazydocker</a></h1>
+<p><a href="https://github.com/jesseduffield/lazydocker">Lazydocker</a> is a TUI for Docker to quickly access and manage container logs, stats, volumes, and even allows to quickly enter a running container with a shell.</p>
+<p>The latest version can be found <a href="https://github.com/jesseduffield/lazydocker/releases/latest">here</a>.</p>
+<pre><code class="language-bash">wget -O lazydocker.tar.gz https://github.com/jesseduffield/lazydocker/releases/download/v0.20.0/lazydocker_0.20.0_Linux_x86_64.tar.gz
+tar xfz lazydocker.tar.gz --directory=.
+for nomad in $(jq -r keys[] ~/nomad-env.json); do
+  scp lazydocker $nomad:/usr/local/sbin/lazydocker
+done
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="quick-enter-containers"><a class="header" href="#quick-enter-containers">Quick enter containers</a></h1>
 <p>This script refers to <code>nomad-env.json</code>.</p>
 <pre><code class="language-bash">for nomad in $(jq -r keys[] ~/nomad-env.json); do

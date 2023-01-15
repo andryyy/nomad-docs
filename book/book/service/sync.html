@@ -82,7 +82,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Prepare environment</li><li class="chapter-item expanded "><a href="../preparation.html"><strong aria-hidden="true">1.</strong> Preparation</a></li><li class="chapter-item expanded "><a href="../basic-setup.html"><strong aria-hidden="true">2.</strong> Basic setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Nomad cluster</li><li class="chapter-item expanded "><a href="../nomad/encryption.html"><strong aria-hidden="true">3.</strong> Encryption</a></li><li class="chapter-item expanded "><a href="../nomad/services_and_folders.html"><strong aria-hidden="true">4.</strong> Services and folders</a></li><li class="chapter-item expanded "><a href="../nomad/server_config.html"><strong aria-hidden="true">5.</strong> Configuration</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../nomad/server_config.html"><strong aria-hidden="true">5.1.</strong> Server agent configuration</a></li><li class="chapter-item expanded "><a href="../nomad/client_config.html"><strong aria-hidden="true">5.2.</strong> Client agent configuration</a></li><li class="chapter-item expanded "><a href="../nomad/client_agent_access.html"><strong aria-hidden="true">5.3.</strong> Accessing the client</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">System Jobs</li><li class="chapter-item expanded "><a href="../system/nginx.html"><strong aria-hidden="true">6.</strong> Nginx</a></li><li class="chapter-item expanded "><a href="../system/sshd.html"><strong aria-hidden="true">7.</strong> SSHd</a></li><li class="chapter-item expanded affix "><li class="part-title">Service jobs</li><li class="chapter-item expanded "><a href="../service/sync.html" class="active"><strong aria-hidden="true">8.</strong> Mutagen</a></li><li class="chapter-item expanded "><a href="../service/databases.html"><strong aria-hidden="true">9.</strong> Databases</a></li><li class="chapter-item expanded affix "><li class="part-title">Tools</li><li class="chapter-item expanded "><a href="../tools/damon.html"><strong aria-hidden="true">10.</strong> Damon</a></li><li class="chapter-item expanded "><a href="../tools/wander.html"><strong aria-hidden="true">11.</strong> Wander</a></li><li class="chapter-item expanded affix "><li class="part-title">Scripts</li><li class="chapter-item expanded "><a href="../scripts/quick-enter.html"><strong aria-hidden="true">12.</strong> Quick-enter containers</a></li><li class="chapter-item expanded affix "><li class="part-title">Server debug</li><li class="chapter-item expanded "><a href="../server_debug/services.html"><strong aria-hidden="true">13.</strong> Nomad services</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Prepare environment</li><li class="chapter-item expanded "><a href="../preparation.html"><strong aria-hidden="true">1.</strong> Preparation</a></li><li class="chapter-item expanded "><a href="../basic-setup.html"><strong aria-hidden="true">2.</strong> Basic setup</a></li><li class="chapter-item expanded affix "><li class="part-title">Nomad cluster</li><li class="chapter-item expanded "><a href="../nomad/encryption.html"><strong aria-hidden="true">3.</strong> Encryption</a></li><li class="chapter-item expanded "><a href="../nomad/services_and_folders.html"><strong aria-hidden="true">4.</strong> Services and folders</a></li><li class="chapter-item expanded "><a href="../nomad/server_config.html"><strong aria-hidden="true">5.</strong> Configuration</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../nomad/server_config.html"><strong aria-hidden="true">5.1.</strong> Server agent configuration</a></li><li class="chapter-item expanded "><a href="../nomad/client_config.html"><strong aria-hidden="true">5.2.</strong> Client agent configuration</a></li><li class="chapter-item expanded "><a href="../nomad/client_agent_access.html"><strong aria-hidden="true">5.3.</strong> Accessing the client</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">System Jobs</li><li class="chapter-item expanded "><a href="../system/nginx.html"><strong aria-hidden="true">6.</strong> Nginx</a></li><li class="chapter-item expanded "><a href="../system/sshd.html"><strong aria-hidden="true">7.</strong> SSHd</a></li><li class="chapter-item expanded affix "><li class="part-title">Service jobs</li><li class="chapter-item expanded "><a href="../service/sync.html" class="active"><strong aria-hidden="true">8.</strong> Mutagen</a></li><li class="chapter-item expanded "><a href="../service/databases.html"><strong aria-hidden="true">9.</strong> Databases</a></li><li class="chapter-item expanded affix "><li class="part-title">Tools</li><li class="chapter-item expanded "><a href="../tools/damon.html"><strong aria-hidden="true">10.</strong> Damon</a></li><li class="chapter-item expanded "><a href="../tools/wander.html"><strong aria-hidden="true">11.</strong> Wander</a></li><li class="chapter-item expanded "><a href="../tools/lazydocker.html"><strong aria-hidden="true">12.</strong> Lazydocker</a></li><li class="chapter-item expanded affix "><li class="part-title">Scripts</li><li class="chapter-item expanded "><a href="../scripts/quick-enter.html"><strong aria-hidden="true">13.</strong> Quick-enter containers</a></li><li class="chapter-item expanded affix "><li class="part-title">Server debug</li><li class="chapter-item expanded "><a href="../server_debug/services.html"><strong aria-hidden="true">14.</strong> Nomad services</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -152,16 +152,13 @@
 </code></pre>
 <p>Alternatively default values can be assigned on top of the job file.</p>
 <p><strong>Important</strong>: These variables will not be stored encrypted.</p>
-<pre><code class="language-bash">variable &quot;telegram_bot_token&quot; {
-  type = string
-  default = &quot;&quot;
-}
-variable &quot;telegram_chat_id&quot; {
-  type = string
-  default = &quot;&quot;
-}
+<pre><code class="language-bash">job &quot;sync&quot; {
 
-job &quot;sync&quot; {
+  update {
+    max_parallel  = 1
+    health_check  = &quot;checks&quot;
+    auto_revert = true
+  }
 
   datacenters = [&quot;falkenstein&quot;]
   type = &quot;service&quot;
@@ -178,7 +175,7 @@ job &quot;sync&quot; {
 
     network {
       mode = &quot;bridge&quot;
-      port &quot;mutagen&quot; {
+      port &quot;mutagen_flask&quot; {
         host_network = &quot;nomad-clients&quot;
         to = 8082
       }
@@ -186,21 +183,24 @@ job &quot;sync&quot; {
 
     service {
       name     = &quot;mutagen&quot;
-      port     = &quot;mutagen&quot;
+      port     = &quot;mutagen_flask&quot;
       provider = &quot;nomad&quot;
-      tags = [&quot;public-http&quot;, jsonencode({
-        path = &quot;/mutagen/&quot;,
-        limit_except = &quot;GET&quot;
-      })]
+      tags = [&quot;public-http&quot;, &quot;{\&quot;path\&quot;: \&quot;/mutagen/\&quot;, \&quot;limit_except\&quot;: \&quot;GET\&quot;}&quot;]
+      check {
+        name     = &quot;mutagen_probe&quot;
+        type     = &quot;http&quot;
+        interval = &quot;10s&quot;
+        timeout  = &quot;2s&quot;
+        path  = &quot;/mutagen/health.json&quot;
+        port  = &quot;mutagen_flask&quot;
+      }
     }
 
     task &quot;project&quot; {
 
       env {
-        PUID = &quot;1000&quot;
-        PGID = &quot;1000&quot;
-        TELEGRAM_BOT_TOKEN = var.telegram_bot_token
-        CHAT_ID = var.telegram_chat_id
+        TELEGRAM_BOT_TOKEN = &quot;[[ .telegram_bot_token ]]&quot;
+        CHAT_ID = &quot;[[ .telegram_chat_id ]]&quot;
         TZ = &quot;Europe/Berlin&quot;
       }
 
@@ -212,182 +212,12 @@ job &quot;sync&quot; {
       driver = &quot;docker&quot;
       config {
         image = &quot;python:3&quot;
-        ports = [&quot;mutagen&quot;]
+        ports = [&quot;mutagen_flask&quot;]
         command = &quot;/bin/bash&quot;
-        args    = [&quot;-c&quot;, &lt;&lt;EOF
-set -o pipefail
-
-trap &quot;exit&quot; INT TERM
-trap &quot;kill 0&quot; EXIT
-
-# Prepare
-BACKGROUND_TASKS=
-[ -f /root/.mutagen/daemon/daemon.lock ] &amp;&amp; rm /root/.mutagen/daemon/daemon.*
-apt update
-apt upgrade -y
-apt install -y openssh-client jq curl
-pip install flask
-
-#~
-#~ Generic functions
-#~
-
-log_msg() {
-  local input=&quot;&quot;
-  [[ -p /dev/stdin ]] &amp;&amp; input=$(cat -) || input=$1
-
-  # Using bash pattern replacement is difficult in a command argument template, so we are using tr
-  [[ -z &quot;$(echo $input | tr -d &quot; \t\n\r&quot;)&quot; ]] || [[ &quot;$input&quot; == &quot;''&quot; ]] &amp;&amp; return 0
-
-  local now=$(date -R)
-  printf &quot;🕙 %s - %s\n&quot; &quot;$now&quot; &quot;$input&quot;
-  if [[ -z $TELEGRAM_BOT_TOKEN ]] || [[ -z $CHAT_ID ]]; then
-    return 0
-  fi
-  local data=$(jq --null-input \
-    --arg chat_id $CHAT_ID \
-    --arg parse_mode HTML \
-    --arg msg &quot;$(printf &quot;&lt;b&gt;Sync notification&lt;/b&gt;\n&lt;i&gt;🕙 %s&lt;/i&gt;\n\n&lt;pre&gt;%s&lt;/pre&gt;&quot; &quot;$now&quot; &quot;$input&quot;)&quot; \
-    '{&quot;chat_id&quot;: $chat_id, &quot;text&quot;: $msg, &quot;parse_mode&quot;: $parse_mode}'
-    )
-  curl -s -o /dev/null -H 'Content-Type: application/json' \
-    -d &quot;$data&quot; \
-    -X POST \
-    https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage
-}
-
-if [ $EXPECTED_NODES -lt 2 ]; then
-  log_msg &quot;Critical: Need at least 2 nodes&quot;
-  exit 1
-fi
-
-until /local/mutagen project start -f /local/mutagen.yml 2&gt;&amp;1 | log_msg; do
-  /local/mutagen project terminate -f /local/mutagen.yml 2&gt;&amp;1 | log_msg
-  sleep 10
-done
-
-#~
-#~ Checks / Workers
-#~
-
-mutagen_nodes() {
-  local init=1
-  while true; do
-    ACTIVE_NODES=$(($(local/mutagen sync list --template &quot;{{ len . }}&quot;) + 1))
-    if [ $ACTIVE_NODES -ne $EXPECTED_NODES ]; then
-      log_msg &quot;Warning: Active node count does not match expected nodes.&quot;
-      init=1
-    elif [ $init -eq 1 ]; then
-      # Example how to escape var:
-      #log_msg &quot;$$${init}&quot;
-      log_msg &quot;Running with $ACTIVE_NODES nodes: the party is complete!&quot;
-      init=0
-    fi
-    sleep 60
-  done
-}
-
-mutagen_status() {
-  while true; do
-    while read job; do
-      status=$(local/mutagen sync list $job --template \
-        &quot;{{ range . }}{{ .Status }}{{ end }}&quot;)
-      if [[ $status =~ (Halt|Unknown|halt|unknown) ]]; then
-        log_msg &quot;$job is in critical state:
-$status
-Resetting...&quot;
-        local/mutagen sync reset $job 2&gt;&amp;1 | log_msg
-      fi
-    done &lt; &lt;(local/mutagen sync list --template \
-      &quot;{{ range . }}{{ .Identifier }}
-{{ end }}&quot;)
-    sleep 10
-  done
-}
-
-mutagen_flask() {
-  while true; do
-    log_msg &quot;Spawned flask listener for Mutagen&quot;
-    flask --app local/flask-app.py run --host=0.0.0.0 --port=8082
-  done
-}
-
-mutagen_conflicts() {
-  # Settle...
-  sleep 10
-  while true; do
-    if ! curl -s --fail -o /dev/null http://localhost:8082/mutagen/scanproblems/report; then
-      curl -s http://localhost:8082/mutagen/scanproblems/fix | log_msg
-    fi
-    sleep 5
-  done
-}
-
-#~
-#~ Spawn workers
-#~
-
-(
-while true; do
-  if ! mutagen_nodes; then
-    log_msg &quot;mutagen_nodes error&quot;
-  fi
-done
-) &amp;
-PID=$!
-log_msg &quot;Spawned mutagen_nodes with PID $PID&quot;
-BACKGROUND_TASKS+=$PID:
-
-(
-while true; do
-  if ! mutagen_flask; then
-    log_msg &quot;mutagen_flask error&quot;
-  fi
-done
-) &amp;
-PID=$!
-log_msg &quot;Spawned mutagen_flask with PID $PID&quot;
-BACKGROUND_TASKS+=$PID:
-
-(
-while true; do
-  if ! mutagen_status; then
-    log_msg &quot;mutagen_status error&quot;
-  fi
-done
-) &amp;
-PID=$!
-log_msg &quot;Spawned mutagen_status with PID $PID&quot;
-BACKGROUND_TASKS+=$PID:
-
-(
-while true; do
-  if ! mutagen_conflicts; then
-    log_msg &quot;mutagen_conflicts error&quot;
-  fi
-done
-) &amp;
-PID=$!
-log_msg &quot;Spawned mutagen_conflicts with PID $PID&quot;
-BACKGROUND_TASKS+=$PID:
-
-#~
-#~ Kill self/task (PID 1) if any worker died
-#~
-
-while true; do
-  IFS=:
-  for bg_task in $BACKGROUND_TASKS; do
-    if ! kill -0 $bg_task 1&gt;&amp;2; then
-      log_msg &quot;Task $bg_task died, bye...&quot;
-      kill -TERM 1
-    fi
-    sleep 10
-  done
-done
-
+        args = [&quot;-c&quot;, &lt;&lt;EOF
+[[ fileContents &quot;init.sh&quot; ]]
 EOF
-        ]
+]
         volumes = [
           &quot;ssh:/root/.ssh&quot;,
         ]
@@ -395,136 +225,26 @@ EOF
 
       template {
         data = &lt;&lt;EOF
-EXPECTED_NODES={{ len (nomadService &quot;sshd&quot;) }}
 CHAT_ID={{ env &quot;CHAT_ID&quot; }}
 TELEGRAM_BOT_TOKEN={{ env &quot;TELEGRAM_BOT_TOKEN&quot; }}
 EOF
-        destination = &quot;local/file.env&quot;
+        destination = &quot;secrets/file.env&quot;
+        change_mode = &quot;restart&quot;
         env = true
       }
 
       template {
         data = &lt;&lt;EOF
-sync:
-  defaults:
-    permissions:
-      defaultGroup: &quot;id:{{ env &quot;PUID&quot; }}&quot;
-      defaultOwner: &quot;id:{{ env &quot;PGID&quot; }}&quot;
-      defaultFileMode: 0600
-      defaultDirectoryMode: 0700
-    flushOnCreate: true
-    stageMode: &quot;internal&quot;
-    ignore:
-      vcs: true
-{{ range $idx, $srv := nomadService &quot;sshd&quot; }}{{ if ne $idx 0 }}
-# {{ len (nomadService &quot;sshd&quot;) }}
-  job-{{ $idx }}:
-    alpha: &quot;user@{{ with nomadService &quot;sshd&quot; }}{{ with index . 0 }}{{ .Address }}:{{ .Port }}{{ end }}{{ end }}:/shared-data&quot;
-    beta: &quot;user@{{ $srv.Address }}:{{ $srv.Port }}:/shared-data&quot;
-    mode: &quot;two-way-resolved&quot;
-{{ end }}{{ else }}{{ end }}
+[[ fileContents &quot;mutagen.yml&quot; ]]
 EOF
-        destination   = &quot;local/mutagen.yml&quot;
-        change_mode   = &quot;restart&quot;
+        destination = &quot;local/mutagen.yml&quot;
+        change_mode = &quot;signal&quot;
+        change_signal = &quot;SIGUSR1&quot;
       }
 
       template {
         data = &lt;&lt;EOF
-from flask import Flask, Response
-import subprocess
-import json
-import base64
-import locale
-import os
-
-enc = locale.getpreferredencoding()
-app = Flask(__name__)
-
-@app.route(&quot;/mutagen/status.json&quot;)
-def mutagen_json():
-  ret = subprocess.check_output([&quot;local/mutagen&quot;, &quot;sync&quot;, &quot;list&quot;, &quot;--template&quot;, &quot;{{ `{{ json . }}` }}&quot;])
-  try:
-    json.loads(ret)
-    return Response(ret, status=200, mimetype=&quot;application/json&quot;)
-  except:
-    return Response('{&quot;status&quot;: &quot;cannot decode mutagen response&quot;}', status=503, mimetype=&quot;application/json&quot;)
-
-@app.route(&quot;/mutagen/flush&quot;)
-def mutagen_flush():
-  ret = subprocess.run([&quot;local/mutagen&quot;, &quot;project&quot;, &quot;flush&quot;, &quot;-f&quot;, &quot;/local/mutagen.yml&quot;],
-    stdout=subprocess.DEVNULL,
-    stderr=subprocess.DEVNULL)
-  if ret.returncode == 0:
-    return Response(str(ret.returncode), status=200, mimetype=&quot;text/plain&quot;)
-  else:
-    return Response(str(ret.returncode), status=500, mimetype=&quot;text/plain&quot;)
-
-# Returns 409 on conflicts else 200; 503 if mutagen cmd fails
-# Report-only on do == &quot;report&quot; anything else will attempt to auto-fix
-@app.route(&quot;/mutagen/scanproblems/&lt;do&gt;&quot;)
-def mutagen_problems(do):
-  ret = subprocess.check_output([&quot;local/mutagen&quot;, &quot;sync&quot;, &quot;list&quot;, &quot;--template&quot;, &quot;{{ `{{ json . }}` }}&quot;])
-  try:
-    response = {}
-    response[&quot;problems&quot;] = []
-    for job in json.loads(ret):
-      for site in [&quot;alpha&quot;, &quot;beta&quot;]:
-        if job[site].get(&quot;scanProblems&quot;):
-          for problem in job[site].get(&quot;scanProblems&quot;):
-            path = problem.get(&quot;path&quot;)
-            if do == &quot;report&quot;:
-              response[&quot;problems&quot;].append({
-                &quot;path&quot;: path,
-                &quot;report_only&quot;: True,
-                &quot;host&quot;: job[site][&quot;host&quot;]
-              })
-              continue
-            if not os.path.abspath(&quot;/shared-data/&quot; + path).startswith(&quot;/shared-data/&quot;):
-              response[&quot;problems&quot;].append({
-                &quot;path&quot;: path,
-                &quot;report_only&quot;: True,
-                &quot;error&quot;: &quot;illegal path&quot;,
-                &quot;host&quot;: job[site][&quot;host&quot;]
-              })
-              continue
-
-            # Start fix logic
-            ssh_user = job[site][&quot;user&quot;]
-            ssh_host = job[site][&quot;host&quot;]
-            ssh_port = job[site][&quot;port&quot;]
-            problem_path_bytes = (&quot;/shared-data/&quot; + path).encode(enc)
-            problem_path_base64 = base64.b64encode(problem_path_bytes).decode(enc)
-
-            command = f&quot;ssh -p {ssh_port} {ssh_user}@{ssh_host} sudo /usr/local/sbin/permfix {problem_path_base64}&quot;
-            ret = subprocess.run(command.split(), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
-            response[&quot;problems&quot;].append({
-              &quot;path&quot;: path,
-              &quot;permix_return_code&quot;: ret.returncode,
-              &quot;host&quot;: job[site][&quot;host&quot;]
-            })
-
-    return_code = 409 if response[&quot;problems&quot;] else 200
-    return Response(json.dumps(response), status=return_code, mimetype=&quot;application/json&quot;)
-
-  except Exception as err:
-    return Response('{&quot;status&quot;: &quot;cannot decode mutagen response&quot;}', status=503, mimetype=&quot;application/json&quot;)
-
-@app.route(&quot;/mutagen/health.json&quot;)
-def mutagen_health():
-  ret = subprocess.check_output([&quot;local/mutagen&quot;, &quot;sync&quot;, &quot;list&quot;, &quot;--template&quot;, &quot;{{ `{{ json . }}` }}&quot;])
-  try:
-    for job in json.loads(ret):
-      for data in [job[&quot;alpha&quot;][&quot;scanned&quot;], job[&quot;alpha&quot;][&quot;connected&quot;], job[&quot;beta&quot;][&quot;scanned&quot;], job[&quot;beta&quot;][&quot;connected&quot;]]:
-        if data != True:
-          return Response('{&quot;status&quot;: &quot;unhealthy: at least one node is not connected or has not finished a scan&quot;}', status=500, mimetype=&quot;application/json&quot;)
-      if job[&quot;status&quot;] != &quot;watching&quot;:
-        return Response('{&quot;status&quot;: &quot;unhealthy: at least one node is not in watching mode&quot;}', status=500, mimetype=&quot;application/json&quot;)
-      if job[&quot;alpha&quot;].get(&quot;scanProblems&quot;) or job[&quot;beta&quot;].get(&quot;scanProblems&quot;):
-        return Response('{&quot;status&quot;: &quot;unhealthy: at least one node reports scan problems&quot;}', status=500, mimetype=&quot;application/json&quot;)
-    return Response('{&quot;status&quot;: &quot;healthy&quot;}', status=200, mimetype=&quot;application/json&quot;)
-  except:
-    return Response('{&quot;status&quot;: &quot;cannot decode mutagen response&quot;}', status=503, mimetype=&quot;application/json&quot;)
+[[ fileContents &quot;flask-app.py&quot; ]]
 EOF
         destination   = &quot;local/flask-app.py&quot;
         change_mode   = &quot;restart&quot;
@@ -534,19 +254,19 @@ EOF
         data = &lt;&lt;EOH
 {{ with nomadVar &quot;nomad/jobs/sync/mutagen/project&quot; }}{{ .id_ed25519 }}{{ end }}
 EOH
-        destination = &quot;ssh/id_ed25519&quot;
-        change_mode   = &quot;restart&quot;
+        destination = &quot;secrets/id_ed25519&quot;
+        change_mode = &quot;noop&quot;
         perms = &quot;600&quot;
       }
 
       template {
         data = &lt;&lt;EOH
 Host *
-  IdentityFile ~/.ssh/id_ed25519
+  IdentityFile /secrets/id_ed25519
   StrictHostKeyChecking no
 EOH
         destination = &quot;ssh/config&quot;
-        change_mode   = &quot;restart&quot;
+        change_mode   = &quot;noop&quot;
         perms = &quot;600&quot;
       }
 
