@@ -19,6 +19,8 @@ sshd/
 └── variables.json
 ```
 
+## variables.json
+
 **Filename**: `sshd/variables.json`
 
 **Important**: Task names must be unique.
@@ -27,13 +29,15 @@ sshd/
 {{#include ../../../../jobs/sshd/variables.json}}
 ```
 
+## set_var.sh
+
 **Filename**: `sshd/set_var.sh`
 
 ```bash
 {{#include ../../../../jobs/sshd/set_var.sh}}
 ```
 
----
+## includes/permfix
 
 This script is called by Mutagen to fix permissions on scan problems.
 Besides this script having all necessary fail-safes, Mutagen will also run some sanity checks before sending a path to this script.
@@ -43,6 +47,8 @@ Besides this script having all necessary fail-safes, Mutagen will also run some 
 ```bash
 {{#include ../../../../jobs/sshd/includes/permfix}}
 ```
+
+## includes/prepare.sh
 
 This script will prepare the environment.
 
@@ -58,13 +64,15 @@ The user "user" will only be allowed to call the permfix script using sudo.
 {{#include ../../../../jobs/sshd/includes/prepare.sh}}
 ```
 
+## sshd.nomad
+
 **Filename**: `sshd/sshd.nomad`
 
 ```bash
 {{#include ../../../../jobs/sshd/sshd.nomad}}
 ```
 
----
+## run_sshd.sh
 
 The deploy script is calling `levant deploy`, which is pretty close to `nomad run`.
 

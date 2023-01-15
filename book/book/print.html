@@ -1089,6 +1089,7 @@ EOF
 ├── sshd.nomad
 └── variables.json
 </code></pre>
+<h2 id="variablesjson"><a class="header" href="#variablesjson">variables.json</a></h2>
 <p><strong>Filename</strong>: <code>sshd/variables.json</code></p>
 <p><strong>Important</strong>: Task names must be unique.</p>
 <pre><code class="language-bash">{
@@ -1109,6 +1110,7 @@ EOF
 }
 
 </code></pre>
+<h2 id="set_varsh"><a class="header" href="#set_varsh">set_var.sh</a></h2>
 <p><strong>Filename</strong>: <code>sshd/set_var.sh</code></p>
 <pre><code class="language-bash"># All tasks of group sync of job sshd have access
 ssh-keygen -q -t ed25519 -f id_ed25519 -N &quot;&quot; &lt;&lt;&lt;y &gt;/dev/null 2&gt;&amp;1
@@ -1122,7 +1124,7 @@ for varpath in nomad/jobs/sync/mutagen/project nomad/jobs/sshd/sync; do
 done
 rm id_ed25519.pub id_ed25519
 </code></pre>
-<hr />
+<h2 id="includespermfix"><a class="header" href="#includespermfix">includes/permfix</a></h2>
 <p>This script is called by Mutagen to fix permissions on scan problems.
 Besides this script having all necessary fail-safes, Mutagen will also run some sanity checks before sending a path to this script.</p>
 <p><strong>Filename</strong>: <code>sshd/includes/permfix</code></p>
@@ -1178,6 +1180,7 @@ else
   exit 5
 fi
 </code></pre>
+<h2 id="includespreparesh"><a class="header" href="#includespreparesh">includes/prepare.sh</a></h2>
 <p>This script will prepare the environment.</p>
 <p>It does read the given umask value and create an ACL file to be applied on the desired path, that is derived by the UID and GID, i.e. <code>/shared-data/$uid_$gid</code>.</p>
 <p>Moreover a reference file and directory is installed for &quot;permfix&quot; to use when fixing scan problems.</p>
@@ -1252,6 +1255,7 @@ echo &quot;Set SSHd listen address to dynamic port {{ env $task_name_var }}&quot
 sed -i 's/2222/{{ env $task_name_var }}/' /etc/s6-overlay/s6-rc.d/svc-openssh-server/run
 sed -i 's/2222/{{ env $task_name_var }}/' /var/run/service/svc-openssh-server/run.user
 </code></pre>
+<h2 id="sshdnomad"><a class="header" href="#sshdnomad">sshd.nomad</a></h2>
 <p><strong>Filename</strong>: <code>sshd/sshd.nomad</code></p>
 <pre><code class="language-bash">
 
@@ -1353,7 +1357,7 @@ EOH
   }
 }
 </code></pre>
-<hr />
+<h2 id="run_sshdsh"><a class="header" href="#run_sshdsh">run_sshd.sh</a></h2>
 <p>The deploy script is calling <code>levant deploy</code>, which is pretty close to <code>nomad run</code>.</p>
 <p>The script reads the required variables using the <code>-var-file</code> parameter and also adds the ability to call the script with extra parameters:</p>
 <pre><code class="language-bash"># Deploy
