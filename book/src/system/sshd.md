@@ -20,6 +20,7 @@ sshd/
 ```
 
 **Filename**: `sshd/variables.json`
+
 **Important**: Task names must be unique.
 
 ```bash
