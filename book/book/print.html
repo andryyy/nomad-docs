@@ -1079,8 +1079,18 @@ EOF
 <p><strong>This job does require levant.</strong></p>
 <p>Levant was used to create a dynamic amount of tasks depending on the configuration found in &quot;variables.json&quot;.</p>
 <p>Moreover Levant offers the ability to outsource files to be included when rendering the job. This greatly improves the readability of the job file.</p>
-<p><strong>Important</strong>: Task names must be unique.</p>
-<p><strong>Filename</strong>: <code>sshd/variables.json</code></p>
+<p>Structure:</p>
+<pre><code class="language-bash">sshd/
+├── includes
+│   ├── permfix
+│   └── prepare.sh
+├── run_sshd.sh
+├── set_var.sh
+├── sshd.nomad
+└── variables.json
+</code></pre>
+<p><strong>Filename</strong>: <code>sshd/variables.json</code>
+<strong>Important</strong>: Task names must be unique.</p>
 <pre><code class="language-bash">{
   &quot;tasks&quot;: [
     {

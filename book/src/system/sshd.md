@@ -6,9 +6,21 @@ Levant was used to create a dynamic amount of tasks depending on the configurati
 
 Moreover Levant offers the ability to outsource files to be included when rendering the job. This greatly improves the readability of the job file.
 
-**Important**: Task names must be unique.
+Structure:
+
+```bash
+sshd/
+├── includes
+│   ├── permfix
+│   └── prepare.sh
+├── run_sshd.sh
+├── set_var.sh
+├── sshd.nomad
+└── variables.json
+```
 
 **Filename**: `sshd/variables.json`
+**Important**: Task names must be unique.
 
 ```bash
 {{#include ../../../../jobs/sshd/variables.json}}
