@@ -1080,6 +1080,7 @@ EOF
 <p>Levant was used to create a dynamic amount of tasks depending on the configuration found in &quot;variables.json&quot;.</p>
 <p>Moreover Levant offers the ability to outsource files to be included when rendering the job. This greatly improves the readability of the job file.</p>
 <p><strong>Important</strong>: Task names must be unique.</p>
+<p><strong>Filename</strong>: <code>sshd/variables.json</code></p>
 <pre><code class="language-bash">{
   &quot;tasks&quot;: [
     {
@@ -1098,6 +1099,7 @@ EOF
 }
 
 </code></pre>
+<p><strong>Filename</strong>: <code>sshd/set_var.sh</code></p>
 <pre><code class="language-bash"># All tasks of group sync of job sshd have access
 ssh-keygen -q -t ed25519 -f id_ed25519 -N &quot;&quot; &lt;&lt;&lt;y &gt;/dev/null 2&gt;&amp;1
 for varpath in nomad/jobs/sync/mutagen/project nomad/jobs/sshd/sync; do
@@ -1111,6 +1113,9 @@ done
 rm id_ed25519.pub id_ed25519
 </code></pre>
 <hr />
+<p>This script is called by Mutagen to fix permissions on scan problems.
+Besides this script having all necessary fail-safes, Mutagen will also run some sanity checks before sending a path to this script.</p>
+<p><strong>Filename</strong>: <code>sshd/includes/permfix</code></p>
 <pre><code class="language-bash">#!/bin/bash
 
 # Tests
@@ -1162,7 +1167,13 @@ if [[ ! -z &quot;$1&quot; ]]; then
 else
   exit 5
 fi
-#!/bin/bash
+</code></pre>
+<p>This script will prepare the environment.</p>
+<p>It does read the given umask value and create an ACL file to be applied on the desired path, that is derived by the UID and GID, i.e. <code>/shared-data/$uid_$gid</code>.</p>
+<p>Moreover a reference file and directory is installed for &quot;permfix&quot; to use when fixing scan problems.</p>
+<p>The user &quot;user&quot; will only be allowed to call the permfix script using sudo.</p>
+<p><strong>Filename</strong>: <code>sshd/includes/prepare.sh</code></p>
+<pre><code class="language-bash">#!/bin/bash
 
 # We need -E for our trap to trigger also in functions
 set -eE
@@ -1231,6 +1242,7 @@ echo &quot;Set SSHd listen address to dynamic port {{ env $task_name_var }}&quot
 sed -i 's/2222/{{ env $task_name_var }}/' /etc/s6-overlay/s6-rc.d/svc-openssh-server/run
 sed -i 's/2222/{{ env $task_name_var }}/' /var/run/service/svc-openssh-server/run.user
 </code></pre>
+<p><strong>Filename</strong>: <code>sshd/sshd.nomad</code></p>
 <pre><code class="language-bash">
 
 job &quot;sshd&quot; {
@@ -1331,6 +1343,15 @@ EOH
   }
 }
 </code></pre>
+<hr />
+<p>The deploy script is calling <code>levant deploy</code>, which is pretty close to <code>nomad run</code>.</p>
+<p>The script reads the required variables using the <code>-var-file</code> parameter and also adds the ability to call the script with extra parameters:</p>
+<pre><code class="language-bash"># Deploy
+./run_sshd.sh
+# Force-deploy
+./run_sshd.sh -force
+</code></pre>
+<p><strong>Filename</strong>: <code>sshd/run_sshd.sh</code></p>
 <pre><code class="language-bash">levant deploy ${@} -var-file=variables.json
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="mutagen-job-file"><a class="header" href="#mutagen-job-file">Mutagen job file</a></h1>
