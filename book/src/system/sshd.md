@@ -31,6 +31,10 @@ sshd/
 
 ## set_var.sh
 
+Generate an ed25519 SSH key and put it into Nomad Variables store. The key files will be deleted afterwards.
+
+*Todo*: Use openssl and never store the files to disk.
+
 **Filename**: `sshd/set_var.sh`
 
 ```bash

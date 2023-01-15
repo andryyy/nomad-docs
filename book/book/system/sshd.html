@@ -182,6 +182,8 @@
 
 </code></pre>
 <h2 id="set_varsh"><a class="header" href="#set_varsh">set_var.sh</a></h2>
+<p>Generate an ed25519 SSH key and put it into Nomad Variables store. The key files will be deleted afterwards.</p>
+<p><em>Todo</em>: Use openssl and never store the files to disk.</p>
 <p><strong>Filename</strong>: <code>sshd/set_var.sh</code></p>
 <pre><code class="language-bash"># All tasks of group sync of job sshd have access
 ssh-keygen -q -t ed25519 -f id_ed25519 -N &quot;&quot; &lt;&lt;&lt;y &gt;/dev/null 2&gt;&amp;1
