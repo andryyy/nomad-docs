@@ -2,7 +2,7 @@
 
 **This job does require levant.**
 
-Levant was used to create a dynamic amount of tasks depending on the configuration found in "variables.json".
+Levant was used to create a dynamic amount of tasks depending on the configuration found in `variables.json`.
 
 Moreover Levant offers the ability to outsource files to be included when rendering the job. This greatly improves the readability of the job file.
 
