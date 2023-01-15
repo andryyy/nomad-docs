@@ -1077,6 +1077,9 @@ EOF
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="sshd-job-file"><a class="header" href="#sshd-job-file">SSHd job file</a></h1>
 <p><strong>Important</strong>: Task names must be unique.</p>
+<p>This job does require levant.</p>
+<p>Levant was used to create a dynamic amount of tasks depending on the configuration found in &quot;variables.json&quot;.</p>
+<p>Moreover Levant offers the ability to outsource files to be included when rendering the job. This greatly improves the readability of the job file.</p>
 <pre><code class="language-bash">{
   &quot;tasks&quot;: [
     {
