@@ -5,5 +5,3 @@ language = "en"
 
 [output.html]
 default-theme = "light"
-additional-css = ["style.css"]
-additional-js = ["sidebar.js"]
