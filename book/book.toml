@@ -4,6 +4,6 @@ authors = ["André Peters"]
 language = "en"
 
 [output.html]
-default-theme = "ayu"
+default-theme = "light"
 additional-css = ["style.css"]
 additional-js = ["sidebar.js"]
