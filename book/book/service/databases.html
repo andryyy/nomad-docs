@@ -258,7 +258,8 @@
         data = &lt;&lt;EOF
 {{ with nomadVar &quot;nomad/jobs/databases/index/sonic&quot; }}{{ .sonic_env }}{{ end }}
 EOF
-        destination = &quot;local/file.env&quot;
+        destination = &quot;secrets/file.env&quot;
+        change_mode   = &quot;restart&quot;
         perms = &quot;600&quot;
         uid = 1000
         gid = 1000
@@ -425,7 +426,7 @@ EOF
 # todo: use task name
 {{ with nomadVar &quot;nomad/jobs/databases/mariadb/mariadb&quot; }}{{ .mariadb_env }}{{ end }}
 EOH
-        destination = &quot;secrets/env&quot;
+        destination = &quot;secrets/file.env&quot;
         change_mode   = &quot;restart&quot;
         env = true
       }

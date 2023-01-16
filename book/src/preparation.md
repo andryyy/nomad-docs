@@ -18,17 +18,17 @@ The network used for Nomad server agent gossip **could be** isolated from the ot
 Besides the machine hostname I will assign two more names to each host:
 
 ```yaml
-Machine hostname nomad-1:
+Machine hostname **nomad-1**:
   DNS:
     - Server name in cluster: server-1.nomad.cluster
     - Client name in cluster: client-1.nomad.cluster
 
-Machine hostname nomad-2:
+Machine hostname **nomad-2**:
   DNS:
     - Server name in cluster: server-2.nomad.cluster
     - Client name in cluster: client-2.nomad.cluster
 
-Machine hostname nomad-3:
+Machine hostname **nomad-3**:
   DNS:
     - Server name in cluster: server-3.nomad.cluster
     - Client name in cluster: client-3.nomad.cluster
@@ -36,24 +36,28 @@ Machine hostname nomad-3:
 
 A simple for-loop will setup hostnames and modify the hosts file accordingly in the next steps.
 
-This is my temporary ssh config file. I write "temporary" as I do not prefer to use root as default user for anything, but it will help a lot to create, append, or copy configurations between nodes while setting up the cluster:
+This is my temporary ssh config file. I write "temporary" as I do not prefer to use root as default user for anything, but it will help a lot to create, append, or copy configurations between nodes while setting up the cluster.
+
+Below are all names the SSH client will know the given host as.
+
+This will be helpful when using the tool "nomad-helper", which connects to the IP address advertised by a Nomad client to be connected to the default route.
 
 ```yaml
-Host nomad-1
+Host nomad-1 server-1.nomad.cluster client-1.nomad.cluster 5.75.230.15
   User root
   Hostname 5.75.230.14
   Port 22
   LocalForward 127.0.0.1:4646 10.100.100.2:4646
   ForwardAgent yes
 
-Host nomad-2
+Host nomad-2 server-2.nomad.cluster client-2.nomad.cluster 5.75.230.15
   User root
   Hostname 5.75.230.15
   LocalForward 127.0.0.1:4647 10.100.100.3:4646
   Port 22
   ForwardAgent yes
 
-Host nomad-3
+Host nomad-3 server-3.nomad.cluster client-3.nomad.cluster 5.75.230.15
   User root
   Hostname 5.75.230.16
   LocalForward 127.0.0.1:4648 10.100.100.4:4646

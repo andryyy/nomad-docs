@@ -8,6 +8,9 @@ for nomad in $(jq -r keys[] ~/nomad-env.json); do
     hostnamectl set-hostname $nomad;
     timedatectl set-timezone Europe/Berlin;
     cat << HOSTS >> /etc/hosts
+# To make the host aware of its new name
+# Also prevents host lookup errors in SSH sessions
+127.0.2.1 $nomad
 # Nomad server agents
 10.100.100.2 server-1.nomad.cluster
 10.100.100.3 server-2.nomad.cluster
