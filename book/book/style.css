@@ -38,7 +38,7 @@ body {
     }
     .pagetoc a:hover,
     .pagetoc a.active {
-        background: var(--sidebar-bg);
+        background: var(--search-mark-bg);
         color: var(--sidebar-fg) !important;
     }
     .subcat:before {
