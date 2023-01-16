@@ -136,7 +136,7 @@ root@nomad-1:/etc/nomad.d/pki # echo '{}' | cfssl gencert -ca=nomad-ca.pem -ca-k
   - | cfssljson -bare cli
 ```
 
-### Seeding TLS and cleanup
+### Seeding, postscript
 
 Change the owner to nomad and its default group:
 

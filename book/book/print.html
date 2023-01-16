@@ -436,7 +436,7 @@ EOF
 <pre><code class="language-bash">root@nomad-1:/etc/nomad.d/pki # echo '{}' | cfssl gencert -ca=nomad-ca.pem -ca-key=nomad-ca-key.pem -profile=client \
   - | cfssljson -bare cli
 </code></pre>
-<h3 id="seeding-tls-and-cleanup"><a class="header" href="#seeding-tls-and-cleanup">Seeding TLS and cleanup</a></h3>
+<h3 id="seeding-postscript"><a class="header" href="#seeding-postscript">Seeding, postscript</a></h3>
 <p>Change the owner to nomad and its default group:</p>
 <pre><code class="language-bash">root@nomad-1:/etc/nomad.d/pki # chown -R nomad: /etc/nomad.d/pki
 </code></pre>
