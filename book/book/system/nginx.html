@@ -166,6 +166,11 @@ job &quot;lb&quot; {
   datacenters = [&quot;falkenstein&quot;]
   type = &quot;system&quot;
 
+  # Force a refresh
+  meta {
+    run_uuid = &quot;${uuidv4()}&quot;
+  }
+
   group &quot;web&quot; {
 
     network {
