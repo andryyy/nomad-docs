@@ -54,6 +54,9 @@ window.addEventListener('load', function() {
 
         link.appendChild(document.createTextNode(el.text));
         link.style.paddingLeft = indent;
+        if (indent != "") {
+          link.classList.add("subcat");
+        }
         link.href = el.href;
         pagetoc.appendChild(link);
     });

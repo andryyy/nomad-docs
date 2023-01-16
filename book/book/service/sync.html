@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js light">
+<html lang="en" class="sidebar-visible no-js ayu">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -37,7 +37,7 @@
         <!-- Provide site root to javascript -->
         <script type="text/javascript">
             var path_to_root = "../";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
@@ -63,7 +63,7 @@
             if (theme === null || theme === undefined) { theme = default_theme; }
             var html = document.querySelector('html');
             html.classList.remove('no-js')
-            html.classList.remove('light')
+            html.classList.remove('ayu')
             html.classList.add(theme);
             html.classList.add('js');
         </script>
@@ -100,11 +100,11 @@
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
                         </ul>
                         <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
@@ -185,7 +185,8 @@
       name     = &quot;mutagen&quot;
       port     = &quot;mutagen_flask&quot;
       provider = &quot;nomad&quot;
-      tags = [&quot;public-http&quot;, &quot;{\&quot;path\&quot;: \&quot;/mutagen/\&quot;, \&quot;limit_except\&quot;: \&quot;GET\&quot;}&quot;]
+      # Making sure we are creating valid JSON by creating a map and converting it to text JSON
+      tags = [&quot;public-http&quot;, &quot;[[ (dict &quot;path&quot; &quot;/mutagen/&quot; &quot;limit_except&quot; &quot;GET&quot; ) | toJson | replace &quot;\&quot;&quot; &quot;\\\&quot;&quot; ]]&quot; ]
       check {
         name     = &quot;mutagen_probe&quot;
         type     = &quot;http&quot;
@@ -199,8 +200,6 @@
     task &quot;project&quot; {
 
       env {
-        TELEGRAM_BOT_TOKEN = &quot;[[ .telegram_bot_token ]]&quot;
-        CHAT_ID = &quot;[[ .telegram_chat_id ]]&quot;
         TZ = &quot;Europe/Berlin&quot;
       }
 
@@ -215,7 +214,7 @@
         ports = [&quot;mutagen_flask&quot;]
         command = &quot;/bin/bash&quot;
         args = [&quot;-c&quot;, &lt;&lt;EOF
-[[ fileContents &quot;init.sh&quot; ]]
+[[ fileContents &quot;includes/init.sh&quot; ]]
 EOF
 ]
         volumes = [
@@ -225,8 +224,8 @@ EOF
 
       template {
         data = &lt;&lt;EOF
-CHAT_ID={{ env &quot;CHAT_ID&quot; }}
-TELEGRAM_BOT_TOKEN={{ env &quot;TELEGRAM_BOT_TOKEN&quot; }}
+TELEGRAM_CHAT_ID={{ with nomadVar &quot;nomad/jobs/sync/mutagen&quot; }}{{ .telegram_chat_id }}{{ end }}
+TELEGRAM_BOT_TOKEN={{ with nomadVar &quot;nomad/jobs/sync/mutagen&quot; }}{{ .telegram_bot_token }}{{ end }}
 EOF
         destination = &quot;secrets/file.env&quot;
         change_mode = &quot;restart&quot;
@@ -235,7 +234,7 @@ EOF
 
       template {
         data = &lt;&lt;EOF
-[[ fileContents &quot;mutagen.yml&quot; ]]
+[[ fileContents &quot;includes/mutagen.yml&quot; ]]
 EOF
         destination = &quot;local/mutagen.yml&quot;
         change_mode = &quot;signal&quot;
@@ -244,7 +243,7 @@ EOF
 
       template {
         data = &lt;&lt;EOF
-[[ fileContents &quot;flask-app.py&quot; ]]
+[[ fileContents &quot;includes/flask-app.py&quot; ]]
 EOF
         destination   = &quot;local/flask-app.py&quot;
         change_mode   = &quot;restart&quot;
