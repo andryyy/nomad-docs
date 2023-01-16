@@ -147,14 +147,14 @@
                         <div class="sidetoc"><nav class="pagetoc"></nav></div>
 
                         <h1 id="encryption"><a class="header" href="#encryption">Encryption</a></h1>
-<h2 id="gossip-server-nodes"><a class="header" href="#gossip-server-nodes">Gossip (server nodes)</a></h2>
+<h2 id="gossip"><a class="header" href="#gossip">Gossip</a></h2>
 <p>Gossip is traffic between server nodes on port 4648/tcp/udp. Gossip traffic is not read by a Nomad client. Gossip is encrypted by using symmetric encryption, so all server nodes will share the same secret given as base64 formatted string. The maximum length is 32 bytes.</p>
 <p>I will generate random bytes for gossip encryption between Nomad servers when populating the server configuration file.</p>
-<h2 id="mtls-encryption-for-http-and-rpc-traffic"><a class="header" href="#mtls-encryption-for-http-and-rpc-traffic">mTLS encryption for HTTP and RPC traffic</a></h2>
+<h2 id="mtls-http-and-rpc"><a class="header" href="#mtls-http-and-rpc">mTLS (HTTP and RPC)</a></h2>
 <p>All nodes, no matter their role, talk RPC (4647/tcp) and HTTP (4646/tcp) traffic.</p>
 <p>HTTP is obviously used for the web UI but also necessary for running nomad commands via terminal as Nomad is fully API-driven - as most (all?) Hashicorp products are.</p>
 <p>RPC is used for communication between clients and servers.</p>
-<h3 id="preface-how-does-tls-in-nomad-work"><a class="header" href="#preface-how-does-tls-in-nomad-work">Preface: How does TLS in Nomad work?</a></h3>
+<h3 id="tls-in-nomad"><a class="header" href="#tls-in-nomad">TLS in Nomad</a></h3>
 <p>It is helpful to understand the basics of what Nomad actually verifies using which name using which protocol.</p>
 <h4 id="rpc"><a class="header" href="#rpc">RPC</a></h4>
 <p>For <strong>RPC communication</strong> Nomad agents will use a pseudo name not resolved in DNS depending on the agent role:</p>
@@ -179,7 +179,7 @@ The certificates will include the server as well as client agents name as popula
 <p><strong>Note</strong>: Creating and importing a client certificate as &quot;.p12&quot; file into the browser is explained in the course of this document.</p>
 <p>As long as CRLs are not supported, short-lived client certificates might be something to look into.</p>
 <p>A better and more granular method to restrict access in general is using Nomads ACL system, which can be quite complex.</p>
-<h4 id="our-setup"><a class="header" href="#our-setup">Our setup</a></h4>
+<h4 id="this-setup"><a class="header" href="#this-setup">This setup</a></h4>
 <p>This documentation will follow an easy to reproduce scheme:</p>
 <ul>
 <li>
@@ -200,7 +200,7 @@ The certificates will include the server as well as client agents name as popula
 </ul>
 <p>As wildcard certificates are supported by Nomad, we will make use of that.</p>
 <p><strong>Important</strong>: &quot;server.global.nomad&quot; is used to address any server agent in the region &quot;global&quot;. This is the default region in Nomad we will adopt to. Changing the region to something like <code>eu-west</code> would require to append <code>server.eu-west.nomad</code> as hostname. This setup will validate the region.</p>
-<h3 id="bootstrap-a-minimal-ca"><a class="header" href="#bootstrap-a-minimal-ca">Bootstrap a minimal CA</a></h3>
+<h3 id="bootstrap-ca"><a class="header" href="#bootstrap-ca">Bootstrap CA</a></h3>
 <p>I will use nomad-1 to bootstrap a minimal CA using &quot;cfssl&quot; as described in the Nomad documentation:</p>
 <pre><code class="language-bash">root@nomad-1:~ # apt install golang-cfssl
 root@nomad-1:~ # mkdir /etc/nomad.d/pki ; cd /etc/nomad.d/pki
@@ -222,26 +222,26 @@ root@nomad-1:/etc/nomad.d/pki #
 }
 EOF
 </code></pre>
-<h3 id="server-agent-certificate"><a class="header" href="#server-agent-certificate">Server agent certificate</a></h3>
+<h3 id="server-agent-tls"><a class="header" href="#server-agent-tls">Server agent TLS</a></h3>
 <pre><code class="language-bash">root@nomad-1:/etc/nomad.d/pki # echo '{}' | cfssl gencert \
   -ca=/etc/nomad.d/pki/nomad-ca.pem \
   -ca-key=/etc/nomad.d/pki/nomad-ca-key.pem \
   -config=/etc/nomad.d/pki/cfssl.json \
   -hostname=&quot;server.global.nomad,*.nomad.cluster&quot; - | cfssljson -bare server
 </code></pre>
-<h3 id="client-agent-certificate"><a class="header" href="#client-agent-certificate">Client agent certificate</a></h3>
+<h3 id="client-agent-tls"><a class="header" href="#client-agent-tls">Client agent TLS</a></h3>
 <pre><code class="language-bash">root@nomad-1:/etc/nomad.d/pki # echo '{}' | cfssl gencert \
   -ca=/etc/nomad.d/pki/nomad-ca.pem \
   -ca-key=/etc/nomad.d/pki/nomad-ca-key.pem \
   -config=/etc/nomad.d/pki/cfssl.json \
   -hostname=&quot;client.global.nomad,*.nomad.cluster&quot; - | cfssljson -bare client
 </code></pre>
-<h3 id="client-authentication-certificate"><a class="header" href="#client-authentication-certificate">Client authentication certificate</a></h3>
+<h3 id="client-auth-tls"><a class="header" href="#client-auth-tls">Client auth TLS</a></h3>
 <p>This certificate does not contain hostnames and is solely used to authenticate to the HTTP endpoint:</p>
 <pre><code class="language-bash">root@nomad-1:/etc/nomad.d/pki # echo '{}' | cfssl gencert -ca=nomad-ca.pem -ca-key=nomad-ca-key.pem -profile=client \
   - | cfssljson -bare cli
 </code></pre>
-<h3 id="seeding-certificates-cleanup-and-details"><a class="header" href="#seeding-certificates-cleanup-and-details">Seeding certificates, cleanup, and details</a></h3>
+<h3 id="seeding-tls-and-cleanup"><a class="header" href="#seeding-tls-and-cleanup">Seeding TLS and cleanup</a></h3>
 <p>Change the owner to nomad and its default group:</p>
 <pre><code class="language-bash">root@nomad-1:/etc/nomad.d/pki # chown -R nomad: /etc/nomad.d/pki
 </code></pre>
@@ -263,7 +263,7 @@ PROFILE
 EOF
 done
 </code></pre>
-<h3 id="creating-a-p12-file"><a class="header" href="#creating-a-p12-file">Creating a .p12 file</a></h3>
+<h3 id="create-p12"><a class="header" href="#create-p12">Create .p12</a></h3>
 <p>I do want to access the Nomad web UI with my browser, so the CLI certificate must be imported into my local Firefox.</p>
 <p>A proper &quot;.p12&quot; file should be password protected. Some browsers or operation systems will refuse to import a &quot;.p12&quot; file without a password set (see iOS).</p>
 <pre><code class="language-bash">root@nomad-1:/etc/nomad.d/pki # openssl pkcs12 -export \

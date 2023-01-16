@@ -1,12 +1,12 @@
 # Encryption
 
-## Gossip (server nodes)
+## Gossip
 
 Gossip is traffic between server nodes on port 4648/tcp/udp. Gossip traffic is not read by a Nomad client. Gossip is encrypted by using symmetric encryption, so all server nodes will share the same secret given as base64 formatted string. The maximum length is 32 bytes.
 
 I will generate random bytes for gossip encryption between Nomad servers when populating the server configuration file.
 
-## mTLS encryption for HTTP and RPC traffic
+## mTLS (HTTP and RPC)
 
 All nodes, no matter their role, talk RPC (4647/tcp) and HTTP (4646/tcp) traffic.
 
@@ -14,7 +14,7 @@ HTTP is obviously used for the web UI but also necessary for running nomad comma
 
 RPC is used for communication between clients and servers.
 
-### Preface: How does TLS in Nomad work?
+### TLS in Nomad
 
 It is helpful to understand the basics of what Nomad actually verifies using which name using which protocol.
 
@@ -58,7 +58,7 @@ As long as CRLs are not supported, short-lived client certificates might be some
 
 A better and more granular method to restrict access in general is using Nomads ACL system, which can be quite complex.
 
-#### Our setup
+#### This setup
 
 This documentation will follow an easy to reproduce scheme:
 
@@ -74,7 +74,7 @@ As wildcard certificates are supported by Nomad, we will make use of that.
 
 **Important**: "server.global.nomad" is used to address any server agent in the region "global". This is the default region in Nomad we will adopt to. Changing the region to something like `eu-west` would require to append `server.eu-west.nomad` as hostname. This setup will validate the region.
 
-### Bootstrap a minimal CA
+### Bootstrap CA
 
 I will use nomad-1 to bootstrap a minimal CA using "cfssl" as described in the Nomad documentation:
 
@@ -107,7 +107,7 @@ root@nomad-1:/etc/nomad.d/pki # cat <<EOF> /etc/nomad.d/pki/cfssl.json
 EOF
 ```
 
-### Server agent certificate
+### Server agent TLS
 
 ```bash
 root@nomad-1:/etc/nomad.d/pki # echo '{}' | cfssl gencert \
@@ -117,7 +117,7 @@ root@nomad-1:/etc/nomad.d/pki # echo '{}' | cfssl gencert \
   -hostname="server.global.nomad,*.nomad.cluster" - | cfssljson -bare server
 ```
 
-### Client agent certificate
+### Client agent TLS
 
 ```bash
 root@nomad-1:/etc/nomad.d/pki # echo '{}' | cfssl gencert \
@@ -127,7 +127,7 @@ root@nomad-1:/etc/nomad.d/pki # echo '{}' | cfssl gencert \
   -hostname="client.global.nomad,*.nomad.cluster" - | cfssljson -bare client
 ```
 
-### Client authentication certificate
+### Client auth TLS
 
 This certificate does not contain hostnames and is solely used to authenticate to the HTTP endpoint:
 
@@ -136,7 +136,7 @@ root@nomad-1:/etc/nomad.d/pki # echo '{}' | cfssl gencert -ca=nomad-ca.pem -ca-k
   - | cfssljson -bare cli
 ```
 
-### Seeding certificates, cleanup, and details
+### Seeding TLS and cleanup
 
 Change the owner to nomad and its default group:
 
@@ -170,7 +170,7 @@ EOF
 done
 ```
 
-### Creating a .p12 file
+### Create .p12
 
 I do want to access the Nomad web UI with my browser, so the CLI certificate must be imported into my local Firefox.
 
