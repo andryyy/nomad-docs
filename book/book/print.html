@@ -860,15 +860,12 @@ done
 <pre><code class="language-bash">nomad run -var server_name=nomad.debinux.de nginx.nomad
 </code></pre>
 <p>Alternatively a default value can be assigned on top of the job file.</p>
-<pre><code class="language-bash">job &quot;lb&quot; {
+<pre><code class="language-bash">[[- $variables := (fileContents &quot;variables.json&quot; | parseJSON ) -]]
+
+job &quot;lb&quot; {
 
   datacenters = [&quot;falkenstein&quot;]
   type = &quot;system&quot;
-
-  # Force a refresh
-  meta {
-    run_uuid = &quot;${uuidv4()}&quot;
-  }
 
   group &quot;web&quot; {
 
@@ -901,7 +898,6 @@ done
     }
 
     restart {
-      attempts = 2
       interval = &quot;30m&quot;
       delay = &quot;15s&quot;
       mode = &quot;fail&quot;
@@ -920,6 +916,11 @@ done
           &quot;www:/var/www&quot;,
           &quot;tls:/etc/nginx/tls.d&quot;,
         ]
+      }
+
+      env {
+        SERVER_NAME = &quot;[[ $variables.server_config.server_name ]]&quot;
+        TZ = &quot;Europe/Berlin&quot;
       }
 
       logs {
@@ -953,73 +954,7 @@ EOH
 
       template {
         data = &lt;&lt;EOF
-map $http_x_forwarded_proto $host_port {
-  default 80;
-  https 443;
-}
-
-{{ range nomadServices }}
-  {{ if contains &quot;public-http&quot; .Tags }}
-upstream {{ .Name }} {
-    {{ range nomadService .Name }}
-  server {{ .Address }}:{{ .Port }};
-    {{ else }}
-  server 127.0.0.1:65535;
-    {{ end }}
-}
-  {{ end }}
-{{ end }}
-
-server {
-   listen 80;
-   server_name ${var.server_name};
-   server_tokens off;
-   return 301 https://${var.server_name}$request_uri;
-}
-
-server {
-  listen 443 ssl;
-  ssl_certificate /etc/nginx/tls.d/fullchain.pem;
-  ssl_certificate_key /etc/nginx/tls.d/privkey.pem;
-  server_tokens off;
-  root /var/www;
-  server_name ${var.server_name};
-
-{{ range nomadServices }}
-  {{ if contains &quot;public-http&quot; .Tags }}
-    {{ $service := .Name }}
-    {{ range .Tags }}
-      {{ if . | regexMatch &quot;^{\&quot;.+\&quot;}$&quot; }}
-        {{ with $d := . | parseJSON }}
-          {{ if $d.path }}
-  location {{ $d.path }} {
-    proxy_set_header Host $host;
-    proxy_set_header X-Real-IP  $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    client_max_body_size 0;
-    proxy_redirect off;
-    proxy_pass http://{{ $service }};
-            {{ if $d.limit_except }}
-    limit_except {{ $d.limit_except }} {
-      deny all;
-    }
-            {{ end }}
-  }
-          {{ end }}
-        {{ end }}
-      {{ end }}
-    {{ end }}
-  {{ end }}
-{{ end }}
-
-  location /docs {
-    limit_except GET {
-      deny all;
-    }
-    alias /var/www/nomad-docs/nomad-docs-main/book/book;
-  }
-
-}
+[[ fileContents &quot;includes/balancer.conf&quot; ]]
 EOF
         destination   = &quot;local/balancer.conf&quot;
         change_mode   = &quot;signal&quot;
@@ -1028,34 +963,18 @@ EOF
 
       template {
         data = &lt;&lt;EOF
-&lt;!DOCTYPE HTML&gt;
-&lt;html&gt;
-&lt;head&gt;
-  &lt;meta charset=&quot;utf-8&quot; /&gt;
-  &lt;title&gt;LB&lt;/title&gt;
-  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot; /&gt;
-&lt;/head&gt;
-&lt;body&gt;
-&lt;div id=&quot;container&quot;&gt;
-&lt;pre&gt;
-# https://pkg.go.dev/github.com/hashicorp/consul-template/dependency#NomadService
-{{ range nomadServices }}
-  Name: {{ .Name }}
-  {{ range nomadService .Name }}
-    Node: {{ .Node }}
-    Address: {{ .Address }}
-    AllocID: {{ .AllocID }}
-    Datacenter: {{ .Datacenter }}
-    ID: {{ .ID }}
-    JobID: {{ .JobID }}
-    Port: {{ .Port }}
-    Tags: {{ .Tags }}
-  {{ end }}
-{{ end }}
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/body&gt;
-&lt;/html&gt;
+[[ range $i, $option := $variables.server_config.raw -]]
+[[ $option ]]
+[[ end -]]
+EOF
+        destination   = &quot;local/server_options.tpl&quot;
+        change_mode   = &quot;signal&quot;
+        change_signal = &quot;SIGHUP&quot;
+      }
+
+      template {
+        data = &lt;&lt;EOF
+[[ fileContents &quot;includes/services.html&quot; ]]
 EOF
         destination   = &quot;www/services.html&quot;
         change_mode   = &quot;signal&quot;
