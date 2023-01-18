@@ -24,6 +24,7 @@
 - [Damon](tools/damon.md)
 - [Wander](tools/wander.md)
 - [Lazydocker](tools/lazydocker.md)
+- [nomad-helper](tools/nomad-helper.md)
 
 # Scripts
 - [Quick-enter containers](scripts/quick-enter.md)
